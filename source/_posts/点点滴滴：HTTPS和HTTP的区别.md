@@ -7,13 +7,13 @@ tags: 点点滴滴
 从iOS9开始，苹果官方开始要求，上线的APP需要对HTTPs协议进行支持，虽然我们可以通过在项目的plist文件中设置属性的方式，暂时绕开这条限制， 但是我个人认为还是有必要了解下，苹果为什么要这么做？
 <!--more-->
 先简单科普下HTTP与HTTPS分别代表什么，以及它们的区别到底是什么？
-### [1 HTPPS和HTTP的概念](#1)
+### [HTPPS和HTTP的概念](#1)
 
 HTTPS（全称：Hypertext Transfer Protocol over Secure Socket Layer），是以安全为目标的HTTP通道，简单讲是HTTP的安全版。即HTTP下加入SSL层，HTTPS的安全基础是SSL，因此加密的详细内容就需要SSL。 它是一个URI scheme（抽象标识符体系），句法类同http:体系。用于安全的HTTP数据传输。https:URL表明它使用了HTTP，但HTTPS存在不同于HTTP的默认端口及一个加密/身份验证层（在HTTP与TCP之间）。这个系统的最初研发由网景公司进行，提供了身份验证与加密通讯方法，现在它被广泛用于万维网上安全敏感的通讯，例如交易支付方面。
 
 超文本传输协议 (HTTP-Hypertext transfer protocol) 是一种详细规定了浏览器和万维网服务器之间互相通信的规则，通过因特网传送万维网文档的数据传送协议。
 
-### [2 HTTPS和HTTP的区别：](#1)
+### [HTTPS和HTTP的区别：](#1)
 
 1.HTTPS议需要到CA申请证书，一般免费证书很少，需要交费。HTTP是超文本传输协议，不需要证书
 2.端口号不同，HTTPS端口号是443，HTTP端口号是80

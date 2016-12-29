@@ -7,7 +7,7 @@ title: 水滴石穿
 subtitle: 学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜
 description: 学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜兮
 author: 水滴石穿
-language: zh-CN
+language: zh-Hans
 timezone:
 
 # URL
@@ -63,12 +63,12 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: maupassant
+theme: next
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repository: https://github.com/ab364743113/ab364743113.github.io
+  repository: https://github.com/TripleFireMan/TripleFireMan.github.io
   branch: master
 

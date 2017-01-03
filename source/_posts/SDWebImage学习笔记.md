@@ -182,10 +182,11 @@ NSString *const SDWebImageDownloadFinishNotification = @"SDWebImageDownloadFinis
 ```
 3. 接下来就是NSURLSession任务的开启、执行中、结束或者错误回调
 这里就不去贴代码了，要不然这篇博文很大篇幅都被代码占据了，其实任务执行开始之后，主要就是各种异常的处理，因为正常的处理其实是比较简单的，之后就会回调到外面去，让外面调用‘下载操作对象’去决定到底该如何处理。
+（补充：经过后面对SDWebImageDownloader的深入研究，发现SDWebImageDownloaderOperation创建好之后，直接扔到SDWebImageDownloader的队列里面去了，此外session由于是注入的，代理设置的是SDWebImageDownloader，回调自然也由SDWebImageDownloader接收，然后分发给各自对应的SDWebImageDownloaderOperation）
 
 ### SDWebImageDownloader对下载任务的封装
 SDWebImageDownloader是对SDWebImageDownloaderOperation的进一步管理和封装，通过下载队列对SDWebImageDownloaderOperation的任务并发数(默认并发数为6个)，执行顺序（默认是FIFO）进行管理。这里我简单梳理下任务的下载流程
-* client首先需要创建一个SDWebImageDownloader，创建好之后，就准备好了下载需要的downloadQueue，下载相关的一些配置（诸如执行顺序、并发数、超时等等）。
+* client（此处指的是使用SDWebImageDownloader的客户，可以是用户自己的类，也可以是其他SDWebImage类）首先需要创建一个SDWebImageDownloader，创建好之后，就准备好了下载需要的downloadQueue，下载相关的一些配置（诸如执行顺序、并发数、超时等等）。
 * client之后调用SDWebImageDownloader的downloadImageWithURL:options:progress:completed:进行实际的下载操作。在这里我有一个疑惑了好久的问题，就是session的回调问题，因为SDWebImageDownloaderOperation里面有session，而SDWebImageDownloader也有session，那么任务执行过程中，岂不是俩处都会收到回调？这难道是SDWebImage的BUG？呵呵，其实并不是，直到我看到下面这段代码。
 ```objc
         NSURLSession *session = self.unownedSession;
@@ -207,7 +208,7 @@ SDWebImageDownloader是对SDWebImageDownloaderOperation的进一步管理和封�
         
         self.dataTask = [session dataTaskWithRequest:self.request];
 ```
- 看了上面的代码自然就明白了，当使用SDWebImageDownloader的时候，session的回调只有SDWebImageDownloader能接收到，这也是为什么SDWebImageDownloader需要在接收到回调之后要进行转发的缘故。
+ 看了上面的代码自然就明白了，<font color=red>当使用SDWebImageDownloader的时候，session的回调只有SDWebImageDownloader能接收到，这也是为什么SDWebImageDownloader需要在接收到回调之后要进行转发的缘故。</font>
 
 1. SDWebImageDownloader的初始化
 ```objc

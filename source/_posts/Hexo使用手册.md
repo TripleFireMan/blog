@@ -8,25 +8,33 @@ tags: Hexo
 
 ### 1.启动本地调试服务器
 
-```c
+```objective-c
 hexo server
 ```
 
-## 2. 新建文章
+### 2.新建文章
 
-```
+```objective-c
 hexo new '文章标题'
 ```
 
-## 3. 文章发布
+### 3. 静态文件生成
 
+```objective-c
+hexo generate
 ```
+
+### 4. 文章发布
+
+```objective-c
 hexo deploy
 ```
 
+
+
 <!---more--->
 
-## 4. 图片放置
+### 5.图片放置
 
 将用的图片放置到 “文章标题”/  文件夹下面
 

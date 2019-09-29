@@ -1,0 +1,737 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="1、问题背景公司是家小公司，没有成熟的打包系统，开发完app之后，往往需要开发人员用xcode打包，导出ipa文件，然后手动上传到蒲公英网站，然后把下载二维码发送给测试/老板。这里面有问题
+
+占用开发人员的时间和设备。
+不能保证每天都有可用的测试包，依赖开发人员打包。
+重复工作,每天都要做，效率低下。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="xcode自动打包实践">
+<meta property="og:url" content="http://yoursite.com/2019/09/29/xcode自动打包实践/index.html">
+<meta property="og:site_name" content="小顽童">
+<meta property="og:description" content="1、问题背景公司是家小公司，没有成熟的打包系统，开发完app之后，往往需要开发人员用xcode打包，导出ipa文件，然后手动上传到蒲公英网站，然后把下载二维码发送给测试/老板。这里面有问题
+
+占用开发人员的时间和设备。
+不能保证每天都有可用的测试包，依赖开发人员打包。
+重复工作,每天都要做，效率低下。">
+<meta property="og:image" content="http://yoursite.com/2019/09/29/xcode自动打包实践/xcodeBuild.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/29/xcode自动打包实践/image-20190929150425280.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/29/xcode自动打包实践/image-20190929145115777.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/29/xcode自动打包实践/image-20190929150130963.png">
+<meta property="og:updated_time" content="2019-09-29T08:25:50.746Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="xcode自动打包实践">
+<meta name="twitter:description" content="1、问题背景公司是家小公司，没有成熟的打包系统，开发完app之后，往往需要开发人员用xcode打包，导出ipa文件，然后手动上传到蒲公英网站，然后把下载二维码发送给测试/老板。这里面有问题
+
+占用开发人员的时间和设备。
+不能保证每天都有可用的测试包，依赖开发人员打包。
+重复工作,每天都要做，效率低下。">
+<meta name="twitter:image" content="http://yoursite.com/2019/09/29/xcode自动打包实践/xcodeBuild.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/29/xcode自动打包实践/"/>
+
+
+
+
+
+  <title> xcode自动打包实践 | 小顽童 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">小顽童</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle">学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜</p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/29/xcode自动打包实践/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="小顽童">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="小顽童">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="小顽童" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                xcode自动打包实践
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-29T15:47:47+08:00">
+                2019-09-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/09/29/xcode自动打包实践/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2019/09/29/xcode自动打包实践/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="1、问题背景"><a href="#1、问题背景" class="headerlink" title="1、问题背景"></a>1、问题背景</h2><p>公司是家小公司，没有成熟的打包系统，开发完app之后，往往需要开发人员用xcode打包，导出ipa文件，然后手动上传到蒲公英网站，然后把下载二维码发送给测试/老板。这里面有问题</p>
+<ol>
+<li>占用开发人员的时间和设备。</li>
+<li>不能保证每天都有可用的测试包，依赖开发人员打包。</li>
+<li>重复工作,每天都要做，效率低下。</li>
+</ol>
+<a id="more"></a>
+<h2 id="2-、解决方案"><a href="#2-、解决方案" class="headerlink" title="2 、解决方案"></a>2 、解决方案</h2><p>可以利用脚本对xcode进行打包，然后发布上传到相应的平台。</p>
+<p>这里面，核心的功能是xcodebuild，利用这个命令行工具，可以对工程进行打包，导出。流程图如下</p>
+<p><img src="/2019/09/29/xcode自动打包实践/xcodeBuild.png" style="zoom:48%;"></p>
+<h2 id="3-、脚本文件"><a href="#3-、脚本文件" class="headerlink" title="3 、脚本文件"></a>3 、脚本文件</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/sh</span></div><div class="line"><span class="built_in">source</span> /etc/profile  </div><div class="line">SECONDS=0</div><div class="line">now=$(date +<span class="string">"%Y%m%d-%H:%M"</span>)</div><div class="line">setting_path=<span class="string">"/Users/chengyan/Desktop/setting.plist"</span> </div><div class="line"><span class="comment"># 项目名称</span></div><div class="line">project_name=$(/usr/libexec/PlistBuddy -c <span class="string">"print project_name"</span> <span class="variable">$&#123;setting_path&#125;</span>)</div><div class="line"><span class="built_in">echo</span> <span class="variable">$project_name</span></div><div class="line"><span class="comment"># 项目路径</span></div><div class="line">project_path=$(/usr/libexec/PlistBuddy -c <span class="string">"print project_path"</span> <span class="variable">$&#123;setting_path&#125;</span>)</div><div class="line"><span class="built_in">echo</span> <span class="variable">$project_path</span></div><div class="line"><span class="keyword">if</span> [ <span class="_">-d</span> <span class="string">"<span class="variable">$&#123;project_path&#125;</span>/<span class="variable">$&#123;project_name&#125;</span>.xcworkspace"</span> ];<span class="keyword">then</span></div><div class="line">	<span class="comment"># workspace_path="$&#123;project_path&#125;/$&#123;project_name&#125;.xcworkspace"</span></div><div class="line">	workspace_path=<span class="string">"<span class="variable">$&#123;project_path&#125;</span>/<span class="variable">$&#123;project_name&#125;</span>.xcworkspace"</span></div><div class="line">	<span class="built_in">echo</span> <span class="variable">$workspace_path</span></div><div class="line"><span class="keyword">else</span></div><div class="line">	workspace_path=<span class="string">"<span class="variable">$&#123;project_path&#125;</span>/<span class="variable">$&#123;project_name&#125;</span>.xcodeproj"</span></div><div class="line">	<span class="built_in">echo</span> <span class="variable">$workspace_path</span></div><div class="line"><span class="keyword">fi</span></div><div class="line"><span class="comment"># scheme名称</span></div><div class="line">scheme_name=$(/usr/libexec/PlistBuddy -c <span class="string">"print scheme_name"</span> <span class="variable">$&#123;setting_path&#125;</span>)</div><div class="line"><span class="comment"># 项目版本</span></div><div class="line">version=$(/usr/libexec/PlistBuddy -c <span class="string">"print version"</span> <span class="variable">$&#123;setting_path&#125;</span>)</div><div class="line"><span class="comment"># 开发者账号</span></div><div class="line">dev_account=$(/usr/libexec/PlistBuddy -c <span class="string">"print dev_account"</span> <span class="variable">$&#123;setting_path&#125;</span>)</div><div class="line"><span class="comment"># 开发者密码</span></div><div class="line">dev_password=$(/usr/libexec/PlistBuddy -c <span class="string">"print dev_password"</span> <span class="variable">$&#123;setting_path&#125;</span>)</div><div class="line"><span class="comment"># 配置打包方式</span></div><div class="line">configration=$(/usr/libexec/PlistBuddy -c <span class="string">"print configration"</span> <span class="variable">$&#123;setting_path&#125;</span>)</div><div class="line"><span class="comment"># 发布地址 PGY 蒲公英 苹果商店 AppStore</span></div><div class="line">upload_address=$(/usr/libexec/PlistBuddy -c <span class="string">"print upload_address"</span> <span class="variable">$&#123;setting_path&#125;</span>)</div><div class="line"><span class="comment"># ipa包名称:项目名称+版本号+打包类型</span></div><div class="line">ipa_name=$(/usr/libexec/PlistBuddy -c <span class="string">"print ipa_name"</span> <span class="variable">$&#123;setting_path&#125;</span>)</div><div class="line"><span class="comment"># ipa包路径</span></div><div class="line">ipa_path2=$(/usr/libexec/PlistBuddy -c <span class="string">"print ipa_path"</span> <span class="variable">$&#123;setting_path&#125;</span>)/<span class="variable">$&#123;now&#125;</span></div><div class="line">ipa_path=<span class="string">"<span class="variable">$&#123;ipa_path2&#125;</span>-V<span class="variable">$&#123;version&#125;</span>-<span class="variable">$&#123;upload_address&#125;</span>"</span></div><div class="line"><span class="comment"># 编译build路径</span></div><div class="line">archive_path=<span class="string">"<span class="variable">$&#123;ipa_path&#125;</span>/<span class="variable">$&#123;project_name&#125;</span>.xcarchive"</span></div><div class="line"><span class="built_in">echo</span> <span class="variable">$&#123;archive_path&#125;</span></div><div class="line"><span class="comment"># 上传到蒲公英设置</span></div><div class="line">user_key=$(/usr/libexec/PlistBuddy -c <span class="string">"print user_key"</span> <span class="variable">$&#123;setting_path&#125;</span>)</div><div class="line">api_key=$(/usr/libexec/PlistBuddy -c <span class="string">"print api_key"</span> <span class="variable">$&#123;setting_path&#125;</span>)</div><div class="line">password=$(/usr/libexec/PlistBuddy -c <span class="string">"print password"</span> <span class="variable">$&#123;setting_path&#125;</span>)</div><div class="line"></div><div class="line"><span class="comment"># 打包方式配置</span></div><div class="line"><span class="keyword">if</span> [ <span class="variable">$&#123;upload_address&#125;</span> == <span class="string">'AppStore'</span> ]; <span class="keyword">then</span></div><div class="line">	configration=<span class="string">"Release"</span></div><div class="line">	plist_path=<span class="variable">$&#123;project_path&#125;</span>/<span class="built_in">export</span>AppStore.plist</div><div class="line"><span class="keyword">elif</span> [ <span class="variable">$&#123;upload_address&#125;</span> == <span class="string">'PGY'</span> ]; <span class="keyword">then</span></div><div class="line">	<span class="keyword">if</span> [ <span class="variable">$&#123;configration&#125;</span> == <span class="string">'Release'</span> ]; <span class="keyword">then</span></div><div class="line">		plist_path=<span class="string">"/Users/chengyan/Desktop/exportAdHot.plist"</span></div><div class="line">	<span class="keyword">else</span></div><div class="line">		plist_path=<span class="built_in">export</span>Development.plist</div><div class="line">	</div><div class="line">	<span class="keyword">fi</span></div><div class="line"><span class="keyword">fi</span></div><div class="line"></div><div class="line"><span class="built_in">echo</span> <span class="string">"=======================正在清理工程================="</span></div><div class="line">xcodebuild clean -configuration <span class="variable">$&#123;configration&#125;</span> \</div><div class="line">-workspace <span class="variable">$&#123;workspace_path&#125;</span> \</div><div class="line">-scheme <span class="variable">$&#123;scheme_name&#125;</span> \</div><div class="line">-quiet || <span class="built_in">exit</span></div><div class="line"><span class="built_in">echo</span> <span class="string">'清理完成--------》》正在编译工程:'</span><span class="variable">$&#123;configration&#125;</span></div><div class="line"><span class="comment">#通过wordspace方式打包</span></div><div class="line"><span class="keyword">if</span> [ <span class="_">-d</span> <span class="string">"<span class="variable">$&#123;project_path&#125;</span>/<span class="variable">$&#123;project_name&#125;</span>.xcworkspace"</span> ]; <span class="keyword">then</span></div><div class="line">	xcodebuild archive -workspace <span class="variable">$&#123;workspace_path&#125;</span> -scheme <span class="variable">$&#123;scheme_name&#125;</span> \</div><div class="line">	-configuration <span class="variable">$&#123;configration&#125;</span> \</div><div class="line">	-archivePath <span class="variable">$&#123;archive_path&#125;</span> -quiet || <span class="built_in">exit</span></div><div class="line"><span class="keyword">else</span></div><div class="line">	xcodebuild archive -project <span class="variable">$&#123;project_path&#125;</span> - scheme <span class="variable">$&#123;scheme_name&#125;</span>\</div><div class="line">	-configuration <span class="variable">$&#123;configration&#125;</span> \</div><div class="line">	-archivePath <span class="variable">$&#123;archive_path&#125;</span> -quiet || <span class="built_in">exit</span></div><div class="line"><span class="keyword">fi</span></div><div class="line"></div><div class="line"><span class="comment"># 检查下是否构建成功</span></div><div class="line"><span class="keyword">if</span> [ <span class="_">-d</span> <span class="string">"<span class="variable">$archive_path</span>"</span> ]; <span class="keyword">then</span></div><div class="line">	<span class="built_in">echo</span> <span class="string">'========项目构建成功========'</span></div><div class="line"><span class="keyword">else</span></div><div class="line">	<span class="built_in">echo</span> <span class="string">'========项目构建失败========'</span></div><div class="line">	<span class="built_in">exit</span> 1</div><div class="line"><span class="keyword">fi</span></div><div class="line"></div><div class="line"><span class="built_in">echo</span> <span class="string">'编译完成---》》---开始ipa打包'</span></div><div class="line">xcodebuild -exportArchive -archivePath <span class="variable">$&#123;archive_path&#125;</span> \</div><div class="line">-configuration <span class="variable">$&#123;configration&#125;</span> \</div><div class="line">-exportPath <span class="variable">$&#123;ipa_path&#125;</span> \</div><div class="line">-exportOptionsPlist <span class="variable">$&#123;plist_path&#125;</span> \</div><div class="line">-quiet || <span class="built_in">exit</span></div><div class="line"></div><div class="line"><span class="comment"># 检查下是否导出ipa包成功</span></div><div class="line"><span class="keyword">if</span> [ <span class="_">-e</span> <span class="string">"<span class="variable">$&#123;ipa_path&#125;</span>/<span class="variable">$&#123;ipa_name&#125;</span>.ipa"</span> ]; <span class="keyword">then</span></div><div class="line">	<span class="built_in">echo</span> <span class="string">'========ipa 打包成功=========='</span></div><div class="line">	open <span class="variable">$ipa_path</span></div><div class="line"><span class="keyword">else</span></div><div class="line">	<span class="built_in">echo</span> <span class="string">'=========ipa 打包失败========='</span></div><div class="line">	<span class="built_in">exit</span> 1</div><div class="line"><span class="keyword">fi</span></div><div class="line"></div><div class="line"><span class="built_in">echo</span> <span class="string">'==========准备发布ipa包========='</span></div><div class="line"></div><div class="line"><span class="keyword">if</span> [ <span class="variable">$&#123;upload_address&#125;</span> == <span class="string">"AppStore"</span> ]; <span class="keyword">then</span></div><div class="line">	<span class="built_in">echo</span> <span class="string">'准备发布包到appstore'</span></div><div class="line"><span class="keyword">else</span></div><div class="line">	<span class="built_in">echo</span> <span class="string">'发布包到蒲公英平台'</span></div><div class="line">	curl -F <span class="string">"file=@<span class="variable">$&#123;ipa_path&#125;</span>/<span class="variable">$&#123;ipa_name&#125;</span>.ipa"</span> \</div><div class="line">	-F  <span class="string">"uKey=<span class="variable">$&#123;user_key&#125;</span>"</span> -F <span class="string">"_api_key=<span class="variable">$&#123;api_key&#125;</span>"</span> \ </div><div class="line">	-F <span class="string">"password=<span class="variable">$&#123;password&#125;</span>"</span> \</div><div class="line">	https://www.pgyer.com/apiv1/app/upload</div><div class="line">	<span class="keyword">if</span> [ $? == 0 ]; <span class="keyword">then</span></div><div class="line">		<span class="built_in">echo</span> <span class="string">'=====提交蒲公英成功'</span></div><div class="line">	<span class="keyword">else</span></div><div class="line">		<span class="built_in">echo</span> <span class="string">'=====提交蒲公英失败'</span></div><div class="line">	<span class="keyword">fi</span></div><div class="line"><span class="keyword">fi</span></div><div class="line"></div><div class="line"><span class="comment"># 输出耗时</span></div><div class="line"><span class="built_in">echo</span> <span class="string">"执行时间:<span class="variable">$&#123;SECONDS&#125;</span>秒"</span></div><div class="line"><span class="built_in">exit</span> 0</div></pre></td></tr></table></figure>
+<h2 id="4、具体流程"><a href="#4、具体流程" class="headerlink" title="4、具体流程"></a>4、具体流程</h2><h3 id="4-1、-在脚本的同级目录下，创建一个setting-json（名字不一定叫这个，可以自己随便起）文件"><a href="#4-1、-在脚本的同级目录下，创建一个setting-json（名字不一定叫这个，可以自己随便起）文件" class="headerlink" title="4.1、 在脚本的同级目录下，创建一个setting.json（名字不一定叫这个，可以自己随便起）文件"></a>4.1、 在脚本的同级目录下，创建一个<strong>setting.json</strong>（名字不一定叫这个，可以自己随便起）文件</h3><p>这个文件主要用来配置脚本执行的环境、上传的平台、打完包存放ipa包的路径，如果是往appstore上传的话，还需要开发者的账号，密码等信息。</p>
+<p><img src="/2019/09/29/xcode自动打包实践/image-20190929150425280.png" alt="image-20190929150425280" style="zoom:50%;"></p>
+<p>文件内容如下，</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</div><div class="line"><span class="meta">&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">plist</span> <span class="attr">version</span>=<span class="string">"1.0"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">dict</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">key</span>&gt;</span>project_name<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">string</span>&gt;</span>项目名称<span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">key</span>&gt;</span>project_path<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">string</span>&gt;</span>/Users/chengyan/Desktop/工程文件目录<span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">key</span>&gt;</span>scheme_name<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">string</span>&gt;</span>工程<span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">key</span>&gt;</span>version<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">string</span>&gt;</span>1.6.5<span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">key</span>&gt;</span>upload_address<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">string</span>&gt;</span>PGY<span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">key</span>&gt;</span>configration<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">string</span>&gt;</span>Release<span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">key</span>&gt;</span>ipa_name<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">string</span>&gt;</span>ipa包的名称<span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">key</span>&gt;</span>ipa_path<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">string</span>&gt;</span>ipa包存放的地址<span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">key</span>&gt;</span>user_key<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">string</span>&gt;</span>蒲公英平台userkey<span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">key</span>&gt;</span>api_key<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">string</span>&gt;</span>蒲公英平台apikey<span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">key</span>&gt;</span>dev_account<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">string</span>&gt;</span>苹果账号<span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">key</span>&gt;</span>dev_password<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">string</span>&gt;</span>苹果账号密码<span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">key</span>&gt;</span>password<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">string</span>&gt;</span><span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dict</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">plist</span>&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="4-2、-导出ipa配置文件"><a href="#4-2、-导出ipa配置文件" class="headerlink" title="4.2、 导出ipa配置文件"></a>4.2、 导出ipa配置文件</h3><p>xcodebuild导出ipa包，核心命令</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">xcodebuild -exportArchive -archivePath <span class="variable">$&#123;archive_path&#125;</span> \</div><div class="line">-configuration <span class="variable">$&#123;configration&#125;</span> \</div><div class="line">-exportPath <span class="variable">$&#123;ipa_path&#125;</span> \</div><div class="line">-exportOptionsPlist <span class="variable">$&#123;plist_path&#125;</span> \</div><div class="line">-quiet || <span class="built_in">exit</span></div></pre></td></tr></table></figure>
+<p>导出ipad包的时候，需要一个ExportOption.plist文件，对应的参数为：exportOptionsPlist，这个文件用来对导出的包进行签名，配置是否要支持bitcode等信息。</p>
+<p>如何获取这个文件？用xcode打一次包，之后在导出的文件夹下就会有这个文件。文件截图如下：</p>
+<p><img src="/2019/09/29/xcode自动打包实践/image-20190929145115777.png" alt="image-20190929145115777" style="zoom:50%;"></p>
+<p>有了上面的两个文件之后，就可以通过运行脚本进行打包，然后把包上传到蒲公英/苹果商店了</p>
+<h2 id="5、-定时打包实现DailyBuild"><a href="#5、-定时打包实现DailyBuild" class="headerlink" title="5、 定时打包实现DailyBuild"></a>5、 定时打包实现DailyBuild</h2><p>利用launchd命令行工具，定时执行脚本。</p>
+<h3 id="5-1、-创建一个”com-runSh-plist”json文件，用来配置启动任务，大致如下图"><a href="#5-1、-创建一个”com-runSh-plist”json文件，用来配置启动任务，大致如下图" class="headerlink" title="5.1、 创建一个”com.runSh.plist”json文件，用来配置启动任务，大致如下图"></a>5.1、 创建一个”com.runSh.plist”json文件，用来配置启动任务，大致如下图</h3><p><img src="/2019/09/29/xcode自动打包实践/image-20190929150130963.png" alt="image-20190929150130963" style="zoom:50%;"></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</div><div class="line"><span class="meta">&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">plist</span> <span class="attr">version</span>=<span class="string">"1.0"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">dict</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">key</span>&gt;</span>Label<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">string</span>&gt;</span>com.suoyi.service<span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">key</span>&gt;</span>ProgramArguments<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">array</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">string</span>&gt;</span>/Users/chengyan/Desktop/autoIpa.sh<span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">array</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">key</span>&gt;</span>StartCalendarInterval<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">array</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">dict</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">key</span>&gt;</span>Hour<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">integer</span>&gt;</span>21<span class="tag">&lt;/<span class="name">integer</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">key</span>&gt;</span>Minute<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">integer</span>&gt;</span>15<span class="tag">&lt;/<span class="name">integer</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">dict</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">dict</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">key</span>&gt;</span>Hour<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">integer</span>&gt;</span>14<span class="tag">&lt;/<span class="name">integer</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">key</span>&gt;</span>Minute<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">integer</span>&gt;</span>1<span class="tag">&lt;/<span class="name">integer</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">dict</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">array</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">key</span>&gt;</span>RunAtLoad<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">true</span>/&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">key</span>&gt;</span>StandardErrorPath<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">string</span>&gt;</span>/Users/chengyan/Desktop/TEST.err<span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">key</span>&gt;</span>StandardOutPath<span class="tag">&lt;/<span class="name">key</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">string</span>&gt;</span>/Users/chengyan/Desktop/TEST.out<span class="tag">&lt;/<span class="name">string</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dict</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">plist</span>&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="5-2、launchd-命令-主要用的就是load和unload命令"><a href="#5-2、launchd-命令-主要用的就是load和unload命令" class="headerlink" title="5.2、launchd 命令,主要用的就是load和unload命令"></a>5.2、launchd 命令,主要用的就是load和unload命令</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">➜  ~ launchctl <span class="built_in">list</span>  <span class="comment">// 获取所有定时任务</span></div><div class="line">➜  Desktop launchctl load com.suoyi.plist <span class="comment">// 加载任务</span></div><div class="line">➜  Desktop launchctl <span class="built_in">list</span> | grep com.suoyi.service <span class="comment">// 查询当前任务的执行状态</span></div><div class="line"><span class="number">53241</span>	<span class="number">0</span>	com.suoyi.service</div><div class="line">➜  Desktop launchctl start com.suoyi.service <span class="comment">// 开启任务</span></div><div class="line">➜  Desktop launchctl stop com.suoyi.service <span class="comment">// 停止任务</span></div><div class="line">➜  Desktop launchctl unload com.suoyi.plist <span class="comment">// 卸载任务</span></div></pre></td></tr></table></figure>
+<h3 id="5-3、注意事项：需要将脚本文件的权限修改为777。修改命令如下"><a href="#5-3、注意事项：需要将脚本文件的权限修改为777。修改命令如下" class="headerlink" title="5.3、注意事项：需要将脚本文件的权限修改为777。修改命令如下"></a>5.3、注意事项：需要将脚本文件的权限修改为777。修改命令如下</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">chmod 777 yourScrpt.sh</div></pre></td></tr></table></figure>
+<h2 id="6、踩过的坑"><a href="#6、踩过的坑" class="headerlink" title="6、踩过的坑"></a>6、踩过的坑</h2><h3 id="1号坑：-脚本文件不能放到中文文件夹下"><a href="#1号坑：-脚本文件不能放到中文文件夹下" class="headerlink" title="1号坑： 脚本文件不能放到中文文件夹下"></a>1号坑： 脚本文件不能放到中文文件夹下</h3><p>我用的是sublime2作为脚本开发工具，将脚本文件放在了我自己建的一个“脚本”文件夹下，结果编译的时候，一直报错。将脚本放到/Desktop之后，此问题解决</p>
+<h3 id="2号坑：路径一定要使用绝对路径"><a href="#2号坑：路径一定要使用绝对路径" class="headerlink" title="2号坑：路径一定要使用绝对路径"></a>2号坑：路径一定要使用绝对路径</h3><p>如果手动执行脚本的话，使用相对路劲也是可以的。但是利用launchctl的方式启动定时任务，那么相对路径执行就会报路径找不到的错误</p>
+<h3 id="3号坑：脚本文件不能放到”-xcodeproj”目录"><a href="#3号坑：脚本文件不能放到”-xcodeproj”目录" class="headerlink" title="3号坑：脚本文件不能放到”.xcodeproj”目录"></a>3号坑：脚本文件不能放到”.xcodeproj”目录</h3><p>曾经误以为是pod文件出错了，把锅摔给cocoapods（正好这段时间升级了cocoapod 1.8.1）后来发现根本不是，是因为放到“.xcodeproj”这个目录下，xcode打包的时候，会报奇奇怪怪的错误。将脚本文件挪走之后，问题解决</p>
+<h3 id="4号坑：为什么使用launchd而不是crontab"><a href="#4号坑：为什么使用launchd而不是crontab" class="headerlink" title="4号坑：为什么使用launchd而不是crontab"></a>4号坑：为什么使用launchd而不是crontab</h3><p>这两都是执行定时任务的，一开始我使用的是crontab，用这个的时候，掉进了坑中坑。</p>
+<h4 id="4-1号坑：crontab执行脚本需要配置环境变量"><a href="#4-1号坑：crontab执行脚本需要配置环境变量" class="headerlink" title="4.1号坑：crontab执行脚本需要配置环境变量"></a>4.1号坑：crontab执行脚本需要配置环境变量</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">* * * * * /bin/sh test.sh ❌</div><div class="line">* * * * * ./etc/profile; /bin/sh test.sh ✅</div></pre></td></tr></table></figure>
+<h4 id="4-2号坑：crontab无法对launched-keychain解锁-获取不到打包证书"><a href="#4-2号坑：crontab无法对launched-keychain解锁-获取不到打包证书" class="headerlink" title="4.2号坑：crontab无法对launched.keychain解锁 获取不到打包证书"></a>4.2号坑：crontab无法对launched.keychain解锁 获取不到打包证书</h4><p>由于这两问题，放弃crontab，而使用launchd</p>
+<h3 id="5号坑：sh代码不熟悉，if判断-没加空格，缩进等"><a href="#5号坑：sh代码不熟悉，if判断-没加空格，缩进等" class="headerlink" title="5号坑：sh代码不熟悉，if判断 没加空格，缩进等"></a>5号坑：sh代码不熟悉，if判断 没加空格，缩进等</h3>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/19/Hexo使用手册/" rel="next" title="Hexo使用手册">
+                <i class="fa fa-chevron-left"></i> Hexo使用手册
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2019/09/29/xcode自动打包实践/"
+           data-title="xcode自动打包实践" data-url="http://yoursite.com/2019/09/29/xcode自动打包实践/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="小顽童" />
+          <p class="site-author-name" itemprop="name">小顽童</p>
+          <p class="site-description motion-element" itemprop="description">学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜兮</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">22</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://kaisayoung.github.io/" title="二代的blog" target="_blank">二代的blog</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://portal.qiniu.com/bucket/ab364743113/resource" title="七牛云" target="_blank">七牛云</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、问题背景"><span class="nav-number">1.</span> <span class="nav-text">1、问题背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-、解决方案"><span class="nav-number">2.</span> <span class="nav-text">2 、解决方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-、脚本文件"><span class="nav-number">3.</span> <span class="nav-text">3 、脚本文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4、具体流程"><span class="nav-number">4.</span> <span class="nav-text">4、具体流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1、-在脚本的同级目录下，创建一个setting-json（名字不一定叫这个，可以自己随便起）文件"><span class="nav-number">4.1.</span> <span class="nav-text">4.1、 在脚本的同级目录下，创建一个setting.json（名字不一定叫这个，可以自己随便起）文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2、-导出ipa配置文件"><span class="nav-number">4.2.</span> <span class="nav-text">4.2、 导出ipa配置文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5、-定时打包实现DailyBuild"><span class="nav-number">5.</span> <span class="nav-text">5、 定时打包实现DailyBuild</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1、-创建一个”com-runSh-plist”json文件，用来配置启动任务，大致如下图"><span class="nav-number">5.1.</span> <span class="nav-text">5.1、 创建一个”com.runSh.plist”json文件，用来配置启动任务，大致如下图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2、launchd-命令-主要用的就是load和unload命令"><span class="nav-number">5.2.</span> <span class="nav-text">5.2、launchd 命令,主要用的就是load和unload命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3、注意事项：需要将脚本文件的权限修改为777。修改命令如下"><span class="nav-number">5.3.</span> <span class="nav-text">5.3、注意事项：需要将脚本文件的权限修改为777。修改命令如下</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6、踩过的坑"><span class="nav-number">6.</span> <span class="nav-text">6、踩过的坑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1号坑：-脚本文件不能放到中文文件夹下"><span class="nav-number">6.1.</span> <span class="nav-text">1号坑： 脚本文件不能放到中文文件夹下</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2号坑：路径一定要使用绝对路径"><span class="nav-number">6.2.</span> <span class="nav-text">2号坑：路径一定要使用绝对路径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3号坑：脚本文件不能放到”-xcodeproj”目录"><span class="nav-number">6.3.</span> <span class="nav-text">3号坑：脚本文件不能放到”.xcodeproj”目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4号坑：为什么使用launchd而不是crontab"><span class="nav-number">6.4.</span> <span class="nav-text">4号坑：为什么使用launchd而不是crontab</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1号坑：crontab执行脚本需要配置环境变量"><span class="nav-number">6.4.1.</span> <span class="nav-text">4.1号坑：crontab执行脚本需要配置环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2号坑：crontab无法对launched-keychain解锁-获取不到打包证书"><span class="nav-number">6.4.2.</span> <span class="nav-text">4.2号坑：crontab无法对launched.keychain解锁 获取不到打包证书</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5号坑：sh代码不熟悉，if判断-没加空格，缩进等"><span class="nav-number">6.5.</span> <span class="nav-text">5号坑：sh代码不熟悉，if判断 没加空格，缩进等</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">小顽童</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ab364743113"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

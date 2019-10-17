@@ -1,375 +1,357 @@
-<!doctype html>
+<!DOCTYPE html>
 
 
 
-  
 
 
-<html class="theme-next pisces use-motion" lang="zh-Hans">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
 
 
-
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
 
 
-
-
-
-
-
-
-
-
-
-
-  
-  
-  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
-
-
-
-
-  
-  
-  
-  
-
-  
-    
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    
-    
-    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
-  
-
-
-
-
-
-
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
-
-<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
-
-
-  <meta name="keywords" content="Hexo, NexT" />
-
-
-
-
-
-
-
-
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
-
-
-
-
-
-
-<meta name="description" content="​    今天主要是来讨论下，线程同步机制的问题。说到线程同步，一般人可能会想到“NSLock”、“@synchronized”、“GCD信号量”等等，好吧，其实这是我想到的，然而我要说的是，如果在面试中只答到这么几个可是远远不够的。所以我查找了下资料，这才发现原来ios中线程同步的方法可足足有将近10种，且听我娓娓道来。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="iOS开发中遇到的同步机制">
-<meta property="og:url" content="http://yoursite.com/2017/05/02/iOS开发中遇到的同步机制/index.html">
-<meta property="og:site_name" content="小顽童">
-<meta property="og:description" content="​    今天主要是来讨论下，线程同步机制的问题。说到线程同步，一般人可能会想到“NSLock”、“@synchronized”、“GCD信号量”等等，好吧，其实这是我想到的，然而我要说的是，如果在面试中只答到这么几个可是远远不够的。所以我查找了下资料，这才发现原来ios中线程同步的方法可足足有将近10种，且听我娓娓道来。">
-<meta property="og:updated_time" content="2017-06-08T15:57:50.000Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="iOS开发中遇到的同步机制">
-<meta name="twitter:description" content="​    今天主要是来讨论下，线程同步机制的问题。说到线程同步，一般人可能会想到“NSLock”、“@synchronized”、“GCD信号量”等等，好吧，其实这是我想到的，然而我要说的是，如果在面试中只答到这么几个可是远远不够的。所以我查找了下资料，这才发现原来ios中线程同步的方法可足足有将近10种，且听我娓娓道来。">
-
-
-
-<script type="text/javascript" id="hexo.configurations">
+<script id="hexo-configurations">
   var NexT = window.NexT || {};
   var CONFIG = {
     root: '/',
     scheme: 'Pisces',
-    sidebar: {"position":"left","display":"post"},
-    fancybox: true,
-    motion: true,
-    duoshuo: {
-      userId: '0',
-      author: '博主'
-    },
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
     algolia: {
-      applicationID: '',
+      appID: '',
       apiKey: '',
       indexName: '',
       hits: {"per_page":10},
       labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    }
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"bounceLeftIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
   };
 </script>
 
+  <meta name="description" content="​    今天主要是来讨论下，线程同步机制的问题。说到线程同步，一般人可能会想到“NSLock”、“@synchronized”、“GCD信号量”等等，好吧，其实这是我想到的，然而我要说的是，如果在面试中只答到这么几个可是远远不够的。所以我查找了下资料，这才发现原来ios中线程同步的方法可足足有将近10种，且听我娓娓道来。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS开发中遇到的同步机制">
+<meta property="og:url" content="http://yoursite.com/2017/05/02/iOS开发中遇到的同步机制/index.html">
+<meta property="og:site_name" content="火三">
+<meta property="og:description" content="​    今天主要是来讨论下，线程同步机制的问题。说到线程同步，一般人可能会想到“NSLock”、“@synchronized”、“GCD信号量”等等，好吧，其实这是我想到的，然而我要说的是，如果在面试中只答到这么几个可是远远不够的。所以我查找了下资料，这才发现原来ios中线程同步的方法可足足有将近10种，且听我娓娓道来。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2017-06-08T15:57:50.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS开发中遇到的同步机制">
+<meta name="twitter:description" content="​    今天主要是来讨论下，线程同步机制的问题。说到线程同步，一般人可能会想到“NSLock”、“@synchronized”、“GCD信号量”等等，好吧，其实这是我想到的，然而我要说的是，如果在面试中只答到这么几个可是远远不够的。所以我查找了下资料，这才发现原来ios中线程同步的方法可足足有将近10种，且听我娓娓道来。">
+  <link rel="canonical" href="http://yoursite.com/2017/05/02/iOS开发中遇到的同步机制/">
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/05/02/iOS开发中遇到的同步机制/"/>
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>iOS开发中遇到的同步机制 | 火三</title>
+  
 
 
 
 
 
-  <title> iOS开发中遇到的同步机制 | 小顽童 </title>
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
-
-  
-
-
-
-
-
-
-
-
-
-
-  
-  
-    
-  
-
-  <div class="container one-collumn sidebar-position-left page-post-detail ">
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
     <div class="headband"></div>
 
-    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-meta ">
-  
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
 
-  <div class="custom-logo-site-title">
-    <a href="/"  class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <span class="site-title">小顽童</span>
-      <span class="logo-line-after"><i></i></span>
-    </a>
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">火三</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜</p>
+      
   </div>
-    
-      <p class="site-subtitle">学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜</p>
-    
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
 </div>
 
-<div class="site-nav-toggle">
-  <button>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-  </button>
-</div>
 
 <nav class="site-nav">
   
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-首页">
+      
+    
 
-  
-    <ul id="menu" class="menu">
-      
-        
-        <li class="menu-item menu-item-home">
-          <a href="/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
-            
-            首页
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-categories">
-          <a href="/categories" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
-            
-            分类
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-archives">
-          <a href="/archives" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
-            
-            归档
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-tags">
-          <a href="/tags" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
-            
-            标签
-          </a>
-        </li>
-      
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
 
+  </li>
       
-    </ul>
-  
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-关于">
+      
+    
 
-  
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-标签">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-分类">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-文章">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>文章</a>
+
+  </li>
+      
+    
+  </ul>
+
 </nav>
-
-
-
- </div>
+</div>
     </header>
 
-    <main id="main" class="main">
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
       <div class="main-inner">
         <div class="content-wrap">
-          <div id="content" class="content">
             
 
-  <div id="posts" class="posts-expand">
-    
+          <div class="content">
+            
 
+  <div class="posts-expand">
+      
   
-
   
-  
-  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/02/iOS开发中遇到的同步机制/">
 
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/02/iOS开发中遇到的同步机制/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="小顽童">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.gif">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="小顽童">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="小顽童" src="">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="火三">
+      <meta itemprop="description" content="学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜兮">
+      <meta itemprop="image" content="/images/avatar.gif">
     </span>
-  </span>
 
-    
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="火三">
+    </span>
       <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            iOS开发中遇到的同步机制
+            
 
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                iOS开发中遇到的同步机制
-              
-            
-          </h1>
-        
+          
+        </h1>
 
         <div class="post-meta">
-          <span class="post-time">
-            
+            <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
+              <span class="post-meta-item-text">发表于</span>
+
               
-                <span class="post-meta-item-text">发表于</span>
+                
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-05-02T20:39:43+08:00">
-                2017-05-02
-              </time>
-            
 
-            
-
-            
-          </span>
-
-          
-
+              <time title="创建时间：2017-05-02 20:39:43" itemprop="dateCreated datePublished" datetime="2017-05-02T20:39:43+08:00">2017-05-02</time>
+            </span>
           
             
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
+
+            
+              <span class="post-meta-item">
                 <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
+                  <i class="fa fa-calendar-check-o"></i>
                 </span>
-                <a href="/2017/05/02/iOS开发中遇到的同步机制/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/02/iOS开发中遇到的同步机制/" itemprop="commentCount"></span>
-                </a>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2017-06-08 23:57:50" itemprop="dateModified" datetime="2017-06-08T23:57:50+08:00">2017-06-08</time>
               </span>
             
           
 
           
-
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>13k</span>
+            </span>
           
-          
-
-          
-
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>12 分钟</span>
+            </span>
           
 
         </div>
       </header>
+
     
-
-
+    
+    
     <div class="post-body" itemprop="articleBody">
-
-      
-      
 
       
         <p>​    今天主要是来讨论下，线程同步机制的问题。说到线程同步，一般人可能会想到<strong>“NSLock”</strong>、<strong>“@synchronized”</strong>、<strong>“GCD信号量”</strong>等等，好吧，其实这是我想到的，然而我要说的是，如果在面试中只答到这么几个可是远远不够的。所以我查找了下资料，这才发现原来ios中线程同步的方法可足足有将近10种，且听我娓娓道来。</p>
 <a id="more"></a>
 <p>各个锁进行1000000此的加锁解锁的空操作时间如下</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">OSSpinLock: <span class="number">46.15</span> ms</div><div class="line">dispatch_semaphore: <span class="number">56.50</span> ms</div><div class="line">pthread_mutex: <span class="number">178.28</span> ms</div><div class="line"><span class="built_in">NSCondition</span>: <span class="number">193.38</span> ms</div><div class="line"><span class="built_in">NSLock</span>: <span class="number">175.02</span> ms</div><div class="line">pthread_mutex(recursive): <span class="number">172.56</span> ms</div><div class="line"><span class="built_in">NSRecursiveLock</span>: <span class="number">157.44</span> ms</div><div class="line"><span class="built_in">NSConditionLock</span>: <span class="number">490.04</span> ms</div><div class="line"><span class="keyword">@synchronized</span>: <span class="number">371.17</span> ms</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">OSSpinLock: <span class="number">46.15</span> ms</span><br><span class="line">dispatch_semaphore: <span class="number">56.50</span> ms</span><br><span class="line">pthread_mutex: <span class="number">178.28</span> ms</span><br><span class="line"><span class="built_in">NSCondition</span>: <span class="number">193.38</span> ms</span><br><span class="line"><span class="built_in">NSLock</span>: <span class="number">175.02</span> ms</span><br><span class="line">pthread_mutex(recursive): <span class="number">172.56</span> ms</span><br><span class="line"><span class="built_in">NSRecursiveLock</span>: <span class="number">157.44</span> ms</span><br><span class="line"><span class="built_in">NSConditionLock</span>: <span class="number">490.04</span> ms</span><br><span class="line"><span class="keyword">@synchronized</span>: <span class="number">371.17</span> ms</span><br></pre></td></tr></table></figure>
 <h3 id="NSLock"><a href="#NSLock" class="headerlink" title="NSLock"></a><strong>NSLock</strong></h3><p>​    提到NSLock，首先要提另外一个名词叫NSLocking，这是一个协议，主要就定义了俩个方法，一个叫 lock,一个叫unLock。NSLock其实就是确认了NSLocking协议的一个NSObject对象，那么NSLock如何使用呢？其实很简单，就是在你认为可能会发生多线程访问的地方进行lock 操作，在执行完相应代码之后，执行unlock操作。举个简单例子</p>
-   <figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">-(<span class="keyword">void</span>)testLock&#123;<span class="comment">// 先简单描述下使用场景，现在有一个线程1，有一个线程2，都要访问字符串name，且线程1访问字符串要耗时3秒，线程2此时需要等待。</span></div><div class="line">	__block <span class="built_in">NSString</span> *name = <span class="string">@"成焱"</span>;</div><div class="line">     <span class="built_in">NSOperationQueue</span> *queue = [[<span class="built_in">NSOperationQueue</span> alloc]init];</div><div class="line">    queue.maxConcurrentOperationCount = <span class="number">3</span>;</div><div class="line">    </div><div class="line">    </div><div class="line">    <span class="built_in">NSLock</span> *lock = [<span class="built_in">NSLock</span> new];</div><div class="line">    </div><div class="line">    [queue addOperationWithBlock:^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"1 将要上锁"</span>);</div><div class="line">        [lock lock];</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"1 已上锁，访问资源"</span>);</div><div class="line">        name = <span class="string">@"哇哈哈"</span>;</div><div class="line">        sleep(<span class="number">3</span>);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"1 将要解锁"</span>);</div><div class="line">        [lock unlock];</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"1 已解锁"</span>);</div><div class="line">    &#125;];</div><div class="line">    </div><div class="line">    [queue addOperationWithBlock:^&#123;</div><div class="line">        sleep(<span class="number">1</span>);<span class="comment">//保证此线程后面的方法后调用</span></div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 将要上锁"</span>);</div><div class="line">        [lock lock];</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 已上锁，访问资源"</span>);</div><div class="line">        name = <span class="string">@"康师傅"</span>;</div><div class="line">        sleep(<span class="number">2</span>);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 将要解锁"</span>);</div><div class="line">        [lock unlock];</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 已解锁"</span>);</div><div class="line">        </div><div class="line">    &#125;];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+   <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">-(<span class="keyword">void</span>)testLock&#123;<span class="comment">// 先简单描述下使用场景，现在有一个线程1，有一个线程2，都要访问字符串name，且线程1访问字符串要耗时3秒，线程2此时需要等待。</span></span><br><span class="line">	__block <span class="built_in">NSString</span> *name = <span class="string">@"成焱"</span>;</span><br><span class="line">     <span class="built_in">NSOperationQueue</span> *queue = [[<span class="built_in">NSOperationQueue</span> alloc]init];</span><br><span class="line">    queue.maxConcurrentOperationCount = <span class="number">3</span>;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="built_in">NSLock</span> *lock = [<span class="built_in">NSLock</span> new];</span><br><span class="line">    </span><br><span class="line">    [queue addOperationWithBlock:^&#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"1 将要上锁"</span>);</span><br><span class="line">        [lock lock];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"1 已上锁，访问资源"</span>);</span><br><span class="line">        name = <span class="string">@"哇哈哈"</span>;</span><br><span class="line">        sleep(<span class="number">3</span>);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"1 将要解锁"</span>);</span><br><span class="line">        [lock unlock];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"1 已解锁"</span>);</span><br><span class="line">    &#125;];</span><br><span class="line">    </span><br><span class="line">    [queue addOperationWithBlock:^&#123;</span><br><span class="line">        sleep(<span class="number">1</span>);<span class="comment">//保证此线程后面的方法后调用</span></span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 将要上锁"</span>);</span><br><span class="line">        [lock lock];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 已上锁，访问资源"</span>);</span><br><span class="line">        name = <span class="string">@"康师傅"</span>;</span><br><span class="line">        sleep(<span class="number">2</span>);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 将要解锁"</span>);</span><br><span class="line">        [lock unlock];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 已解锁"</span>);</span><br><span class="line">        </span><br><span class="line">    &#125;];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>​    <strong><em>打印结果如下</em></strong></p>
-   <figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">06</span>:<span class="number">59.831694</span> test[<span class="number">1300</span>:<span class="number">102434</span>] <span class="number">1</span> 将要上锁</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">06</span>:<span class="number">59.831718</span> test[<span class="number">1300</span>:<span class="number">102434</span>] <span class="number">1</span> 已上锁，访问资源</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">07</span>:<span class="number">00.835992</span> test[<span class="number">1300</span>:<span class="number">102435</span>] <span class="number">2</span> 将要上锁</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">07</span>:<span class="number">02.836242</span> test[<span class="number">1300</span>:<span class="number">102434</span>] <span class="number">1</span> 将要解锁</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">07</span>:<span class="number">02.836385</span> test[<span class="number">1300</span>:<span class="number">102434</span>] <span class="number">1</span> 已解锁</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">07</span>:<span class="number">02.836443</span> test[<span class="number">1300</span>:<span class="number">102435</span>] <span class="number">2</span> 已上锁，访问资源</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">07</span>:<span class="number">04.841407</span> test[<span class="number">1300</span>:<span class="number">102435</span>] <span class="number">2</span> 将要解锁</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">07</span>:<span class="number">04.841528</span> test[<span class="number">1300</span>:<span class="number">102435</span>] <span class="number">2</span> 已解锁</div></pre></td></tr></table></figure>
+   <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">06</span>:<span class="number">59.831694</span> test[<span class="number">1300</span>:<span class="number">102434</span>] <span class="number">1</span> 将要上锁</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">06</span>:<span class="number">59.831718</span> test[<span class="number">1300</span>:<span class="number">102434</span>] <span class="number">1</span> 已上锁，访问资源</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">07</span>:<span class="number">00.835992</span> test[<span class="number">1300</span>:<span class="number">102435</span>] <span class="number">2</span> 将要上锁</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">07</span>:<span class="number">02.836242</span> test[<span class="number">1300</span>:<span class="number">102434</span>] <span class="number">1</span> 将要解锁</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">07</span>:<span class="number">02.836385</span> test[<span class="number">1300</span>:<span class="number">102434</span>] <span class="number">1</span> 已解锁</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">07</span>:<span class="number">02.836443</span> test[<span class="number">1300</span>:<span class="number">102435</span>] <span class="number">2</span> 已上锁，访问资源</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">07</span>:<span class="number">04.841407</span> test[<span class="number">1300</span>:<span class="number">102435</span>] <span class="number">2</span> 将要解锁</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">07</span>:<span class="number">04.841528</span> test[<span class="number">1300</span>:<span class="number">102435</span>] <span class="number">2</span> 已解锁</span><br></pre></td></tr></table></figure>
 <pre><code>查看控制台的打印输出很明显的看到了，在线程一访问name时，加锁之后，线程2一直在等待，直到线程1释放锁之后，线程2才会去访问name。
 </code></pre><h3 id="synchronize"><a href="#synchronize" class="headerlink" title="@synchronize"></a><strong>@synchronize</strong></h3><p>​    想必但凡是开发过一段时间ios程序的同学，一定会对这个关键字不陌生。这个关键字的字面意思就是“同步”。那么它是如何实现同步的呢？</p>
 <p>​    该特性允许传入一个NSObject类型的对象，并执行一个block，形如</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">@syncronized(obj)&#123;</div><div class="line">  <span class="comment">// do work</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@syncronized(obj)&#123;</span><br><span class="line">  <span class="comment">// do work</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>​    网上查询资料获得，这个特性其实是对objc_sync_enter()于objc_sync_exit()的封装，其实际上等价于</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">@try</span>&#123;</div><div class="line">	  objc_sync_enter(obj);</div><div class="line"> &#125;<span class="keyword">@finally</span>&#123;</div><div class="line"> 	  objc_sync_exit(obj);</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
-<p>​    函数objc_sync_enter()内部实际进行的操作，是对传入的对象，分配递归锁，并存在哈希表中，感兴趣的同学可以参考这篇<a href="http://yulingtianxia.com/blog/2015/11/01/More-than-you-want-to-know-about-synchronized/" target="_blank" rel="external">blog</a>,在这里我就不展开讨论了。不过下面还是举个简单例子来说明下如何使用这个特性，这里有个地方需要注意就是，<strong><em>当传入的对象为nil时，将会从代码中移走线程安全</em></strong></p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)testSynchronized</div><div class="line">&#123;</div><div class="line">    __block <span class="built_in">NSString</span> *source = <span class="string">@"资源"</span>;   </div><div class="line">    <span class="built_in">dispatch_queue_t</span> global = dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</div><div class="line">        <span class="keyword">@synchronized</span> (source) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"1 将要执行"</span>);</div><div class="line">            sleep(<span class="number">3</span>);</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"1 执行完毕"</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</div><div class="line">        sleep(<span class="number">1</span>);<span class="comment">//只是为了让这个线程后调用</span></div><div class="line">        <span class="keyword">@synchronized</span> (source) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"2 将要执行"</span>);</div><div class="line">            sleep(<span class="number">1</span>);</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"2 执行完毕"</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@try</span>&#123;</span><br><span class="line">	  objc_sync_enter(obj);</span><br><span class="line"> &#125;<span class="keyword">@finally</span>&#123;</span><br><span class="line"> 	  objc_sync_exit(obj);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>​    函数objc_sync_enter()内部实际进行的操作，是对传入的对象，分配递归锁，并存在哈希表中，感兴趣的同学可以参考这篇<a href="http://yulingtianxia.com/blog/2015/11/01/More-than-you-want-to-know-about-synchronized/" target="_blank" rel="noopener">blog</a>,在这里我就不展开讨论了。不过下面还是举个简单例子来说明下如何使用这个特性，这里有个地方需要注意就是，<strong><em>当传入的对象为nil时，将会从代码中移走线程安全</em></strong></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)testSynchronized</span><br><span class="line">&#123;</span><br><span class="line">    __block <span class="built_in">NSString</span> *source = <span class="string">@"资源"</span>;   </span><br><span class="line">    <span class="built_in">dispatch_queue_t</span> global = dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</span><br><span class="line">        <span class="keyword">@synchronized</span> (source) &#123;</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@"1 将要执行"</span>);</span><br><span class="line">            sleep(<span class="number">3</span>);</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@"1 执行完毕"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</span><br><span class="line">        sleep(<span class="number">1</span>);<span class="comment">//只是为了让这个线程后调用</span></span><br><span class="line">        <span class="keyword">@synchronized</span> (source) &#123;</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@"2 将要执行"</span>);</span><br><span class="line">            sleep(<span class="number">1</span>);</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@"2 执行完毕"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>​    <strong><em>打印结果如下</em></strong></p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">01.933835</span> test[<span class="number">1589</span>:<span class="number">154385</span>] <span class="number">1</span> 将要执行</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">04.938447</span> test[<span class="number">1589</span>:<span class="number">154385</span>] <span class="number">1</span> 执行完毕</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">04.938782</span> test[<span class="number">1589</span>:<span class="number">154386</span>] <span class="number">2</span> 将要执行</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">05.942177</span> test[<span class="number">1589</span>:<span class="number">154386</span>] <span class="number">2</span> 执行完毕</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">01.933835</span> test[<span class="number">1589</span>:<span class="number">154385</span>] <span class="number">1</span> 将要执行</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">04.938447</span> test[<span class="number">1589</span>:<span class="number">154385</span>] <span class="number">1</span> 执行完毕</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">04.938782</span> test[<span class="number">1589</span>:<span class="number">154386</span>] <span class="number">2</span> 将要执行</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-24</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">05.942177</span> test[<span class="number">1589</span>:<span class="number">154386</span>] <span class="number">2</span> 执行完毕</span><br></pre></td></tr></table></figure>
 <h3 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a><strong>信号量</strong></h3><p>​    GCD的信号量机制，通过消耗信号的方式，控制线程同步</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)testSemaphore</div><div class="line">&#123;</div><div class="line">    <span class="built_in">dispatch_queue_t</span> global = dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>);</div><div class="line">    </div><div class="line">    dispatch_semaphore_t semaphore = dispatch_semaphore_create(<span class="number">1</span>);</div><div class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</div><div class="line">        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"1 将要执行"</span>);</div><div class="line">        sleep(<span class="number">3</span>);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"1 执行完毕"</span>);</div><div class="line">        dispatch_semaphore_signal(semaphore);</div><div class="line">    &#125;);</div><div class="line"></div><div class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</div><div class="line">        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 将要执行"</span>);</div><div class="line">        sleep(<span class="number">3</span>);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 执行完毕"</span>);</div><div class="line">        dispatch_semaphore_signal(semaphore);</div><div class="line">        </div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)testSemaphore</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">dispatch_queue_t</span> global = dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    </span><br><span class="line">    dispatch_semaphore_t semaphore = dispatch_semaphore_create(<span class="number">1</span>);</span><br><span class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</span><br><span class="line">        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"1 将要执行"</span>);</span><br><span class="line">        sleep(<span class="number">3</span>);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"1 执行完毕"</span>);</span><br><span class="line">        dispatch_semaphore_signal(semaphore);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</span><br><span class="line">        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 将要执行"</span>);</span><br><span class="line">        sleep(<span class="number">3</span>);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 执行完毕"</span>);</span><br><span class="line">        dispatch_semaphore_signal(semaphore);</span><br><span class="line">        </span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <pre><code>***打印结果如下***
-</code></pre>   <figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">22</span>:<span class="number">32</span>:<span class="number">17.563019</span> test[<span class="number">914</span>:<span class="number">142382</span>] <span class="number">1</span> 将要执行</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">22</span>:<span class="number">32</span>:<span class="number">20.568142</span> test[<span class="number">914</span>:<span class="number">142382</span>] <span class="number">1</span> 执行完毕</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">22</span>:<span class="number">32</span>:<span class="number">20.568336</span> test[<span class="number">914</span>:<span class="number">142383</span>] <span class="number">2</span> 将要执行</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">22</span>:<span class="number">32</span>:<span class="number">23.573598</span> test[<span class="number">914</span>:<span class="number">142383</span>] <span class="number">2</span> 执行完毕</div></pre></td></tr></table></figure>
+</code></pre>   <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">22</span>:<span class="number">32</span>:<span class="number">17.563019</span> test[<span class="number">914</span>:<span class="number">142382</span>] <span class="number">1</span> 将要执行</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">22</span>:<span class="number">32</span>:<span class="number">20.568142</span> test[<span class="number">914</span>:<span class="number">142382</span>] <span class="number">1</span> 执行完毕</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">22</span>:<span class="number">32</span>:<span class="number">20.568336</span> test[<span class="number">914</span>:<span class="number">142383</span>] <span class="number">2</span> 将要执行</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">22</span>:<span class="number">32</span>:<span class="number">23.573598</span> test[<span class="number">914</span>:<span class="number">142383</span>] <span class="number">2</span> 执行完毕</span><br></pre></td></tr></table></figure>
 <h3 id="NSConditionLock"><a href="#NSConditionLock" class="headerlink" title="NSConditionLock"></a><strong>NSConditionLock</strong></h3><p>​    条件锁，当满足某种条件时，才会尝试获取锁，利用该特性，可以人为干预线程执行的依赖顺序，参见如下代码</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)testConditionLock</div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> condition = <span class="number">1</span>;</div><div class="line">    </div><div class="line">    <span class="comment">// 当满足条件时，如果锁空闲，可以获取到锁</span></div><div class="line">    <span class="built_in">NSConditionLock</span> *conditionLock = [[<span class="built_in">NSConditionLock</span> alloc]initWithCondition:condition];</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_queue_t</span> global = dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>);</div><div class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</div><div class="line">        <span class="built_in">BOOL</span> islocked = [conditionLock tryLockWhenCondition:<span class="number">1</span>];</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程1 要执行"</span>);</div><div class="line">        sleep(<span class="number">2</span>);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程1 执行完毕"</span>);</div><div class="line">        <span class="keyword">if</span> (islocked) &#123;</div><div class="line">            [conditionLock unlockWithCondition:<span class="number">3</span>];</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</div><div class="line">        <span class="built_in">BOOL</span> isLocked = [conditionLock lockWhenCondition:<span class="number">2</span> beforeDate:[<span class="built_in">NSDate</span> dateWithTimeIntervalSinceNow:<span class="number">10</span>]];</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程2 要执行"</span>);</div><div class="line">        sleep(<span class="number">2</span>);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程2 执行完毕"</span>);</div><div class="line">        <span class="keyword">if</span> (isLocked) &#123;</div><div class="line">            [conditionLock unlockWithCondition:<span class="number">1</span>];</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</div><div class="line">        <span class="built_in">BOOL</span> isLocked = [conditionLock tryLockWhenCondition:<span class="number">3</span>];</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程3 要执行"</span>);</div><div class="line">        sleep(<span class="number">3</span>);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程3 执行完毕"</span>);</div><div class="line">        <span class="keyword">if</span> (isLocked) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"加锁了"</span>);</div><div class="line">            [conditionLock unlockWithCondition:<span class="number">10</span>];</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)testConditionLock</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">int</span> condition = <span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 当满足条件时，如果锁空闲，可以获取到锁</span></span><br><span class="line">    <span class="built_in">NSConditionLock</span> *conditionLock = [[<span class="built_in">NSConditionLock</span> alloc]initWithCondition:condition];</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_queue_t</span> global = dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</span><br><span class="line">        <span class="built_in">BOOL</span> islocked = [conditionLock tryLockWhenCondition:<span class="number">1</span>];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程1 要执行"</span>);</span><br><span class="line">        sleep(<span class="number">2</span>);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程1 执行完毕"</span>);</span><br><span class="line">        <span class="keyword">if</span> (islocked) &#123;</span><br><span class="line">            [conditionLock unlockWithCondition:<span class="number">3</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</span><br><span class="line">        <span class="built_in">BOOL</span> isLocked = [conditionLock lockWhenCondition:<span class="number">2</span> beforeDate:[<span class="built_in">NSDate</span> dateWithTimeIntervalSinceNow:<span class="number">10</span>]];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程2 要执行"</span>);</span><br><span class="line">        sleep(<span class="number">2</span>);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程2 执行完毕"</span>);</span><br><span class="line">        <span class="keyword">if</span> (isLocked) &#123;</span><br><span class="line">            [conditionLock unlockWithCondition:<span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</span><br><span class="line">        <span class="built_in">BOOL</span> isLocked = [conditionLock tryLockWhenCondition:<span class="number">3</span>];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程3 要执行"</span>);</span><br><span class="line">        sleep(<span class="number">3</span>);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程3 执行完毕"</span>);</span><br><span class="line">        <span class="keyword">if</span> (isLocked) &#123;</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@"加锁了"</span>);</span><br><span class="line">            [conditionLock unlockWithCondition:<span class="number">10</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>​    <strong><em>打印结果如下</em></strong></p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">11</span>:<span class="number">56.343532</span> test[<span class="number">1092</span>:<span class="number">199052</span>] 线程<span class="number">1</span> 要执行</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">11</span>:<span class="number">56.343546</span> test[<span class="number">1092</span>:<span class="number">199054</span>] 线程<span class="number">3</span> 要执行</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">11</span>:<span class="number">58.348745</span> test[<span class="number">1092</span>:<span class="number">199052</span>] 线程<span class="number">1</span> 执行完毕</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">11</span>:<span class="number">59.348618</span> test[<span class="number">1092</span>:<span class="number">199054</span>] 线程<span class="number">3</span> 执行完毕</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">12</span>:<span class="number">06.348449</span> test[<span class="number">1092</span>:<span class="number">199053</span>] 线程<span class="number">2</span> 要执行</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">12</span>:<span class="number">08.353647</span> test[<span class="number">1092</span>:<span class="number">199053</span>] 线程<span class="number">2</span> 执行完毕</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">11</span>:<span class="number">56.343532</span> test[<span class="number">1092</span>:<span class="number">199052</span>] 线程<span class="number">1</span> 要执行</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">11</span>:<span class="number">56.343546</span> test[<span class="number">1092</span>:<span class="number">199054</span>] 线程<span class="number">3</span> 要执行</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">11</span>:<span class="number">58.348745</span> test[<span class="number">1092</span>:<span class="number">199052</span>] 线程<span class="number">1</span> 执行完毕</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">11</span>:<span class="number">59.348618</span> test[<span class="number">1092</span>:<span class="number">199054</span>] 线程<span class="number">3</span> 执行完毕</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">12</span>:<span class="number">06.348449</span> test[<span class="number">1092</span>:<span class="number">199053</span>] 线程<span class="number">2</span> 要执行</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">12</span>:<span class="number">08.353647</span> test[<span class="number">1092</span>:<span class="number">199053</span>] 线程<span class="number">2</span> 执行完毕</span><br></pre></td></tr></table></figure>
 <h3 id="dispatch-barrier-async-与dispatch-barrier-sync"><a href="#dispatch-barrier-async-与dispatch-barrier-sync" class="headerlink" title="dispatch_barrier_async()与dispatch_barrier_sync()"></a><strong>dispatch_barrier_async()与dispatch_barrier_sync()</strong></h3><p>​    GCD提供了线程顺序控制的一个函数，假设有5个任务要执行，需要前俩个并发执行，执行完成之后执行第三个任务，等第三个执行完成才可以执行第四个和第五个任务，这个时候就可以考虑使用dispath_barrier_async()函数，具体dispatch_barrier_asyn与dispatch_barrier_sync有什么区别的话，稍后再说，请看下面这个例子</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)testBarrierAsyncAndSync</div><div class="line">&#123;</div><div class="line">    <span class="comment">/// 创建一个并发执行的队列</span></div><div class="line">    <span class="built_in">dispatch_queue_t</span> global = dispatch_queue_create(<span class="string">"com.demo.chengyan"</span>, DISPATCH_QUEUE_CONCURRENT);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务1"</span>);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务2"</span>);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    </div><div class="line">    dispatch_barrier_async(global, ^&#123;</div><div class="line">        sleep(<span class="number">3</span>);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务3"</span>);</div><div class="line">    &#125;);</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"---------------"</span>);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务4"</span>);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务5"</span>);</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)testBarrierAsyncAndSync</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">/// 创建一个并发执行的队列</span></span><br><span class="line">    <span class="built_in">dispatch_queue_t</span> global = dispatch_queue_create(<span class="string">"com.demo.chengyan"</span>, DISPATCH_QUEUE_CONCURRENT);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务1"</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务2"</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    dispatch_barrier_async(global, ^&#123;</span><br><span class="line">        sleep(<span class="number">3</span>);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务3"</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"---------------"</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务4"</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务5"</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>​    <strong><em>打印结果如下</em></strong></p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">08.653034</span> test[<span class="number">1214</span>:<span class="number">243421</span>] ---------------</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">08.653138</span> test[<span class="number">1214</span>:<span class="number">243447</span>] 任务<span class="number">1</span></div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">08.653151</span> test[<span class="number">1214</span>:<span class="number">243448</span>] 任务<span class="number">2</span></div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">11.654589</span> test[<span class="number">1214</span>:<span class="number">243447</span>] 任务<span class="number">3</span></div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">11.654715</span> test[<span class="number">1214</span>:<span class="number">243447</span>] 任务<span class="number">4</span></div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">11.654728</span> test[<span class="number">1214</span>:<span class="number">243448</span>] 任务<span class="number">5</span></div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">08.653034</span> test[<span class="number">1214</span>:<span class="number">243421</span>] ---------------</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">08.653138</span> test[<span class="number">1214</span>:<span class="number">243447</span>] 任务<span class="number">1</span></span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">08.653151</span> test[<span class="number">1214</span>:<span class="number">243448</span>] 任务<span class="number">2</span></span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">11.654589</span> test[<span class="number">1214</span>:<span class="number">243447</span>] 任务<span class="number">3</span></span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">11.654715</span> test[<span class="number">1214</span>:<span class="number">243447</span>] 任务<span class="number">4</span></span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-26</span> <span class="number">23</span>:<span class="number">43</span>:<span class="number">11.654728</span> test[<span class="number">1214</span>:<span class="number">243448</span>] 任务<span class="number">5</span></span><br></pre></td></tr></table></figure>
 <p>​    可以看到由于是通过async的方式添加到队列中的，所以没有阻塞主线程，—————–被最先执行了。同时注意到在任务3中，沉睡了3秒，而任务4和5都在等任务3执行完之后，才开始执行的。</p>
 <p>​    那么接下来再看下sync的方式执行barrier会怎么样？</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)testBarrierAsyncAndSync</div><div class="line">&#123;</div><div class="line">    <span class="comment">/// 创建一个并发执行的队列</span></div><div class="line">    <span class="built_in">dispatch_queue_t</span> global = dispatch_queue_create(<span class="string">"com.demo.chengyan"</span>, DISPATCH_QUEUE_CONCURRENT);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务1"</span>);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务2"</span>);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    </div><div class="line">    dispatch_barrier_sync(global, ^&#123;</div><div class="line">        sleep(<span class="number">3</span>);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务3"</span>);</div><div class="line">    &#125;);</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"---------------"</span>);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务4"</span>);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务5"</span>);</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)testBarrierAsyncAndSync</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">/// 创建一个并发执行的队列</span></span><br><span class="line">    <span class="built_in">dispatch_queue_t</span> global = dispatch_queue_create(<span class="string">"com.demo.chengyan"</span>, DISPATCH_QUEUE_CONCURRENT);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务1"</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务2"</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    dispatch_barrier_sync(global, ^&#123;</span><br><span class="line">        sleep(<span class="number">3</span>);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务3"</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"---------------"</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务4"</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_async</span>(global, ^&#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"任务5"</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>​    <strong><em>打印结果如下</em></strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">2017-04-26 23:53:57.275541 test[1249:258152] 任务1</div><div class="line">2017-04-26 23:53:57.275542 test[1249:258154] 任务2</div><div class="line">2017-04-26 23:54:00.280724 test[1249:258129] 任务3</div><div class="line">2017-04-26 23:54:00.280832 test[1249:258129] ---------------</div><div class="line">2017-04-26 23:54:00.280944 test[1249:258154] 任务4</div><div class="line">2017-04-26 23:54:00.281000 test[1249:258152] 任务5</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">2017-04-26 23:53:57.275541 test[1249:258152] 任务1</span><br><span class="line">2017-04-26 23:53:57.275542 test[1249:258154] 任务2</span><br><span class="line">2017-04-26 23:54:00.280724 test[1249:258129] 任务3</span><br><span class="line">2017-04-26 23:54:00.280832 test[1249:258129] ---------------</span><br><span class="line">2017-04-26 23:54:00.280944 test[1249:258154] 任务4</span><br><span class="line">2017-04-26 23:54:00.281000 test[1249:258152] 任务5</span><br></pre></td></tr></table></figure>
 <p>​    可以看到由于sync的方式，阻塞了主线程的操作，导致主线程后面的打印必须要等任务3完成之后才会执行。所以尽量不要用这种方式在主线程调用。防止卡到ui</p>
 <h3 id="GCD的串行队列实际上也是可以起到锁的作用（略）"><a href="#GCD的串行队列实际上也是可以起到锁的作用（略）" class="headerlink" title="GCD的串行队列实际上也是可以起到锁的作用（略）"></a><strong>GCD的串行队列实际上也是可以起到锁的作用（略）</strong></h3><h3 id="os-unfair-lock（系统非公平锁）"><a href="#os-unfair-lock（系统非公平锁）" class="headerlink" title="os_unfair_lock（系统非公平锁）"></a><strong>os_unfair_lock（系统非公平锁）</strong></h3><p>​    在IOS10，MacOS10.12之后，苹果新提供的锁，用来替代OSSPinLock,根据官方文档说明，该锁解决了OSSPinLock的优先级反转问题，主要是通过该锁上携带的值以及它持有线程的所有权信息，系统可以以此做出相应的策略，来解决优先级反转的问题。就像它的名字一样，这是个非公平锁。</p>
 <p>​    使用此锁，需要注意的是</p>
@@ -386,280 +368,280 @@
 </blockquote>
 <p>​           最后要说明的是，此锁就像它的名字一样，是非公平的，具体啥意思呢？举个例子，解开锁的消费者，存在一种可能立即又重新获得了锁，导致那些在休眠中等待的不能被唤醒。这可能是处于性能的考虑，但是确实有一种可能导致等待者处于饥饿状态。</p>
 <p>​    下面的代码简要演示下如何使用该锁</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#import <span class="meta-string">&lt;os/lock.h&gt;</span></span></div><div class="line">- (<span class="keyword">void</span>)testUnfairlock</div><div class="line">&#123;</div><div class="line">    os_unfair_lock_t unfairlock = &amp;OS_UNFAIR_LOCK_INIT;</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_queue_t</span> queue = dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">        sleep(<span class="number">1</span>);</div><div class="line">        os_unfair_lock_lock(unfairlock);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程1 将要执行"</span>);</div><div class="line">        sleep(<span class="number">3</span>);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程1 执行结束"</span>);</div><div class="line">        os_unfair_lock_unlock(unfairlock);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;</div><div class="line">        os_unfair_lock_lock(unfairlock);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程2 将要执行"</span>);</div><div class="line">        sleep(<span class="number">2</span>);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程2 执行结束"</span>);</div><div class="line">        os_unfair_lock_unlock(unfairlock);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;os/lock.h&gt;</span></span></span><br><span class="line">- (<span class="keyword">void</span>)testUnfairlock</span><br><span class="line">&#123;</span><br><span class="line">    os_unfair_lock_t unfairlock = &amp;OS_UNFAIR_LOCK_INIT;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_queue_t</span> queue = dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</span><br><span class="line">        sleep(<span class="number">1</span>);</span><br><span class="line">        os_unfair_lock_lock(unfairlock);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程1 将要执行"</span>);</span><br><span class="line">        sleep(<span class="number">3</span>);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程1 执行结束"</span>);</span><br><span class="line">        os_unfair_lock_unlock(unfairlock);</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">        os_unfair_lock_lock(unfairlock);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程2 将要执行"</span>);</span><br><span class="line">        sleep(<span class="number">2</span>);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程2 执行结束"</span>);</span><br><span class="line">        os_unfair_lock_unlock(unfairlock);</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>​    <strong><em>打印结果如下</em></strong></p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-28</span> <span class="number">00</span>:<span class="number">14</span>:<span class="number">11.692782</span> test[<span class="number">892</span>:<span class="number">121163</span>] 线程<span class="number">2</span> 将要执行</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-28</span> <span class="number">00</span>:<span class="number">14</span>:<span class="number">13.698007</span> test[<span class="number">892</span>:<span class="number">121163</span>] 线程<span class="number">2</span> 执行结束</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-28</span> <span class="number">00</span>:<span class="number">14</span>:<span class="number">13.698230</span> test[<span class="number">892</span>:<span class="number">121192</span>] 线程<span class="number">1</span> 将要执行</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-28</span> <span class="number">00</span>:<span class="number">14</span>:<span class="number">16.700588</span> test[<span class="number">892</span>:<span class="number">121192</span>] 线程<span class="number">1</span> 执行结束</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-28</span> <span class="number">00</span>:<span class="number">14</span>:<span class="number">11.692782</span> test[<span class="number">892</span>:<span class="number">121163</span>] 线程<span class="number">2</span> 将要执行</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-28</span> <span class="number">00</span>:<span class="number">14</span>:<span class="number">13.698007</span> test[<span class="number">892</span>:<span class="number">121163</span>] 线程<span class="number">2</span> 执行结束</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-28</span> <span class="number">00</span>:<span class="number">14</span>:<span class="number">13.698230</span> test[<span class="number">892</span>:<span class="number">121192</span>] 线程<span class="number">1</span> 将要执行</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-28</span> <span class="number">00</span>:<span class="number">14</span>:<span class="number">16.700588</span> test[<span class="number">892</span>:<span class="number">121192</span>] 线程<span class="number">1</span> 执行结束</span><br></pre></td></tr></table></figure>
 <h3 id="pthread-mutex-t（互斥锁）"><a href="#pthread-mutex-t（互斥锁）" class="headerlink" title="pthread_mutex_t（互斥锁）"></a><strong>pthread_mutex_t（互斥锁）</strong></h3><p>​    互斥锁和自旋锁的区别，主要就在于，当获取锁失败之后，自旋锁会一直轮询，而互斥锁会轮询大概一秒之后，进入休眠，等待唤醒，此外互斥锁，是有队列概念的，有一个等待队列，依次唤醒等待者。</p>
 <p>​    互斥锁和NSLock的区别则在于互斥锁trylock返回正确时返回0，错误时返回错误值，而NSLock则只会返回NO和YES。</p>
 <p>​    此外互斥锁也是性能比较高的锁。使用方式的话，如下</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)testPthreadMutex</div><div class="line">&#123;</div><div class="line">    <span class="keyword">static</span> pthread_mutex_t plock;</div><div class="line">    pthread_mutex_init(&amp;plock, <span class="literal">NULL</span>);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_queue_t</span> queue = dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">        sleep(<span class="number">1</span>);</div><div class="line">        pthread_mutex_lock(&amp;plock);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程1 将要执行"</span>);</div><div class="line">        sleep(<span class="number">3</span>);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程1 执行结束"</span>);</div><div class="line">        pthread_mutex_unlock(&amp;plock);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;</div><div class="line">        <span class="keyword">int</span> code = pthread_mutex_lock(&amp;plock);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程2 将要执行,code = %d"</span>,code);</div><div class="line">        sleep(<span class="number">2</span>);</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程2 执行结束"</span>);</div><div class="line">        pthread_mutex_unlock(&amp;plock);</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line"><span class="comment">//    pthread_mutex_destroy(&amp;plock);</span></div><div class="line">   </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)testPthreadMutex</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">static</span> pthread_mutex_t plock;</span><br><span class="line">    pthread_mutex_init(&amp;plock, <span class="literal">NULL</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_queue_t</span> queue = dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</span><br><span class="line">        sleep(<span class="number">1</span>);</span><br><span class="line">        pthread_mutex_lock(&amp;plock);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程1 将要执行"</span>);</span><br><span class="line">        sleep(<span class="number">3</span>);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程1 执行结束"</span>);</span><br><span class="line">        pthread_mutex_unlock(&amp;plock);</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">        <span class="keyword">int</span> code = pthread_mutex_lock(&amp;plock);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程2 将要执行,code = %d"</span>,code);</span><br><span class="line">        sleep(<span class="number">2</span>);</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"线程2 执行结束"</span>);</span><br><span class="line">        pthread_mutex_unlock(&amp;plock);</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line"><span class="comment">//    pthread_mutex_destroy(&amp;plock);</span></span><br><span class="line">   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>​    <strong><em>执行结果如下</em></strong></p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-28</span> <span class="number">00</span>:<span class="number">14</span>:<span class="number">11.692782</span> test[<span class="number">892</span>:<span class="number">121163</span>] 线程<span class="number">2</span> 将要执行</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-28</span> <span class="number">00</span>:<span class="number">14</span>:<span class="number">13.698007</span> test[<span class="number">892</span>:<span class="number">121163</span>] 线程<span class="number">2</span> 执行结束</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-28</span> <span class="number">00</span>:<span class="number">14</span>:<span class="number">13.698230</span> test[<span class="number">892</span>:<span class="number">121192</span>] 线程<span class="number">1</span> 将要执行</div><div class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-28</span> <span class="number">00</span>:<span class="number">14</span>:<span class="number">16.700588</span> test[<span class="number">892</span>:<span class="number">121192</span>] 线程<span class="number">1</span> 执行结束</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-28</span> <span class="number">00</span>:<span class="number">14</span>:<span class="number">11.692782</span> test[<span class="number">892</span>:<span class="number">121163</span>] 线程<span class="number">2</span> 将要执行</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-28</span> <span class="number">00</span>:<span class="number">14</span>:<span class="number">13.698007</span> test[<span class="number">892</span>:<span class="number">121163</span>] 线程<span class="number">2</span> 执行结束</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-28</span> <span class="number">00</span>:<span class="number">14</span>:<span class="number">13.698230</span> test[<span class="number">892</span>:<span class="number">121192</span>] 线程<span class="number">1</span> 将要执行</span><br><span class="line"><span class="number">2017</span><span class="number">-04</span><span class="number">-28</span> <span class="number">00</span>:<span class="number">14</span>:<span class="number">16.700588</span> test[<span class="number">892</span>:<span class="number">121192</span>] 线程<span class="number">1</span> 执行结束</span><br></pre></td></tr></table></figure>
 <h3 id="NSRecursiveLock-递归锁"><a href="#NSRecursiveLock-递归锁" class="headerlink" title="NSRecursiveLock(递归锁)"></a><strong>NSRecursiveLock(递归锁)</strong></h3><p>​    此锁和NSLock的区别主要在于内部实现原理的不同，NSLock内部封装的pthread_mutex_t类型为PTHREAD_MUTEX_TIMED_NP，而NSRecursiveLock的类型为PTHREAD_MUTEX_RECURSIVE_NP，此外还有PTHREAD_MUTEX_ERRORCHECK_NP（检错锁）、PTHREAD_MUTEX_ADAPTIVE_NP（适应锁）。</p>
 <p>​    递归锁，允许同一个线程对同一个锁成功获得多次，并通过多次unlock解锁。如果是不同线程请求，则在加锁线程解锁时重新竞争。</p>
 <p>​    该锁的使用场景主要是在递归函数内部调用。</p>
 <p>​    按照惯例还是看个代码来说明下如何使用。</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)testRecursiveLock</div><div class="line">&#123;</div><div class="line">    <span class="built_in">NSRecursiveLock</span> *recursive = [[<span class="built_in">NSRecursiveLock</span> alloc]init];</div><div class="line"><span class="comment">//</span></div><div class="line">    <span class="built_in">dispatch_queue_t</span> queue = dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">        </div><div class="line">        [<span class="keyword">self</span> getFactorial:<span class="number">10</span> cursive:recursive];</div><div class="line">        </div><div class="line">    &#125;);</div><div class="line"></div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">int</span>)getFactorial:(<span class="keyword">int</span>)n cursive:(<span class="built_in">NSRecursiveLock</span> *)lock</div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> result = <span class="number">0</span>;</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"加锁"</span>);</div><div class="line">    [lock lock];</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">0</span>) &#123;</div><div class="line">        result = <span class="number">1</span>;</div><div class="line">    &#125;<span class="keyword">else</span>&#123;</div><div class="line">        result = [<span class="keyword">self</span> getFactorial:n<span class="number">-1</span> cursive:lock] * n;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"result =%d"</span>,result);</div><div class="line">    </div><div class="line">    [lock unlock];</div><div class="line">    <span class="built_in">NSLog</span>(<span class="string">@"解锁"</span>);</div><div class="line">    <span class="keyword">return</span> result;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)testRecursiveLock</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSRecursiveLock</span> *recursive = [[<span class="built_in">NSRecursiveLock</span> alloc]init];</span><br><span class="line"><span class="comment">//</span></span><br><span class="line">    <span class="built_in">dispatch_queue_t</span> queue = dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</span><br><span class="line">        </span><br><span class="line">        [<span class="keyword">self</span> getFactorial:<span class="number">10</span> cursive:recursive];</span><br><span class="line">        </span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">int</span>)getFactorial:(<span class="keyword">int</span>)n cursive:(<span class="built_in">NSRecursiveLock</span> *)lock</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">int</span> result = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"加锁"</span>);</span><br><span class="line">    [lock lock];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">        result = <span class="number">1</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        result = [<span class="keyword">self</span> getFactorial:n<span class="number">-1</span> cursive:lock] * n;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"result =%d"</span>,result);</span><br><span class="line">    </span><br><span class="line">    [lock unlock];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"解锁"</span>);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>​    <strong><em>打印结果如下</em></strong></p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241134</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241902</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241920</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241934</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241942</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241950</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241957</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241974</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241991</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241998</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242005</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242023</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">1</span></div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242030</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242036</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">1</span></div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242053</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242095</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">2</span></div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242110</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242128</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">6</span></div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242136</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242143</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">24</span></div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242151</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242293</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">120</span></div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242309</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242317</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">720</span></div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242324</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242331</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">5040</span></div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242338</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242344</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">40320</span></div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242351</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242357</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">362880</span></div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242365</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242371</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">3628800</span></div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242378</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241134</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241902</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241920</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241934</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241942</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241950</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241957</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241974</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241991</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.241998</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242005</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 加锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242023</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">1</span></span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242030</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242036</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">1</span></span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242053</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242095</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">2</span></span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242110</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242128</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">6</span></span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242136</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242143</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">24</span></span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242151</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242293</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">120</span></span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242309</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242317</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">720</span></span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242324</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242331</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">5040</span></span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242338</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242344</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">40320</span></span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242351</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242357</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">362880</span></span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242365</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242371</span> test[<span class="number">1194</span>:<span class="number">551965</span>] result =<span class="number">3628800</span></span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">00</span>:<span class="number">43</span>:<span class="number">08.242378</span> test[<span class="number">1194</span>:<span class="number">551965</span>] 解锁</span><br></pre></td></tr></table></figure>
 <h3 id="NSCondition"><a href="#NSCondition" class="headerlink" title="NSCondition"></a><strong>NSCondition</strong></h3><p>​    NSCondition 的对象实际上作为一个锁和一个线程检查器：锁主要为了当检测条件时保护数据源，执行条件引发的任务；线程检查器主要是根据条件决定是否继续运行线程，即线程是否被阻塞。</p>
 <p>​    使用方式主要包括，lock，unlock, wait, signal,四个方法，分别指获取锁、放开锁、等待信号、发送信号。同样用一段示例代码来看下它的用法</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)testCondition</div><div class="line">&#123;</div><div class="line">    <span class="built_in">NSCondition</span> *condition = [<span class="built_in">NSCondition</span> new];</div><div class="line">    <span class="built_in">NSMutableArray</span> *ops = [<span class="built_in">NSMutableArray</span> array];</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_queue_t</span> queue = dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">        [condition lock];</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"1 将要上锁"</span>);</div><div class="line">        <span class="keyword">while</span> (ops.count == <span class="number">0</span>) &#123;</div><div class="line">            <span class="built_in">NSLog</span>(<span class="string">@"1 等待"</span>);</div><div class="line">            [condition wait];</div><div class="line">        &#125;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"1 移除第一个元素"</span>);</div><div class="line">        [ops removeObjectAtIndex:<span class="number">0</span>];</div><div class="line">        </div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"1 将要解锁"</span>);</div><div class="line">        [condition unlock];</div><div class="line">    &#125;);</div><div class="line">    </div><div class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 将要上锁"</span>);</div><div class="line">        [condition lock];</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 生产一个对象"</span>);</div><div class="line">        [ops addObject:[<span class="built_in">NSObject</span> new]];</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 发送信号"</span>);</div><div class="line">        [condition signal];</div><div class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 将要解锁"</span>);</div><div class="line">        [condition unlock];</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)testCondition</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSCondition</span> *condition = [<span class="built_in">NSCondition</span> new];</span><br><span class="line">    <span class="built_in">NSMutableArray</span> *ops = [<span class="built_in">NSMutableArray</span> array];</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_queue_t</span> queue = dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</span><br><span class="line">        [condition lock];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"1 将要上锁"</span>);</span><br><span class="line">        <span class="keyword">while</span> (ops.count == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@"1 等待"</span>);</span><br><span class="line">            [condition wait];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"1 移除第一个元素"</span>);</span><br><span class="line">        [ops removeObjectAtIndex:<span class="number">0</span>];</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"1 将要解锁"</span>);</span><br><span class="line">        [condition unlock];</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">dispatch_async</span>(queue, ^&#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 将要上锁"</span>);</span><br><span class="line">        [condition lock];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 生产一个对象"</span>);</span><br><span class="line">        [ops addObject:[<span class="built_in">NSObject</span> new]];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 发送信号"</span>);</span><br><span class="line">        [condition signal];</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"2 将要解锁"</span>);</span><br><span class="line">        [condition unlock];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>​    <strong><em>打印结果如下</em></strong></p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">01</span>:<span class="number">04</span>:<span class="number">28.327316</span> test[<span class="number">1240</span>:<span class="number">582713</span>] <span class="number">2</span> 将要上锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">01</span>:<span class="number">04</span>:<span class="number">28.327329</span> test[<span class="number">1240</span>:<span class="number">582712</span>] <span class="number">1</span> 将要上锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">01</span>:<span class="number">04</span>:<span class="number">28.328121</span> test[<span class="number">1240</span>:<span class="number">582712</span>] <span class="number">1</span> 等待</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">01</span>:<span class="number">04</span>:<span class="number">28.328149</span> test[<span class="number">1240</span>:<span class="number">582713</span>] <span class="number">2</span> 生产一个对象</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">01</span>:<span class="number">04</span>:<span class="number">28.328166</span> test[<span class="number">1240</span>:<span class="number">582713</span>] <span class="number">2</span> 发送信号</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">01</span>:<span class="number">04</span>:<span class="number">28.328182</span> test[<span class="number">1240</span>:<span class="number">582713</span>] <span class="number">2</span> 将要解锁</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">01</span>:<span class="number">04</span>:<span class="number">28.328233</span> test[<span class="number">1240</span>:<span class="number">582712</span>] <span class="number">1</span> 移除第一个元素</div><div class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">01</span>:<span class="number">04</span>:<span class="number">28.328261</span> test[<span class="number">1240</span>:<span class="number">582712</span>] <span class="number">1</span> 将要解锁</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">01</span>:<span class="number">04</span>:<span class="number">28.327316</span> test[<span class="number">1240</span>:<span class="number">582713</span>] <span class="number">2</span> 将要上锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">01</span>:<span class="number">04</span>:<span class="number">28.327329</span> test[<span class="number">1240</span>:<span class="number">582712</span>] <span class="number">1</span> 将要上锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">01</span>:<span class="number">04</span>:<span class="number">28.328121</span> test[<span class="number">1240</span>:<span class="number">582712</span>] <span class="number">1</span> 等待</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">01</span>:<span class="number">04</span>:<span class="number">28.328149</span> test[<span class="number">1240</span>:<span class="number">582713</span>] <span class="number">2</span> 生产一个对象</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">01</span>:<span class="number">04</span>:<span class="number">28.328166</span> test[<span class="number">1240</span>:<span class="number">582713</span>] <span class="number">2</span> 发送信号</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">01</span>:<span class="number">04</span>:<span class="number">28.328182</span> test[<span class="number">1240</span>:<span class="number">582713</span>] <span class="number">2</span> 将要解锁</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">01</span>:<span class="number">04</span>:<span class="number">28.328233</span> test[<span class="number">1240</span>:<span class="number">582712</span>] <span class="number">1</span> 移除第一个元素</span><br><span class="line"><span class="number">2017</span><span class="number">-05</span><span class="number">-02</span> <span class="number">01</span>:<span class="number">04</span>:<span class="number">28.328261</span> test[<span class="number">1240</span>:<span class="number">582712</span>] <span class="number">1</span> 将要解锁</span><br></pre></td></tr></table></figure>
 <p>至此，ios里面的大部分同步方法我们已经基本了解了，剩下的就是在实践中选择合适的方法进行应用了。</p>
-<h3 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h3><p>​    如果有想查看DEMO的同学，可以点击<a href="https://github.com/TripleFireMan/SynDemo.git" target="_blank" rel="external">它</a>来下载DEMO，查看。</p>
+<h3 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h3><p>​    如果有想查看DEMO的同学，可以点击<a href="https://github.com/TripleFireMan/SynDemo.git" target="_blank" rel="noopener">它</a>来下载DEMO，查看。</p>
 <h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><hr>
 <ul>
-<li><a href="http://www.jianshu.com/p/8b8a01dd6356" target="_blank" rel="external">iOS开发中的8种锁</a></li>
-<li><a href="http://blog.csdn.net/super_man_ww/article/details/52753802" target="_blank" rel="external">深入理解ios开发中的锁</a></li>
-<li><a href="http://blog.ibireme.com/2016/01/16/spinlock_is_unsafe_in_ios/" target="_blank" rel="external">不再安全的OSSPinLock</a></li>
-<li><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW1" target="_blank" rel="external">Threading Programming Guide</a></li>
-<li><a href="http://blog.csdn.net/zmxiangde_88/article/details/7998458" target="_blank" rel="external">Linux线程-互斥锁pthread_mutex_t</a></li>
-<li><a href="http://www.jianshu.com/p/5d20c15ae690" target="_blank" rel="external">iOS NSCondition详解</a></li>
+<li><a href="http://www.jianshu.com/p/8b8a01dd6356" target="_blank" rel="noopener">iOS开发中的8种锁</a></li>
+<li><a href="http://blog.csdn.net/super_man_ww/article/details/52753802" target="_blank" rel="noopener">深入理解ios开发中的锁</a></li>
+<li><a href="http://blog.ibireme.com/2016/01/16/spinlock_is_unsafe_in_ios/" target="_blank" rel="noopener">不再安全的OSSPinLock</a></li>
+<li><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Multithreading/ThreadSafety/ThreadSafety.html#//apple_ref/doc/uid/10000057i-CH8-SW1" target="_blank" rel="noopener">Threading Programming Guide</a></li>
+<li><a href="http://blog.csdn.net/zmxiangde_88/article/details/7998458" target="_blank" rel="noopener">Linux线程-互斥锁pthread_mutex_t</a></li>
+<li><a href="http://www.jianshu.com/p/5d20c15ae690" target="_blank" rel="noopener">iOS NSCondition详解</a></li>
 </ul>
 
-      
     </div>
 
-    <div>
-      
-        
-
-      
-    </div>
-
-    <div>
-      
-        
-
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2017/02/19/关于如何将私人Pod库发布到pod库的心得/" rel="next" title="关于如何将私人Pod库发布到pod库的心得">
-                <i class="fa fa-chevron-left"></i> 关于如何将私人Pod库发布到pod库的心得
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/05/06/CAReplicatorLayer探究/" rel="prev" title="CAReplicatorLayer探究">
-                CAReplicatorLayer探究 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </article>
-
-
-
-    <div class="post-spread">
-      
-    </div>
-  </div>
-
-
-          </div>
-          
-
-
-          
-  <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2017/05/02/iOS开发中遇到的同步机制/"
-           data-title="iOS开发中遇到的同步机制" data-url="http://yoursite.com/2017/05/02/iOS开发中遇到的同步机制/">
+    
+    
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center;">
+  <img id="wechat_subscriber_qcode" src="/images/wechat_qcode.jpeg" alt="火三 wechat" style="width: 200px; max-width: 100%;">
+  <div>扫码二维码，关注我的公众号，一起交流学习</div>
+</div>
+
+      
+        
+      
+        <div class="reward-container">
+  <div></div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="火三 微信支付">
+        <p>微信支付</p>
       </div>
+        
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="火三 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2017/02/19/关于如何将私人Pod库发布到pod库的心得/" rel="next" title="关于如何将私人Pod库发布到pod库的心得">
+                  <i class="fa fa-chevron-left"></i> 关于如何将私人Pod库发布到pod库的心得
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2017/05/06/CAReplicatorLayer探究/" rel="prev" title="CAReplicatorLayer探究">
+                  CAReplicatorLayer探究 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
     
+  </article>
+  
+  
+  
+
   </div>
 
 
+          </div>
+          
+
         </div>
-        
           
   
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
   </div>
 
-  <aside id="sidebar" class="sidebar">
+  <aside class="sidebar">
     <div class="sidebar-inner">
-
+        
+        
+        
+        
       
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
 
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
-
-      <section class="site-overview sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <img class="site-author-image" itemprop="image"
-               src="/images/avatar.gif"
-               alt="小顽童" />
-          <p class="site-author-name" itemprop="name">小顽童</p>
-          <p class="site-description motion-element" itemprop="description">学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜兮</p>
-        </div>
-        <nav class="site-state motion-element">
-        
-          
-            <div class="site-state-item site-state-posts">
-              <a href="/archives">
-                <span class="site-state-item-count">22</span>
-                <span class="site-state-item-name">日志</span>
-              </a>
-            </div>
-          
-
-          
-            <div class="site-state-item site-state-categories">
-              <a href="/categories">
-                <span class="site-state-item-count">1</span>
-                <span class="site-state-item-name">分类</span>
-              </a>
-            </div>
-          
-
-          
-            <div class="site-state-item site-state-tags">
-              <a href="/tags">
-                <span class="site-state-item-count">6</span>
-                <span class="site-state-item-name">标签</span>
-              </a>
-            </div>
-          
-
-        </nav>
-
-        
-
-        <div class="links-of-author motion-element">
-          
-        </div>
-
-        
-        
-
-        
-        
-          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
-            <div class="links-of-blogroll-title">
-              <i class="fa  fa-fw fa-globe"></i>
-              
-            </div>
-            <ul class="links-of-blogroll-list">
-              
-                <li class="links-of-blogroll-item">
-                  <a href="https://kaisayoung.github.io/" title="二代的blog" target="_blank">二代的blog</a>
-                </li>
-              
-                <li class="links-of-blogroll-item">
-                  <a href="https://portal.qiniu.com/bucket/ab364743113/resource" title="七牛云" target="_blank">七牛云</a>
-                </li>
-              
-            </ul>
-          </div>
-        
-
-        
-
-
-      </section>
-
-      
       <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#NSLock"><span class="nav-number">1.</span> <span class="nav-text">NSLock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronize"><span class="nav-number">2.</span> <span class="nav-text">@synchronize</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#信号量"><span class="nav-number">3.</span> <span class="nav-text">信号量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSConditionLock"><span class="nav-number">4.</span> <span class="nav-text">NSConditionLock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dispatch-barrier-async-与dispatch-barrier-sync"><span class="nav-number">5.</span> <span class="nav-text">dispatch_barrier_async()与dispatch_barrier_sync()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GCD的串行队列实际上也是可以起到锁的作用（略）"><span class="nav-number">6.</span> <span class="nav-text">GCD的串行队列实际上也是可以起到锁的作用（略）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#os-unfair-lock（系统非公平锁）"><span class="nav-number">7.</span> <span class="nav-text">os_unfair_lock（系统非公平锁）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-mutex-t（互斥锁）"><span class="nav-number">8.</span> <span class="nav-text">pthread_mutex_t（互斥锁）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSRecursiveLock-递归锁"><span class="nav-number">9.</span> <span class="nav-text">NSRecursiveLock(递归锁)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSCondition"><span class="nav-number">10.</span> <span class="nav-text">NSCondition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#附录"><span class="nav-number">11.</span> <span class="nav-text">附录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">12.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#NSLock"><span class="nav-number">1.</span> <span class="nav-text">NSLock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronize"><span class="nav-number">2.</span> <span class="nav-text">@synchronize</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#信号量"><span class="nav-number">3.</span> <span class="nav-text">信号量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSConditionLock"><span class="nav-number">4.</span> <span class="nav-text">NSConditionLock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dispatch-barrier-async-与dispatch-barrier-sync"><span class="nav-number">5.</span> <span class="nav-text">dispatch_barrier_async()与dispatch_barrier_sync()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GCD的串行队列实际上也是可以起到锁的作用（略）"><span class="nav-number">6.</span> <span class="nav-text">GCD的串行队列实际上也是可以起到锁的作用（略）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#os-unfair-lock（系统非公平锁）"><span class="nav-number">7.</span> <span class="nav-text">os_unfair_lock（系统非公平锁）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-mutex-t（互斥锁）"><span class="nav-number">8.</span> <span class="nav-text">pthread_mutex_t（互斥锁）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSRecursiveLock-递归锁"><span class="nav-number">9.</span> <span class="nav-text">NSRecursiveLock(递归锁)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSCondition"><span class="nav-number">10.</span> <span class="nav-text">NSCondition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#附录"><span class="nav-number">11.</span> <span class="nav-text">附录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">12.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+        
+      </div>
       <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.gif"
+      alt="火三">
+  <p class="site-author-name" itemprop="name">火三</p>
+  <div class="site-description" itemprop="description">学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜兮</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives">
+        
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
       
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
 
     </div>
   </aside>
+  <div id="sidebar-dimmer"></div>
 
 
-        
       </div>
     </main>
 
-    <footer id="footer" class="footer">
+    <footer class="footer">
       <div class="footer-inner">
-        <div class="copyright" >
-  
+        
+
+<div class="copyright">
   &copy; 
   <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
-    <i class="fa fa-heart"></i>
+    <i class="fa fa-user"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">小顽童</span>
+  <span class="author" itemprop="copyrightHolder">火三</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">161k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">2:26</span>
 </div>
-
-
-<div class="powered-by">
-  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
-</div>
-
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Pisces
-  </a>
-</div>
-
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    主题 – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.1
+  </div>
 
         
+
+
+
+
+
+
+
+
+
+
+
 
         
       </div>
     </footer>
-
-    <div class="back-to-top">
-      <i class="fa fa-arrow-up"></i>
-    </div>
   </div>
 
   
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/pisces.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
 
-<script type="text/javascript">
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
-  }
-</script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -671,105 +653,9 @@
 
   
 
-
-
-  
-  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
-
-  
-  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
-
-  
-  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
-
-  
-  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-
-  
-  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-
-  
-  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
-
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
-
-
-
-  
-  
-
-
-  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
-
-  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
-
-
-
-  
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
-
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
-
-
-
   
 
   
-    
-  
-
-  <script type="text/javascript">
-    var duoshuoQuery = {short_name:"ab364743113"};
-    (function() {
-      var ds = document.createElement('script');
-      ds.type = 'text/javascript';ds.async = true;
-      ds.id = 'duoshuo-script';
-      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-      ds.charset = 'UTF-8';
-      (document.getElementsByTagName('head')[0]
-      || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
-  </script>
-
-  
-    
-    
-    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
-    <script src="/js/src/hook-duoshuo.js"></script>
-  
-
-
-
-
-
-
-
-
-
-
-  
-  
-
-  
-
-  
-
-  
-
-  
-
 
 </body>
 </html>

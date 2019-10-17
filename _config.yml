@@ -3,11 +3,11 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: 小顽童
+title: 火三
 subtitle: 学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜
 description: 学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜兮
-author: 小顽童
-language: zh-Hans
+author: 火三
+language: zh-CN
 timezone:
 
 # URL
@@ -48,6 +48,19 @@ default_category: uncategorized
 category_map:
 tag_map:
 
+post_wordcount:
+ item_text: true
+ wordcount: true
+ min2read: true
+
+
+symbols_count_time:
+  symbols: true                # 文章字数统计
+  time: true                   # 文章阅读时长
+  total_symbols: true          # 站点总字数统计
+  total_time: true             # 站点总阅读时长
+  exclude_codeblock: false     # 排除代码字数统计
+
 # Date / Time format
 ## Hexo uses Moment.js to parse and display date
 ## You can customize the date format as defined in
@@ -63,7 +76,25 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: next
+theme: next-reloaded
+#Plugins:
+# - hexo-generator-feed
+# - hexo-generator-sitemap
+# - hexo-generator-baidu-sitemap
+#feed:
+#  type: atom
+#  path: atom.xml
+#  limit: 20
+
+#search:
+#  path: search.json
+#  field: post
+
+#sitemap:
+#  path: sitemap.xml
+#baidusitemap:
+#  path: baidusitemap.xml
+  
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html

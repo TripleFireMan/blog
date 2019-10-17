@@ -38,7 +38,7 @@ seo: false
 menu:
   home: /
   categories: /categories
-  #about: /about
+  about: /about
   archives: /archives
   tags: /tags
   #sitemap: /sitemap.xml
@@ -174,7 +174,7 @@ toc:
 sidebar:
   # Sidebar Position, available value: left | right
   position: left
-  #position: right
+#  position: right
 
   # Sidebar Display, available value:
   #  - post    expand on posts automatically. Default.
@@ -182,9 +182,9 @@ sidebar:
   #  - hide    expand only when click on the sidebar toggle icon.
   #  - remove  Totally remove sidebar including sidebar toggler.
   display: post
-  #display: always
-  #display: hide
-  #display: remove
+#  display: always
+#  display: hide
+#  display: remove
 
 
 # Blogrolls
@@ -209,7 +209,7 @@ excerpt_description: true
 # Automatically Excerpt. Not recommand.
 # Please use <!-- more --> in the post to control excerpt accurately.
 auto_excerpt:
-  enable: false
+  enable: true
   length: 150
 
 # Post meta display settings
@@ -246,7 +246,7 @@ custom_logo:
 # Available value:
 #    normal | night | night eighties | night blue | night bright
 # https://github.com/chriskempson/tomorrow-theme
-highlight_theme: normal
+highlight_theme: night bright
 
 
 # ---------------------------------------------------------------
@@ -368,7 +368,7 @@ busuanzi_count:
 
 
 # Enable baidu push so that the blog will push the url to baidu automatically which is very helpful for SEO
-baidu_push: false
+baidu_push: true
 
 # Google Calendar
 # Share your recent schedule to others via calendar page
@@ -389,7 +389,7 @@ calendar:
 
 # Algolia Search
 algolia_search:
-  enable: false
+  enable: true
   hits:
     per_page: 10
   labels:
@@ -464,6 +464,11 @@ vendors:
 css: css
 js: js
 images: images
+
+post_wordcount:
+ item_text: true
+ wordcount: true
+ min2read: true
 
 # Theme version
 version: 5.1.0

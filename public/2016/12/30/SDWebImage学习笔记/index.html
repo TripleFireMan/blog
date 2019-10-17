@@ -1,340 +1,323 @@
-<!doctype html>
+<!DOCTYPE html>
 
 
 
-  
 
 
-<html class="theme-next pisces use-motion" lang="zh-Hans">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
 
 
-
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
 
 
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"bounceLeftIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
 
-
-
-
-
-
-
-
-
-
-  
-  
-  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
-
-
-
-
-  
-  
-  
-  
-
-  
-    
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    
-    
-    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
-  
-
-
-
-
-
-
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
-
-<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
-
-
-  <meta name="keywords" content="三方库研究," />
-
-
-
-
-
-
-
-
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
-
-
-
-
-
-
-<meta name="description" content="简介SDWebImage是ios开发中，最常见的图片加载框架，它主要实现了图片异步加载、图片缓存，并提供了UIImageView、UIButton、MKAnnotationview的类目，使用体验很友好，也很方便，成为广大ios开发者加载网络图片的选择，今天我主要是来通过分析其源码来研究下，SDWebimage到底是如何进行设计的，架构的?">
+  <meta name="description" content="简介SDWebImage是ios开发中，最常见的图片加载框架，它主要实现了图片异步加载、图片缓存，并提供了UIImageView、UIButton、MKAnnotationview的类目，使用体验很友好，也很方便，成为广大ios开发者加载网络图片的选择，今天我主要是来通过分析其源码来研究下，SDWebimage到底是如何进行设计的，架构的?">
+<meta name="keywords" content="三方库研究">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SDWebImage学习笔记（一）">
 <meta property="og:url" content="http://yoursite.com/2016/12/30/SDWebImage学习笔记/index.html">
-<meta property="og:site_name" content="小顽童">
+<meta property="og:site_name" content="火三">
 <meta property="og:description" content="简介SDWebImage是ios开发中，最常见的图片加载框架，它主要实现了图片异步加载、图片缓存，并提供了UIImageView、UIButton、MKAnnotationview的类目，使用体验很友好，也很方便，成为广大ios开发者加载网络图片的选择，今天我主要是来通过分析其源码来研究下，SDWebimage到底是如何进行设计的，架构的?">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://ock9zbzms.bkt.clouddn.com/SDWebImageClassDiagram.png">
 <meta property="og:updated_time" content="2017-01-20T15:15:14.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SDWebImage学习笔记（一）">
 <meta name="twitter:description" content="简介SDWebImage是ios开发中，最常见的图片加载框架，它主要实现了图片异步加载、图片缓存，并提供了UIImageView、UIButton、MKAnnotationview的类目，使用体验很友好，也很方便，成为广大ios开发者加载网络图片的选择，今天我主要是来通过分析其源码来研究下，SDWebimage到底是如何进行设计的，架构的?">
 <meta name="twitter:image" content="http://ock9zbzms.bkt.clouddn.com/SDWebImageClassDiagram.png">
+  <link rel="canonical" href="http://yoursite.com/2016/12/30/SDWebImage学习笔记/">
 
 
-
-<script type="text/javascript" id="hexo.configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Pisces',
-    sidebar: {"position":"left","display":"post"},
-    fancybox: true,
-    motion: true,
-    duoshuo: {
-      userId: '0',
-      author: '博主'
-    },
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    }
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
   };
 </script>
 
-
-
-  <link rel="canonical" href="http://yoursite.com/2016/12/30/SDWebImage学习笔记/"/>
-
-
+  <title>SDWebImage学习笔记（一） | 火三</title>
+  
 
 
 
-  <title> SDWebImage学习笔记（一） | 小顽童 </title>
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
-
-  
-
-
-
-
-
-
-
-
-
-
-  
-  
-    
-  
-
-  <div class="container one-collumn sidebar-position-left page-post-detail ">
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
     <div class="headband"></div>
 
-    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-meta ">
-  
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
 
-  <div class="custom-logo-site-title">
-    <a href="/"  class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <span class="site-title">小顽童</span>
-      <span class="logo-line-after"><i></i></span>
-    </a>
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">火三</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜</p>
+      
   </div>
-    
-      <p class="site-subtitle">学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜</p>
-    
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
 </div>
 
-<div class="site-nav-toggle">
-  <button>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-  </button>
-</div>
 
 <nav class="site-nav">
   
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-首页">
+      
+    
 
-  
-    <ul id="menu" class="menu">
-      
-        
-        <li class="menu-item menu-item-home">
-          <a href="/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
-            
-            首页
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-categories">
-          <a href="/categories" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
-            
-            分类
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-archives">
-          <a href="/archives" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
-            
-            归档
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-tags">
-          <a href="/tags" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
-            
-            标签
-          </a>
-        </li>
-      
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
 
+  </li>
       
-    </ul>
-  
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-关于">
+      
+    
 
-  
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-标签">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-分类">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-文章">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>文章</a>
+
+  </li>
+      
+    
+  </ul>
+
 </nav>
-
-
-
- </div>
+</div>
     </header>
 
-    <main id="main" class="main">
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
       <div class="main-inner">
         <div class="content-wrap">
-          <div id="content" class="content">
             
 
-  <div id="posts" class="posts-expand">
-    
+          <div class="content">
+            
 
+  <div class="posts-expand">
+      
   
-
   
-  
-  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/12/30/SDWebImage学习笔记/">
 
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/12/30/SDWebImage学习笔记/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="小顽童">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.gif">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="小顽童">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="小顽童" src="">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="火三">
+      <meta itemprop="description" content="学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜兮">
+      <meta itemprop="image" content="/images/avatar.gif">
     </span>
-  </span>
 
-    
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="火三">
+    </span>
       <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            SDWebImage学习笔记（一）
+            
 
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                SDWebImage学习笔记（一）
-              
-            
-          </h1>
-        
+          
+        </h1>
 
         <div class="post-meta">
-          <span class="post-time">
-            
+            <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
+              <span class="post-meta-item-text">发表于</span>
+
               
-                <span class="post-meta-item-text">发表于</span>
+                
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-12-30T10:36:10+08:00">
-                2016-12-30
-              </time>
-            
 
-            
-
-            
-          </span>
-
-          
-
+              <time title="创建时间：2016-12-30 10:36:10" itemprop="dateCreated datePublished" datetime="2016-12-30T10:36:10+08:00">2016-12-30</time>
+            </span>
           
             
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
+
+            
+              <span class="post-meta-item">
                 <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
+                  <i class="fa fa-calendar-check-o"></i>
                 </span>
-                <a href="/2016/12/30/SDWebImage学习笔记/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/30/SDWebImage学习笔记/" itemprop="commentCount"></span>
-                </a>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2017-01-20 23:15:14" itemprop="dateModified" datetime="2017-01-20T23:15:14+08:00">2017-01-20</time>
               </span>
             
           
 
           
-
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>13k</span>
+            </span>
           
-          
-
-          
-
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>12 分钟</span>
+            </span>
           
 
         </div>
       </header>
+
     
-
-
+    
+    
     <div class="post-body" itemprop="articleBody">
-
-      
-      
 
       
         <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>SDWebImage是ios开发中，最常见的图片加载框架，它主要实现了图片异步加载、图片缓存，并提供了UIImageView、UIButton、MKAnnotationview的类目，使用体验很友好，也很方便，成为广大ios开发者加载网络图片的选择，今天我主要是来通过分析其源码来研究下，SDWebimage到底是如何进行设计的，架构的? </p>
@@ -362,22 +345,22 @@
 <li>xcode 7.3 +</li>
 </ul>
 <h1 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h1><ul>
-<li><p>如果UITableViewCell使用了动态的图片大小，图片展示可能会有问题，也就是说SDWebImage是根据placeholder的大小来设置UIImageView的大小的，如果要展示的图片大小和placeholder的图片大小不一致就会有一些问题，解决方案<a href="http://www.wrichards.com/blog/2011/11/sdwebimage-fixed-width-cell-images/" target="_blank" rel="external"><font color="blue">点击这里</font></a></p>
+<li><p>如果UITableViewCell使用了动态的图片大小，图片展示可能会有问题，也就是说SDWebImage是根据placeholder的大小来设置UIImageView的大小的，如果要展示的图片大小和placeholder的图片大小不一致就会有一些问题，解决方案<a href="http://www.wrichards.com/blog/2011/11/sdwebimage-fixed-width-cell-images/" target="_blank" rel="noopener"><font color="blue">点击这里</font></a></p>
 </li>
 <li><p>手动去刷新图片，SDWebImage使用了暴力的图片缓存方式，不会关注HTTP 的header里面缓存的策略，直接根据图片的URL地址进行缓存，也就是说一个URL会对应一张图片，如果图片地址不发生变化的话，图片永远不会重新下载，因此在某些场景下，你需要手动去刷新图片。</p>
 </li>
 </ul>
 <h1 id="架构图"><a href="#架构图" class="headerlink" title="架构图"></a>架构图</h1><p><img src="http://ock9zbzms.bkt.clouddn.com/SDWebImageClassDiagram.png" alt="架构图"></p>
 <h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><p>上文是SDWebImageView官方的一些文档，我这里给简要的翻译了下，可以看的出来，SDWebImage虽然功能很强大，但是依然还是有一些使用中存在的问题。接下来，我将会通过逐个分析代码的方式，将SDWebImageView从下载、缓存、管理等等一层一层剥开它神秘的面纱。在这个过程中，我尽量避免过多的纠结于一些细节，但是同样的，有些时候为了说明一些问题，难免也会贴一些代码。</p>
-<h2 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h2><p>SDWebimageview的下载是通过NSURLSession的方式，并通过继承NSOperation来异步的进行下载。下载过程中是通过发送通知的方式进行消息通信。<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSString</span> *<span class="keyword">const</span> SDWebImageDownloadStartNotification = <span class="string">@"SDWebImageDownloadStartNotification"</span>;</div><div class="line"><span class="built_in">NSString</span> *<span class="keyword">const</span> SDWebImageDownloadReceiveResponseNotification = <span class="string">@"SDWebImageDownloadReceiveResponseNotification"</span>;</div><div class="line"><span class="built_in">NSString</span> *<span class="keyword">const</span> SDWebImageDownloadStopNotification = <span class="string">@"SDWebImageDownloadStopNotification"</span>;</div><div class="line"><span class="built_in">NSString</span> *<span class="keyword">const</span> SDWebImageDownloadFinishNotification = <span class="string">@"SDWebImageDownloadFinishNotification"</span>;</div></pre></td></tr></table></figure></p>
-<h3 id="SDWebImageDownloaderOperation任务的创建及取消"><a href="#SDWebImageDownloaderOperation任务的创建及取消" class="headerlink" title="SDWebImageDownloaderOperation任务的创建及取消"></a>SDWebImageDownloaderOperation任务的创建及取消</h3><p> SDWebImageDownloaderOperation通过确认下面的这俩个协议实际上执行下载图片的工作，接下来就研究下其内部是怎么工作的。<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">@protocol</span> <span class="title">SDWebImageDownloaderOperationInterface</span>&lt;<span class="title">NSObject</span>&gt;</span></div><div class="line"><span class="comment">//通过该方法进行Opearation的创建</span></div><div class="line">- (<span class="keyword">nonnull</span> <span class="keyword">instancetype</span>)initWithRequest:(<span class="keyword">nullable</span> <span class="built_in">NSURLRequest</span> *)request</div><div class="line">                              inSession:(<span class="keyword">nullable</span> <span class="built_in">NSURLSession</span> *)session</div><div class="line">                                options:(SDWebImageDownloaderOptions)options;</div><div class="line"><span class="comment">//添加下载过程中需要的回调，主要包括下载进度、下载完成的回调</span></div><div class="line">- (<span class="keyword">nullable</span> <span class="keyword">id</span>)addHandlersForProgress:(<span class="keyword">nullable</span> SDWebImageDownloaderProgressBlock)progressBlock</div><div class="line">                            completed:(<span class="keyword">nullable</span> SDWebImageDownloaderCompletedBlock)completedBlock;</div><div class="line"><span class="comment">//是否支持解压图片</span></div><div class="line">- (<span class="built_in">BOOL</span>)shouldDecompressImages;</div><div class="line"><span class="comment">//设置是否支持解压图片</span></div><div class="line">- (<span class="keyword">void</span>)setShouldDecompressImages:(<span class="built_in">BOOL</span>)value;</div><div class="line"><span class="comment">//URL鉴定</span></div><div class="line">- (<span class="keyword">nullable</span> <span class="built_in">NSURLCredential</span> *)credential;</div><div class="line"><span class="comment">//设置URL鉴定</span></div><div class="line">- (<span class="keyword">void</span>)setCredential:(<span class="keyword">nullable</span> <span class="built_in">NSURLCredential</span> *)value;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">@protocol</span> <span class="title">SDWebImageOperation</span> &lt;<span class="title">NSObject</span>&gt;</span></div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)cancel;</div><div class="line"></div><div class="line"><span class="keyword">@end</span></div></pre></td></tr></table></figure></p>
+<h2 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h2><p>SDWebimageview的下载是通过NSURLSession的方式，并通过继承NSOperation来异步的进行下载。下载过程中是通过发送通知的方式进行消息通信。<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSString</span> *<span class="keyword">const</span> SDWebImageDownloadStartNotification = <span class="string">@"SDWebImageDownloadStartNotification"</span>;</span><br><span class="line"><span class="built_in">NSString</span> *<span class="keyword">const</span> SDWebImageDownloadReceiveResponseNotification = <span class="string">@"SDWebImageDownloadReceiveResponseNotification"</span>;</span><br><span class="line"><span class="built_in">NSString</span> *<span class="keyword">const</span> SDWebImageDownloadStopNotification = <span class="string">@"SDWebImageDownloadStopNotification"</span>;</span><br><span class="line"><span class="built_in">NSString</span> *<span class="keyword">const</span> SDWebImageDownloadFinishNotification = <span class="string">@"SDWebImageDownloadFinishNotification"</span>;</span><br></pre></td></tr></table></figure></p>
+<h3 id="SDWebImageDownloaderOperation任务的创建及取消"><a href="#SDWebImageDownloaderOperation任务的创建及取消" class="headerlink" title="SDWebImageDownloaderOperation任务的创建及取消"></a>SDWebImageDownloaderOperation任务的创建及取消</h3><p> SDWebImageDownloaderOperation通过确认下面的这俩个协议实际上执行下载图片的工作，接下来就研究下其内部是怎么工作的。<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@protocol</span> <span class="title">SDWebImageDownloaderOperationInterface</span>&lt;<span class="title">NSObject</span>&gt;</span></span><br><span class="line"><span class="comment">//通过该方法进行Opearation的创建</span></span><br><span class="line">- (<span class="keyword">nonnull</span> <span class="keyword">instancetype</span>)initWithRequest:(<span class="keyword">nullable</span> <span class="built_in">NSURLRequest</span> *)request</span><br><span class="line">                              inSession:(<span class="keyword">nullable</span> <span class="built_in">NSURLSession</span> *)session</span><br><span class="line">                                options:(SDWebImageDownloaderOptions)options;</span><br><span class="line"><span class="comment">//添加下载过程中需要的回调，主要包括下载进度、下载完成的回调</span></span><br><span class="line">- (<span class="keyword">nullable</span> <span class="keyword">id</span>)addHandlersForProgress:(<span class="keyword">nullable</span> SDWebImageDownloaderProgressBlock)progressBlock</span><br><span class="line">                            completed:(<span class="keyword">nullable</span> SDWebImageDownloaderCompletedBlock)completedBlock;</span><br><span class="line"><span class="comment">//是否支持解压图片</span></span><br><span class="line">- (<span class="built_in">BOOL</span>)shouldDecompressImages;</span><br><span class="line"><span class="comment">//设置是否支持解压图片</span></span><br><span class="line">- (<span class="keyword">void</span>)setShouldDecompressImages:(<span class="built_in">BOOL</span>)value;</span><br><span class="line"><span class="comment">//URL鉴定</span></span><br><span class="line">- (<span class="keyword">nullable</span> <span class="built_in">NSURLCredential</span> *)credential;</span><br><span class="line"><span class="comment">//设置URL鉴定</span></span><br><span class="line">- (<span class="keyword">void</span>)setCredential:(<span class="keyword">nullable</span> <span class="built_in">NSURLCredential</span> *)value;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@protocol</span> <span class="title">SDWebImageOperation</span> &lt;<span class="title">NSObject</span>&gt;</span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)cancel;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure></p>
 <h3 id="SDWebImageDownloaderOperation任务的初始化以及任务的执行"><a href="#SDWebImageDownloaderOperation任务的初始化以及任务的执行" class="headerlink" title="SDWebImageDownloaderOperation任务的初始化以及任务的执行"></a>SDWebImageDownloaderOperation任务的初始化以及任务的执行</h3><p>忽略掉那些细节，这里只关注关键的几个地方，SDWebImageDownloaderOperation，以下简称‘下载操作对象’，通过持有Request，注入session，以及options，创建好下载操作对象。之后通过外部调用start方法，开启下载任务。并通过设置session任务的代理，来监听下载过程，同时发出相应的通知进行对象间的消息通信。</p>
 <ol>
 <li><p>初始化</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">nonnull</span> <span class="keyword">instancetype</span>)initWithRequest:(<span class="keyword">nullable</span> <span class="built_in">NSURLRequest</span> *)request</div><div class="line">                              inSession:(<span class="keyword">nullable</span> <span class="built_in">NSURLSession</span> *)session</div><div class="line">                                options:(SDWebImageDownloaderOptions)options &#123;</div><div class="line">    <span class="keyword">if</span> ((<span class="keyword">self</span> = [<span class="keyword">super</span> init])) &#123;</div><div class="line">        _request = [request <span class="keyword">copy</span>];</div><div class="line">        _shouldDecompressImages = <span class="literal">YES</span>;</div><div class="line">        _options = options;</div><div class="line">        _callbackBlocks = [<span class="built_in">NSMutableArray</span> new];</div><div class="line">        _executing = <span class="literal">NO</span>;</div><div class="line">        _finished = <span class="literal">NO</span>;</div><div class="line">        _expectedSize = <span class="number">0</span>;</div><div class="line">        _unownedSession = session;</div><div class="line">        responseFromCached = <span class="literal">YES</span>; <span class="comment">// Initially wrong until `- URLSession:dataTask:willCacheResponse:completionHandler: is called or not called</span></div><div class="line">        _barrierQueue = dispatch_queue_create(<span class="string">"com.hackemist.SDWebImageDownloaderOperationBarrierQueue"</span>, DISPATCH_QUEUE_CONCURRENT);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">nonnull</span> <span class="keyword">instancetype</span>)initWithRequest:(<span class="keyword">nullable</span> <span class="built_in">NSURLRequest</span> *)request</span><br><span class="line">                              inSession:(<span class="keyword">nullable</span> <span class="built_in">NSURLSession</span> *)session</span><br><span class="line">                                options:(SDWebImageDownloaderOptions)options &#123;</span><br><span class="line">    <span class="keyword">if</span> ((<span class="keyword">self</span> = [<span class="keyword">super</span> init])) &#123;</span><br><span class="line">        _request = [request <span class="keyword">copy</span>];</span><br><span class="line">        _shouldDecompressImages = <span class="literal">YES</span>;</span><br><span class="line">        _options = options;</span><br><span class="line">        _callbackBlocks = [<span class="built_in">NSMutableArray</span> new];</span><br><span class="line">        _executing = <span class="literal">NO</span>;</span><br><span class="line">        _finished = <span class="literal">NO</span>;</span><br><span class="line">        _expectedSize = <span class="number">0</span>;</span><br><span class="line">        _unownedSession = session;</span><br><span class="line">        responseFromCached = <span class="literal">YES</span>; <span class="comment">// Initially wrong until `- URLSession:dataTask:willCacheResponse:completionHandler: is called or not called</span></span><br><span class="line">        _barrierQueue = dispatch_queue_create(<span class="string">"com.hackemist.SDWebImageDownloaderOperationBarrierQueue"</span>, DISPATCH_QUEUE_CONCURRENT);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>执行任务</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)start &#123;</div><div class="line">    <span class="keyword">@synchronized</span> (<span class="keyword">self</span>) &#123;</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">self</span>.isCancelled) &#123;</div><div class="line">            <span class="keyword">self</span>.finished = <span class="literal">YES</span>;</div><div class="line">            [<span class="keyword">self</span> reset];</div><div class="line">            <span class="keyword">return</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line"><span class="meta">#if SD_UIKIT</span></div><div class="line">        Class <span class="built_in">UIApplicationClass</span> = <span class="built_in">NSClassFromString</span>(<span class="string">@"UIApplication"</span>);</div><div class="line">        <span class="built_in">BOOL</span> hasApplication = <span class="built_in">UIApplicationClass</span> &amp;&amp; [<span class="built_in">UIApplicationClass</span> respondsToSelector:<span class="keyword">@selector</span>(sharedApplication)];</div><div class="line">        <span class="comment">//对后台下载任务的支持，app可以开启后台下载任务，并返回一个后台下载的ID，并设置一个过期的callback，此处注意当任务失效的时候，需要将任务终止，并设置taskid为无效</span></div><div class="line">        <span class="keyword">if</span> (hasApplication &amp;&amp; [<span class="keyword">self</span> shouldContinueWhenAppEntersBackground]) &#123;</div><div class="line">            __<span class="keyword">weak</span> __typeof__ (<span class="keyword">self</span>) wself = <span class="keyword">self</span>;</div><div class="line">            <span class="built_in">UIApplication</span> * app = [<span class="built_in">UIApplicationClass</span> performSelector:<span class="keyword">@selector</span>(sharedApplication)];</div><div class="line">            <span class="keyword">self</span>.backgroundTaskId = [app beginBackgroundTaskWithExpirationHandler:^&#123;</div><div class="line">                __<span class="keyword">strong</span> __<span class="keyword">typeof</span> (wself) sself = wself;</div><div class="line"></div><div class="line">                <span class="keyword">if</span> (sself) &#123;</div><div class="line">                    [sself cancel];</div><div class="line"></div><div class="line">                    [app endBackgroundTask:sself.backgroundTaskId];</div><div class="line">                    sself.backgroundTaskId = <span class="built_in">UIBackgroundTaskInvalid</span>;</div><div class="line">                &#125;</div><div class="line">            &#125;];</div><div class="line">        &#125;</div><div class="line"><span class="meta">#endif</span></div><div class="line">        <span class="comment">//默认是有注入session，如果没有的话，需要内部创建一个session</span></div><div class="line">        <span class="built_in">NSURLSession</span> *session = <span class="keyword">self</span>.unownedSession;</div><div class="line">        <span class="keyword">if</span> (!<span class="keyword">self</span>.unownedSession) &#123;</div><div class="line">            <span class="built_in">NSURLSessionConfiguration</span> *sessionConfig = [<span class="built_in">NSURLSessionConfiguration</span> defaultSessionConfiguration];</div><div class="line">            sessionConfig.timeoutIntervalForRequest = <span class="number">15</span>;</div><div class="line">            </div><div class="line">            <span class="comment">/**</span></div><div class="line">             *  Create the session for this task</div><div class="line">             *  We send nil as delegate queue so that the session creates a serial operation queue for performing all delegate</div><div class="line">             *  method calls and completion handler calls.</div><div class="line">             */</div><div class="line">            <span class="keyword">self</span>.ownedSession = [<span class="built_in">NSURLSession</span> sessionWithConfiguration:sessionConfig</div><div class="line">                                                              delegate:<span class="keyword">self</span></div><div class="line">                                                         delegateQueue:<span class="literal">nil</span>];</div><div class="line">            session = <span class="keyword">self</span>.ownedSession;</div><div class="line">        &#125;</div><div class="line">        <span class="comment">//此处根据当前的session和request创建datatask</span></div><div class="line">        <span class="keyword">self</span>.dataTask = [session dataTaskWithRequest:<span class="keyword">self</span>.request];</div><div class="line">        <span class="keyword">self</span>.executing = <span class="literal">YES</span>;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="comment">//datatask开始工作</span></div><div class="line">    [<span class="keyword">self</span>.dataTask resume];</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.dataTask) &#123;</div><div class="line">        <span class="comment">//通知所有监听回调，任务开始执行了。俩种方式，一种是callback方式，一种是通知</span></div><div class="line">        <span class="keyword">for</span> (SDWebImageDownloaderProgressBlock progressBlock <span class="keyword">in</span> [<span class="keyword">self</span> callbacksForKey:kProgressCallbackKey]) &#123;</div><div class="line">            progressBlock(<span class="number">0</span>, <span class="built_in">NSURLResponseUnknownLength</span>, <span class="keyword">self</span>.request.URL);</div><div class="line">        &#125;</div><div class="line">        <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;</div><div class="line">            [[<span class="built_in">NSNotificationCenter</span> defaultCenter] postNotificationName:SDWebImageDownloadStartNotification object:<span class="keyword">self</span>];</div><div class="line">        &#125;);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="comment">//对异常情况的处理，如果datatask为nil，进行错误的回调</span></div><div class="line">        [<span class="keyword">self</span> callCompletionBlocksWithError:[<span class="built_in">NSError</span> errorWithDomain:<span class="built_in">NSURLErrorDomain</span> code:<span class="number">0</span> userInfo:@&#123;<span class="built_in">NSLocalizedDescriptionKey</span> : <span class="string">@"Connection can't be initialized"</span>&#125;]];</div><div class="line">    &#125;</div><div class="line"></div><div class="line"><span class="meta">#if SD_UIKIT</span></div><div class="line">    Class <span class="built_in">UIApplicationClass</span> = <span class="built_in">NSClassFromString</span>(<span class="string">@"UIApplication"</span>);</div><div class="line">    <span class="keyword">if</span>(!<span class="built_in">UIApplicationClass</span> || ![<span class="built_in">UIApplicationClass</span> respondsToSelector:<span class="keyword">@selector</span>(sharedApplication)]) &#123;</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.backgroundTaskId != <span class="built_in">UIBackgroundTaskInvalid</span>) &#123;</div><div class="line">        <span class="built_in">UIApplication</span> * app = [<span class="built_in">UIApplication</span> performSelector:<span class="keyword">@selector</span>(sharedApplication)];</div><div class="line">        [app endBackgroundTask:<span class="keyword">self</span>.backgroundTaskId];</div><div class="line">        <span class="keyword">self</span>.backgroundTaskId = <span class="built_in">UIBackgroundTaskInvalid</span>;</div><div class="line">    &#125;</div><div class="line"><span class="meta">#endif</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)start &#123;</span><br><span class="line">    <span class="keyword">@synchronized</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">self</span>.isCancelled) &#123;</span><br><span class="line">            <span class="keyword">self</span>.finished = <span class="literal">YES</span>;</span><br><span class="line">            [<span class="keyword">self</span> reset];</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#if SD_UIKIT</span></span><br><span class="line">        Class <span class="built_in">UIApplicationClass</span> = <span class="built_in">NSClassFromString</span>(<span class="string">@"UIApplication"</span>);</span><br><span class="line">        <span class="built_in">BOOL</span> hasApplication = <span class="built_in">UIApplicationClass</span> &amp;&amp; [<span class="built_in">UIApplicationClass</span> respondsToSelector:<span class="keyword">@selector</span>(sharedApplication)];</span><br><span class="line">        <span class="comment">//对后台下载任务的支持，app可以开启后台下载任务，并返回一个后台下载的ID，并设置一个过期的callback，此处注意当任务失效的时候，需要将任务终止，并设置taskid为无效</span></span><br><span class="line">        <span class="keyword">if</span> (hasApplication &amp;&amp; [<span class="keyword">self</span> shouldContinueWhenAppEntersBackground]) &#123;</span><br><span class="line">            __<span class="keyword">weak</span> __typeof__ (<span class="keyword">self</span>) wself = <span class="keyword">self</span>;</span><br><span class="line">            <span class="built_in">UIApplication</span> * app = [<span class="built_in">UIApplicationClass</span> performSelector:<span class="keyword">@selector</span>(sharedApplication)];</span><br><span class="line">            <span class="keyword">self</span>.backgroundTaskId = [app beginBackgroundTaskWithExpirationHandler:^&#123;</span><br><span class="line">                __<span class="keyword">strong</span> __<span class="keyword">typeof</span> (wself) sself = wself;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (sself) &#123;</span><br><span class="line">                    [sself cancel];</span><br><span class="line"></span><br><span class="line">                    [app endBackgroundTask:sself.backgroundTaskId];</span><br><span class="line">                    sself.backgroundTaskId = <span class="built_in">UIBackgroundTaskInvalid</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;];</span><br><span class="line">        &#125;</span><br><span class="line"><span class="meta">#endif</span></span><br><span class="line">        <span class="comment">//默认是有注入session，如果没有的话，需要内部创建一个session</span></span><br><span class="line">        <span class="built_in">NSURLSession</span> *session = <span class="keyword">self</span>.unownedSession;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">self</span>.unownedSession) &#123;</span><br><span class="line">            <span class="built_in">NSURLSessionConfiguration</span> *sessionConfig = [<span class="built_in">NSURLSessionConfiguration</span> defaultSessionConfiguration];</span><br><span class="line">            sessionConfig.timeoutIntervalForRequest = <span class="number">15</span>;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">/**</span></span><br><span class="line"><span class="comment">             *  Create the session for this task</span></span><br><span class="line"><span class="comment">             *  We send nil as delegate queue so that the session creates a serial operation queue for performing all delegate</span></span><br><span class="line"><span class="comment">             *  method calls and completion handler calls.</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            <span class="keyword">self</span>.ownedSession = [<span class="built_in">NSURLSession</span> sessionWithConfiguration:sessionConfig</span><br><span class="line">                                                              delegate:<span class="keyword">self</span></span><br><span class="line">                                                         delegateQueue:<span class="literal">nil</span>];</span><br><span class="line">            session = <span class="keyword">self</span>.ownedSession;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//此处根据当前的session和request创建datatask</span></span><br><span class="line">        <span class="keyword">self</span>.dataTask = [session dataTaskWithRequest:<span class="keyword">self</span>.request];</span><br><span class="line">        <span class="keyword">self</span>.executing = <span class="literal">YES</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//datatask开始工作</span></span><br><span class="line">    [<span class="keyword">self</span>.dataTask resume];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.dataTask) &#123;</span><br><span class="line">        <span class="comment">//通知所有监听回调，任务开始执行了。俩种方式，一种是callback方式，一种是通知</span></span><br><span class="line">        <span class="keyword">for</span> (SDWebImageDownloaderProgressBlock progressBlock <span class="keyword">in</span> [<span class="keyword">self</span> callbacksForKey:kProgressCallbackKey]) &#123;</span><br><span class="line">            progressBlock(<span class="number">0</span>, <span class="built_in">NSURLResponseUnknownLength</span>, <span class="keyword">self</span>.request.URL);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">            [[<span class="built_in">NSNotificationCenter</span> defaultCenter] postNotificationName:SDWebImageDownloadStartNotification object:<span class="keyword">self</span>];</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//对异常情况的处理，如果datatask为nil，进行错误的回调</span></span><br><span class="line">        [<span class="keyword">self</span> callCompletionBlocksWithError:[<span class="built_in">NSError</span> errorWithDomain:<span class="built_in">NSURLErrorDomain</span> code:<span class="number">0</span> userInfo:@&#123;<span class="built_in">NSLocalizedDescriptionKey</span> : <span class="string">@"Connection can't be initialized"</span>&#125;]];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#if SD_UIKIT</span></span><br><span class="line">    Class <span class="built_in">UIApplicationClass</span> = <span class="built_in">NSClassFromString</span>(<span class="string">@"UIApplication"</span>);</span><br><span class="line">    <span class="keyword">if</span>(!<span class="built_in">UIApplicationClass</span> || ![<span class="built_in">UIApplicationClass</span> respondsToSelector:<span class="keyword">@selector</span>(sharedApplication)]) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.backgroundTaskId != <span class="built_in">UIBackgroundTaskInvalid</span>) &#123;</span><br><span class="line">        <span class="built_in">UIApplication</span> * app = [<span class="built_in">UIApplication</span> performSelector:<span class="keyword">@selector</span>(sharedApplication)];</span><br><span class="line">        [app endBackgroundTask:<span class="keyword">self</span>.backgroundTaskId];</span><br><span class="line">        <span class="keyword">self</span>.backgroundTaskId = <span class="built_in">UIBackgroundTaskInvalid</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">#endif</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>接下来就是NSURLSession任务的开启、执行中、结束或者错误回调<br>这里就不去贴代码了，要不然这篇博文很大篇幅都被代码占据了，其实任务执行开始之后，主要就是各种异常的处理，因为正常的处理其实是比较简单的，之后就会回调到外面去，让外面调用‘下载操作对象’去决定到底该如何处理。<br>（补充：经过后面对SDWebImageDownloader的深入研究，发现SDWebImageDownloaderOperation创建好之后，直接扔到SDWebImageDownloader的队列里面去了，此外session由于是注入的，代理设置的是SDWebImageDownloader，回调自然也由SDWebImageDownloader接收，然后分发给各自对应的SDWebImageDownloaderOperation）</p>
 </li>
@@ -386,271 +369,274 @@
 <ul>
 <li>client（此处指的是使用SDWebImageDownloader的客户，可以是用户自己的类，也可以是其他SDWebImage类）首先需要创建一个SDWebImageDownloader，创建好之后，就准备好了下载需要的downloadQueue，下载相关的一些配置（诸如执行顺序、并发数、超时等等）。</li>
 <li><p>client之后调用SDWebImageDownloader的downloadImageWithURL:options:progress:completed:进行实际的下载操作。在这里我有一个疑惑了好久的问题，就是session的回调问题，因为SDWebImageDownloaderOperation里面有session，而SDWebImageDownloader也有session，那么任务执行过程中，岂不是俩处都会收到回调？这难道是SDWebImage的BUG？呵呵，其实并不是，直到我看到下面这段代码。</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSURLSession</span> *session = <span class="keyword">self</span>.unownedSession;</div><div class="line"><span class="keyword">if</span> (!<span class="keyword">self</span>.unownedSession) &#123;</div><div class="line">    <span class="built_in">NSURLSessionConfiguration</span> *sessionConfig = [<span class="built_in">NSURLSessionConfiguration</span> defaultSessionConfiguration];</div><div class="line">    sessionConfig.timeoutIntervalForRequest = <span class="number">15</span>;</div><div class="line">    </div><div class="line">    <span class="comment">/**</span></div><div class="line">     *  Create the session for this task</div><div class="line">     *  We send nil as delegate queue so that the session creates a serial operation queue for performing all delegate</div><div class="line">     *  method calls and completion handler calls.</div><div class="line">     */</div><div class="line">    <span class="comment">//注意这里，只有ownedSession才会设置代理为自己，也就是说注入的session不会设置代理。</span></div><div class="line">    <span class="keyword">self</span>.ownedSession = [<span class="built_in">NSURLSession</span> sessionWithConfiguration:sessionConfig</div><div class="line">                                                      delegate:<span class="keyword">self</span></div><div class="line">                                                 delegateQueue:<span class="literal">nil</span>];</div><div class="line">    session = <span class="keyword">self</span>.ownedSession;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">self</span>.dataTask = [session dataTaskWithRequest:<span class="keyword">self</span>.request];</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSURLSession</span> *session = <span class="keyword">self</span>.unownedSession;</span><br><span class="line"><span class="keyword">if</span> (!<span class="keyword">self</span>.unownedSession) &#123;</span><br><span class="line">    <span class="built_in">NSURLSessionConfiguration</span> *sessionConfig = [<span class="built_in">NSURLSessionConfiguration</span> defaultSessionConfiguration];</span><br><span class="line">    sessionConfig.timeoutIntervalForRequest = <span class="number">15</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     *  Create the session for this task</span></span><br><span class="line"><span class="comment">     *  We send nil as delegate queue so that the session creates a serial operation queue for performing all delegate</span></span><br><span class="line"><span class="comment">     *  method calls and completion handler calls.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="comment">//注意这里，只有ownedSession才会设置代理为自己，也就是说注入的session不会设置代理。</span></span><br><span class="line">    <span class="keyword">self</span>.ownedSession = [<span class="built_in">NSURLSession</span> sessionWithConfiguration:sessionConfig</span><br><span class="line">                                                      delegate:<span class="keyword">self</span></span><br><span class="line">                                                 delegateQueue:<span class="literal">nil</span>];</span><br><span class="line">    session = <span class="keyword">self</span>.ownedSession;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">self</span>.dataTask = [session dataTaskWithRequest:<span class="keyword">self</span>.request];</span><br></pre></td></tr></table></figure>
 <p>看了上面的代码自然就明白了，<font color="red">当使用SDWebImageDownloader的时候，session的回调只有SDWebImageDownloader能接收到，这也是为什么SDWebImageDownloader需要在接收到回调之后要进行转发的缘故。</font></p>
 </li>
 </ul>
 <ol>
 <li><p>SDWebImageDownloader的初始化</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">nonnull</span> <span class="keyword">instancetype</span>)initWithSessionConfiguration:(<span class="keyword">nullable</span> <span class="built_in">NSURLSessionConfiguration</span> *)sessionConfiguration &#123;</div><div class="line">    <span class="keyword">if</span> ((<span class="keyword">self</span> = [<span class="keyword">super</span> init])) &#123;</div><div class="line">        _operationClass = [SDWebImageDownloaderOperation <span class="keyword">class</span>];</div><div class="line">        _shouldDecompressImages = <span class="literal">YES</span>;</div><div class="line">        <span class="comment">//设置任务的执行顺序</span></div><div class="line">        _executionOrder = SDWebImageDownloaderFIFOExecutionOrder;</div><div class="line">        <span class="comment">//创建执行任务的操作队列，并对操作队列进行配置</span></div><div class="line">        _downloadQueue = [<span class="built_in">NSOperationQueue</span> new];</div><div class="line">        _downloadQueue.maxConcurrentOperationCount = <span class="number">6</span>;</div><div class="line">        _downloadQueue.name = <span class="string">@"com.hackemist.SDWebImageDownloader"</span>;</div><div class="line">        _URLOperations = [<span class="built_in">NSMutableDictionary</span> new];</div><div class="line"><span class="meta">#ifdef SD_WEBP</span></div><div class="line">        _HTTPHeaders = [@&#123;<span class="string">@"Accept"</span>: <span class="string">@"image/webp,image/*;q=0.8"</span>&#125; mutableCopy];</div><div class="line"><span class="meta">#else</span></div><div class="line">        _HTTPHeaders = [@&#123;<span class="string">@"Accept"</span>: <span class="string">@"image/*;q=0.8"</span>&#125; mutableCopy];</div><div class="line"><span class="meta">#endif</span></div><div class="line">        _barrierQueue = dispatch_queue_create(<span class="string">"com.hackemist.SDWebImageDownloaderBarrierQueue"</span>, DISPATCH_QUEUE_CONCURRENT);</div><div class="line">        _downloadTimeout = <span class="number">15.0</span>;</div><div class="line"></div><div class="line">        sessionConfiguration.timeoutIntervalForRequest = _downloadTimeout;</div><div class="line"></div><div class="line">        <span class="comment">/**</span></div><div class="line">         *  Create the session for this task</div><div class="line">         *  We send nil as delegate queue so that the session creates a serial operation queue for performing all delegate</div><div class="line">         *  method calls and completion handler calls.</div><div class="line">         */</div><div class="line">        <span class="keyword">self</span>.session = [<span class="built_in">NSURLSession</span> sessionWithConfiguration:sessionConfiguration</div><div class="line">                                                     delegate:<span class="keyword">self</span></div><div class="line">                                                delegateQueue:<span class="literal">nil</span>];</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">nonnull</span> <span class="keyword">instancetype</span>)initWithSessionConfiguration:(<span class="keyword">nullable</span> <span class="built_in">NSURLSessionConfiguration</span> *)sessionConfiguration &#123;</span><br><span class="line">    <span class="keyword">if</span> ((<span class="keyword">self</span> = [<span class="keyword">super</span> init])) &#123;</span><br><span class="line">        _operationClass = [SDWebImageDownloaderOperation <span class="keyword">class</span>];</span><br><span class="line">        _shouldDecompressImages = <span class="literal">YES</span>;</span><br><span class="line">        <span class="comment">//设置任务的执行顺序</span></span><br><span class="line">        _executionOrder = SDWebImageDownloaderFIFOExecutionOrder;</span><br><span class="line">        <span class="comment">//创建执行任务的操作队列，并对操作队列进行配置</span></span><br><span class="line">        _downloadQueue = [<span class="built_in">NSOperationQueue</span> new];</span><br><span class="line">        _downloadQueue.maxConcurrentOperationCount = <span class="number">6</span>;</span><br><span class="line">        _downloadQueue.name = <span class="string">@"com.hackemist.SDWebImageDownloader"</span>;</span><br><span class="line">        _URLOperations = [<span class="built_in">NSMutableDictionary</span> new];</span><br><span class="line"><span class="meta">#ifdef SD_WEBP</span></span><br><span class="line">        _HTTPHeaders = [@&#123;<span class="string">@"Accept"</span>: <span class="string">@"image/webp,image/*;q=0.8"</span>&#125; mutableCopy];</span><br><span class="line"><span class="meta">#else</span></span><br><span class="line">        _HTTPHeaders = [@&#123;<span class="string">@"Accept"</span>: <span class="string">@"image/*;q=0.8"</span>&#125; mutableCopy];</span><br><span class="line"><span class="meta">#endif</span></span><br><span class="line">        _barrierQueue = dispatch_queue_create(<span class="string">"com.hackemist.SDWebImageDownloaderBarrierQueue"</span>, DISPATCH_QUEUE_CONCURRENT);</span><br><span class="line">        _downloadTimeout = <span class="number">15.0</span>;</span><br><span class="line"></span><br><span class="line">        sessionConfiguration.timeoutIntervalForRequest = _downloadTimeout;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         *  Create the session for this task</span></span><br><span class="line"><span class="comment">         *  We send nil as delegate queue so that the session creates a serial operation queue for performing all delegate</span></span><br><span class="line"><span class="comment">         *  method calls and completion handler calls.</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">self</span>.session = [<span class="built_in">NSURLSession</span> sessionWithConfiguration:sessionConfiguration</span><br><span class="line">                                                     delegate:<span class="keyword">self</span></span><br><span class="line">                                                delegateQueue:<span class="literal">nil</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>SDWebImageDownloader执行下载操作<br>这里请原谅我贴上大段的代码，因为这段代码实在是太漂亮了。通过俩个函数的设计将SDWebImageDownloaderOperation的初始化和SDWebImageDownloadToken初始化分割开。并在初始化operation完成之后将任务扔到队列中去执行，还持有了operation的引用，给SDWebImageDownloader有机会保存到字典中。</p>
 </li>
 </ol>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">nullable</span> SDWebImageDownloadToken *)downloadImageWithURL:(<span class="keyword">nullable</span> <span class="built_in">NSURL</span> *)url</div><div class="line">                                                   options:(SDWebImageDownloaderOptions)options</div><div class="line">                                                  progress:(<span class="keyword">nullable</span> SDWebImageDownloaderProgressBlock)progressBlock</div><div class="line">                                                 completed:(<span class="keyword">nullable</span> SDWebImageDownloaderCompletedBlock)completedBlock &#123;</div><div class="line">    __<span class="keyword">weak</span> SDWebImageDownloader *wself = <span class="keyword">self</span>;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> [<span class="keyword">self</span> addProgressCallback:progressBlock completedBlock:completedBlock forURL:url createCallback:^SDWebImageDownloaderOperation *&#123;</div><div class="line">        __<span class="keyword">strong</span> __<span class="keyword">typeof</span> (wself) sself = wself;</div><div class="line">        <span class="built_in">NSTimeInterval</span> timeoutInterval = sself.downloadTimeout;</div><div class="line">        <span class="keyword">if</span> (timeoutInterval == <span class="number">0.0</span>) &#123;</div><div class="line">            timeoutInterval = <span class="number">15.0</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="comment">// In order to prevent from potential duplicate caching (NSURLCache + SDImageCache) we disable the cache for image requests if told otherwise</span></div><div class="line">        <span class="built_in">NSMutableURLRequest</span> *request = [[<span class="built_in">NSMutableURLRequest</span> alloc] initWithURL:url cachePolicy:(options &amp; SDWebImageDownloaderUseNSURLCache ? <span class="built_in">NSURLRequestUseProtocolCachePolicy</span> : <span class="built_in">NSURLRequestReloadIgnoringLocalCacheData</span>) timeoutInterval:timeoutInterval];</div><div class="line">        request.HTTPShouldHandleCookies = (options &amp; SDWebImageDownloaderHandleCookies);</div><div class="line">        request.HTTPShouldUsePipelining = <span class="literal">YES</span>;</div><div class="line">        <span class="keyword">if</span> (sself.headersFilter) &#123;</div><div class="line">            request.allHTTPHeaderFields = sself.headersFilter(url, [sself.HTTPHeaders <span class="keyword">copy</span>]);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">else</span> &#123;</div><div class="line">            request.allHTTPHeaderFields = sself.HTTPHeaders;</div><div class="line">        &#125;</div><div class="line">        SDWebImageDownloaderOperation *operation = [[sself.operationClass alloc] initWithRequest:request inSession:sself.session options:options];</div><div class="line">        operation.shouldDecompressImages = sself.shouldDecompressImages;</div><div class="line">        </div><div class="line">        <span class="keyword">if</span> (sself.urlCredential) &#123;</div><div class="line">            operation.credential = sself.urlCredential;</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (sself.username &amp;&amp; sself.password) &#123;</div><div class="line">            operation.credential = [<span class="built_in">NSURLCredential</span> credentialWithUser:sself.username password:sself.password persistence:<span class="built_in">NSURLCredentialPersistenceForSession</span>];</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        <span class="keyword">if</span> (options &amp; SDWebImageDownloaderHighPriority) &#123;</div><div class="line">            operation.queuePriority = <span class="built_in">NSOperationQueuePriorityHigh</span>;</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (options &amp; SDWebImageDownloaderLowPriority) &#123;</div><div class="line">            operation.queuePriority = <span class="built_in">NSOperationQueuePriorityLow</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        [sself.downloadQueue addOperation:operation];</div><div class="line">        <span class="keyword">if</span> (sself.executionOrder == SDWebImageDownloaderLIFOExecutionOrder) &#123;</div><div class="line">            <span class="comment">// Emulate LIFO execution order by systematically adding new operations as last operation's dependency</span></div><div class="line">            [sself.lastAddedOperation addDependency:operation];</div><div class="line">            sself.lastAddedOperation = operation;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> operation;</div><div class="line">    &#125;];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这里有对SDWebImageDownloaderOperation进行保存处理，确保同一个URL只会创建一次，避免内存的额外消耗。添加对token的初始化和管理，把operation的初始化和token的初始化进行业务上一些小分离，代码层次立马清晰起来了，赞！<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">nullable</span> SDWebImageDownloadToken *)addProgressCallback:(SDWebImageDownloaderProgressBlock)progressBlock</div><div class="line">                                           completedBlock:(SDWebImageDownloaderCompletedBlock)completedBlock</div><div class="line">                                                   forURL:(<span class="keyword">nullable</span> <span class="built_in">NSURL</span> *)url</div><div class="line">                                           createCallback:(SDWebImageDownloaderOperation *(^)())createCallback &#123;</div><div class="line">    <span class="comment">// The URL will be used as the key to the callbacks dictionary so it cannot be nil. If it is nil immediately call the completed block with no image or data.</span></div><div class="line">    <span class="keyword">if</span> (url == <span class="literal">nil</span>) &#123;</div><div class="line">        <span class="keyword">if</span> (completedBlock != <span class="literal">nil</span>) &#123;</div><div class="line">            completedBlock(<span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">NO</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="literal">nil</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    __block SDWebImageDownloadToken *token = <span class="literal">nil</span>;</div><div class="line"></div><div class="line">    dispatch_barrier_sync(<span class="keyword">self</span>.barrierQueue, ^&#123;</div><div class="line">        SDWebImageDownloaderOperation *operation = <span class="keyword">self</span>.URLOperations[url];</div><div class="line">        <span class="keyword">if</span> (!operation) &#123;</div><div class="line">            operation = createCallback();</div><div class="line">            <span class="keyword">self</span>.URLOperations[url] = operation;</div><div class="line"></div><div class="line">            __<span class="keyword">weak</span> SDWebImageDownloaderOperation *woperation = operation;</div><div class="line">            operation.completionBlock = ^&#123;</div><div class="line">              SDWebImageDownloaderOperation *soperation = woperation;</div><div class="line">              <span class="keyword">if</span> (!soperation) <span class="keyword">return</span>;</div><div class="line">              <span class="keyword">if</span> (<span class="keyword">self</span>.URLOperations[url] == soperation) &#123;</div><div class="line">                  [<span class="keyword">self</span>.URLOperations removeObjectForKey:url];</div><div class="line">              &#125;;</div><div class="line">            &#125;;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">id</span> downloadOperationCancelToken = [operation addHandlersForProgress:progressBlock completed:completedBlock];</div><div class="line"></div><div class="line">        token = [SDWebImageDownloadToken new];</div><div class="line">        token.url = url;</div><div class="line">        token.downloadOperationCancelToken = downloadOperationCancelToken;</div><div class="line">    &#125;);</div><div class="line"></div><div class="line">    <span class="keyword">return</span> token;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">nullable</span> SDWebImageDownloadToken *)downloadImageWithURL:(<span class="keyword">nullable</span> <span class="built_in">NSURL</span> *)url</span><br><span class="line">                                                   options:(SDWebImageDownloaderOptions)options</span><br><span class="line">                                                  progress:(<span class="keyword">nullable</span> SDWebImageDownloaderProgressBlock)progressBlock</span><br><span class="line">                                                 completed:(<span class="keyword">nullable</span> SDWebImageDownloaderCompletedBlock)completedBlock &#123;</span><br><span class="line">    __<span class="keyword">weak</span> SDWebImageDownloader *wself = <span class="keyword">self</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> [<span class="keyword">self</span> addProgressCallback:progressBlock completedBlock:completedBlock forURL:url createCallback:^SDWebImageDownloaderOperation *&#123;</span><br><span class="line">        __<span class="keyword">strong</span> __<span class="keyword">typeof</span> (wself) sself = wself;</span><br><span class="line">        <span class="built_in">NSTimeInterval</span> timeoutInterval = sself.downloadTimeout;</span><br><span class="line">        <span class="keyword">if</span> (timeoutInterval == <span class="number">0.0</span>) &#123;</span><br><span class="line">            timeoutInterval = <span class="number">15.0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// In order to prevent from potential duplicate caching (NSURLCache + SDImageCache) we disable the cache for image requests if told otherwise</span></span><br><span class="line">        <span class="built_in">NSMutableURLRequest</span> *request = [[<span class="built_in">NSMutableURLRequest</span> alloc] initWithURL:url cachePolicy:(options &amp; SDWebImageDownloaderUseNSURLCache ? <span class="built_in">NSURLRequestUseProtocolCachePolicy</span> : <span class="built_in">NSURLRequestReloadIgnoringLocalCacheData</span>) timeoutInterval:timeoutInterval];</span><br><span class="line">        request.HTTPShouldHandleCookies = (options &amp; SDWebImageDownloaderHandleCookies);</span><br><span class="line">        request.HTTPShouldUsePipelining = <span class="literal">YES</span>;</span><br><span class="line">        <span class="keyword">if</span> (sself.headersFilter) &#123;</span><br><span class="line">            request.allHTTPHeaderFields = sself.headersFilter(url, [sself.HTTPHeaders <span class="keyword">copy</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            request.allHTTPHeaderFields = sself.HTTPHeaders;</span><br><span class="line">        &#125;</span><br><span class="line">        SDWebImageDownloaderOperation *operation = [[sself.operationClass alloc] initWithRequest:request inSession:sself.session options:options];</span><br><span class="line">        operation.shouldDecompressImages = sself.shouldDecompressImages;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (sself.urlCredential) &#123;</span><br><span class="line">            operation.credential = sself.urlCredential;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (sself.username &amp;&amp; sself.password) &#123;</span><br><span class="line">            operation.credential = [<span class="built_in">NSURLCredential</span> credentialWithUser:sself.username password:sself.password persistence:<span class="built_in">NSURLCredentialPersistenceForSession</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (options &amp; SDWebImageDownloaderHighPriority) &#123;</span><br><span class="line">            operation.queuePriority = <span class="built_in">NSOperationQueuePriorityHigh</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (options &amp; SDWebImageDownloaderLowPriority) &#123;</span><br><span class="line">            operation.queuePriority = <span class="built_in">NSOperationQueuePriorityLow</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        [sself.downloadQueue addOperation:operation];</span><br><span class="line">        <span class="keyword">if</span> (sself.executionOrder == SDWebImageDownloaderLIFOExecutionOrder) &#123;</span><br><span class="line">            <span class="comment">// Emulate LIFO execution order by systematically adding new operations as last operation's dependency</span></span><br><span class="line">            [sself.lastAddedOperation addDependency:operation];</span><br><span class="line">            sself.lastAddedOperation = operation;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> operation;</span><br><span class="line">    &#125;];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里有对SDWebImageDownloaderOperation进行保存处理，确保同一个URL只会创建一次，避免内存的额外消耗。添加对token的初始化和管理，把operation的初始化和token的初始化进行业务上一些小分离，代码层次立马清晰起来了，赞！<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">nullable</span> SDWebImageDownloadToken *)addProgressCallback:(SDWebImageDownloaderProgressBlock)progressBlock</span><br><span class="line">                                           completedBlock:(SDWebImageDownloaderCompletedBlock)completedBlock</span><br><span class="line">                                                   forURL:(<span class="keyword">nullable</span> <span class="built_in">NSURL</span> *)url</span><br><span class="line">                                           createCallback:(SDWebImageDownloaderOperation *(^)())createCallback &#123;</span><br><span class="line">    <span class="comment">// The URL will be used as the key to the callbacks dictionary so it cannot be nil. If it is nil immediately call the completed block with no image or data.</span></span><br><span class="line">    <span class="keyword">if</span> (url == <span class="literal">nil</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (completedBlock != <span class="literal">nil</span>) &#123;</span><br><span class="line">            completedBlock(<span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">NO</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    __block SDWebImageDownloadToken *token = <span class="literal">nil</span>;</span><br><span class="line"></span><br><span class="line">    dispatch_barrier_sync(<span class="keyword">self</span>.barrierQueue, ^&#123;</span><br><span class="line">        SDWebImageDownloaderOperation *operation = <span class="keyword">self</span>.URLOperations[url];</span><br><span class="line">        <span class="keyword">if</span> (!operation) &#123;</span><br><span class="line">            operation = createCallback();</span><br><span class="line">            <span class="keyword">self</span>.URLOperations[url] = operation;</span><br><span class="line"></span><br><span class="line">            __<span class="keyword">weak</span> SDWebImageDownloaderOperation *woperation = operation;</span><br><span class="line">            operation.completionBlock = ^&#123;</span><br><span class="line">              SDWebImageDownloaderOperation *soperation = woperation;</span><br><span class="line">              <span class="keyword">if</span> (!soperation) <span class="keyword">return</span>;</span><br><span class="line">              <span class="keyword">if</span> (<span class="keyword">self</span>.URLOperations[url] == soperation) &#123;</span><br><span class="line">                  [<span class="keyword">self</span>.URLOperations removeObjectForKey:url];</span><br><span class="line">              &#125;;</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">id</span> downloadOperationCancelToken = [operation addHandlersForProgress:progressBlock completed:completedBlock];</span><br><span class="line"></span><br><span class="line">        token = [SDWebImageDownloadToken new];</span><br><span class="line">        token.url = url;</span><br><span class="line">        token.downloadOperationCancelToken = downloadOperationCancelToken;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> token;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p> 好了，SDWebImageView的下载环节就到这里，看来那句话确实没说错，源码面前，没有神秘，哈哈！下一小节主要研究下SDWebImageView是如何对图片进行缓存操作的。</p>
 <hr>
-<p>参考资料<br>[1]. <a href="https://github.com/rs/SDWebImage" target="_blank" rel="external">SDWebimage在github上的地址</a><br>[2]. <a href="http://cocoadocs.org/docsets/SDWebImage/3.8.2/" target="_blank" rel="external">英文版的使用说明</a><br>[3]. <a href="https://github.com/rs/SDWebImage/wiki/Who-Uses-SDWebImage" target="_blank" rel="external">使用SDWebimage的app列表</a></p>
+<p>参考资料<br>[1]. <a href="https://github.com/rs/SDWebImage" target="_blank" rel="noopener">SDWebimage在github上的地址</a><br>[2]. <a href="http://cocoadocs.org/docsets/SDWebImage/3.8.2/" target="_blank" rel="noopener">英文版的使用说明</a><br>[3]. <a href="https://github.com/rs/SDWebImage/wiki/Who-Uses-SDWebImage" target="_blank" rel="noopener">使用SDWebimage的app列表</a></p>
 <hr>
 
-      
     </div>
 
-    <div>
-      
-        
-
-      
-    </div>
-
-    <div>
-      
-        
-
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/三方库研究/" rel="tag"># 三方库研究</a>
-          
-        </div>
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2016/12/29/如何使用subline-text2-作为markdown的编辑工具/" rel="next" title="如何使用subline-text2-作为markdown的编辑工具">
-                <i class="fa fa-chevron-left"></i> 如何使用subline-text2-作为markdown的编辑工具
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/01/06/SDWebImage学习笔记（二）/" rel="prev" title="SDWebImage学习笔记（二）">
-                SDWebImage学习笔记（二） <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </article>
-
-
-
-    <div class="post-spread">
-      
-    </div>
-  </div>
-
-
-          </div>
-          
-
-
-          
-  <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/12/30/SDWebImage学习笔记/"
-           data-title="SDWebImage学习笔记（一）" data-url="http://yoursite.com/2016/12/30/SDWebImage学习笔记/">
+    
+    
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center;">
+  <img id="wechat_subscriber_qcode" src="/images/wechat_qcode.jpeg" alt="火三 wechat" style="width: 200px; max-width: 100%;">
+  <div>扫码二维码，关注我的公众号，一起交流学习</div>
+</div>
+
+      
+        
+      
+        <div class="reward-container">
+  <div></div>
+  <button disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+        
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="火三 微信支付">
+        <p>微信支付</p>
       </div>
+        
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="火三 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/三方库研究/" rel="tag"># 三方库研究</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2016/12/29/如何使用subline-text2-作为markdown的编辑工具/" rel="next" title="如何使用subline-text2-作为markdown的编辑工具">
+                  <i class="fa fa-chevron-left"></i> 如何使用subline-text2-作为markdown的编辑工具
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2017/01/06/SDWebImage学习笔记（二）/" rel="prev" title="SDWebImage学习笔记（二）">
+                  SDWebImage学习笔记（二） <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
     
+  </article>
+  
+  
+  
+
   </div>
 
 
+          </div>
+          
+
         </div>
-        
           
   
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
   </div>
 
-  <aside id="sidebar" class="sidebar">
+  <aside class="sidebar">
     <div class="sidebar-inner">
-
+        
+        
+        
+        
       
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
 
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
-
-      <section class="site-overview sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <img class="site-author-image" itemprop="image"
-               src="/images/avatar.gif"
-               alt="小顽童" />
-          <p class="site-author-name" itemprop="name">小顽童</p>
-          <p class="site-description motion-element" itemprop="description">学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜兮</p>
-        </div>
-        <nav class="site-state motion-element">
-        
-          
-            <div class="site-state-item site-state-posts">
-              <a href="/archives">
-                <span class="site-state-item-count">22</span>
-                <span class="site-state-item-name">日志</span>
-              </a>
-            </div>
-          
-
-          
-            <div class="site-state-item site-state-categories">
-              <a href="/categories">
-                <span class="site-state-item-count">1</span>
-                <span class="site-state-item-name">分类</span>
-              </a>
-            </div>
-          
-
-          
-            <div class="site-state-item site-state-tags">
-              <a href="/tags">
-                <span class="site-state-item-count">6</span>
-                <span class="site-state-item-name">标签</span>
-              </a>
-            </div>
-          
-
-        </nav>
-
-        
-
-        <div class="links-of-author motion-element">
-          
-        </div>
-
-        
-        
-
-        
-        
-          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
-            <div class="links-of-blogroll-title">
-              <i class="fa  fa-fw fa-globe"></i>
-              
-            </div>
-            <ul class="links-of-blogroll-list">
-              
-                <li class="links-of-blogroll-item">
-                  <a href="https://kaisayoung.github.io/" title="二代的blog" target="_blank">二代的blog</a>
-                </li>
-              
-                <li class="links-of-blogroll-item">
-                  <a href="https://portal.qiniu.com/bucket/ab364743113/resource" title="七牛云" target="_blank">七牛云</a>
-                </li>
-              
-            </ul>
-          </div>
-        
-
-        
-
-
-      </section>
-
-      
       <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#特性"><span class="nav-number">2.</span> <span class="nav-text">特性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#支持的图片格式"><span class="nav-number">3.</span> <span class="nav-text">支持的图片格式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用要求"><span class="nav-number">4.</span> <span class="nav-text">使用要求</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见问题"><span class="nav-number">5.</span> <span class="nav-text">常见问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#架构图"><span class="nav-number">6.</span> <span class="nav-text">架构图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文"><span class="nav-number">7.</span> <span class="nav-text">正文</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#下载"><span class="nav-number">7.1.</span> <span class="nav-text">下载</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SDWebImageDownloaderOperation任务的创建及取消"><span class="nav-number">7.1.1.</span> <span class="nav-text">SDWebImageDownloaderOperation任务的创建及取消</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SDWebImageDownloaderOperation任务的初始化以及任务的执行"><span class="nav-number">7.1.2.</span> <span class="nav-text">SDWebImageDownloaderOperation任务的初始化以及任务的执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SDWebImageDownloader对下载任务的封装"><span class="nav-number">7.1.3.</span> <span class="nav-text">SDWebImageDownloader对下载任务的封装</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#小结"><span class="nav-number">8.</span> <span class="nav-text">小结</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#特性"><span class="nav-number">2.</span> <span class="nav-text">特性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#支持的图片格式"><span class="nav-number">3.</span> <span class="nav-text">支持的图片格式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用要求"><span class="nav-number">4.</span> <span class="nav-text">使用要求</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常见问题"><span class="nav-number">5.</span> <span class="nav-text">常见问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#架构图"><span class="nav-number">6.</span> <span class="nav-text">架构图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正文"><span class="nav-number">7.</span> <span class="nav-text">正文</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#下载"><span class="nav-number">7.1.</span> <span class="nav-text">下载</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SDWebImageDownloaderOperation任务的创建及取消"><span class="nav-number">7.1.1.</span> <span class="nav-text">SDWebImageDownloaderOperation任务的创建及取消</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SDWebImageDownloaderOperation任务的初始化以及任务的执行"><span class="nav-number">7.1.2.</span> <span class="nav-text">SDWebImageDownloaderOperation任务的初始化以及任务的执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SDWebImageDownloader对下载任务的封装"><span class="nav-number">7.1.3.</span> <span class="nav-text">SDWebImageDownloader对下载任务的封装</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#小结"><span class="nav-number">8.</span> <span class="nav-text">小结</span></a></li></ol></div>
+        
+      </div>
       <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.gif"
+      alt="火三">
+  <p class="site-author-name" itemprop="name">火三</p>
+  <div class="site-description" itemprop="description">学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜兮</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives">
+        
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
       
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
 
     </div>
   </aside>
+  <div id="sidebar-dimmer"></div>
 
 
-        
       </div>
     </main>
 
-    <footer id="footer" class="footer">
+    <footer class="footer">
       <div class="footer-inner">
-        <div class="copyright" >
-  
+        
+
+<div class="copyright">
   &copy; 
   <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
-    <i class="fa fa-heart"></i>
+    <i class="fa fa-user"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">小顽童</span>
+  <span class="author" itemprop="copyrightHolder">火三</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">161k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">2:26</span>
 </div>
-
-
-<div class="powered-by">
-  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
-</div>
-
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Pisces
-  </a>
-</div>
-
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    主题 – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.4.1
+  </div>
 
         
+
+
+
+
+
+
+
+
+
+
+
 
         
       </div>
     </footer>
-
-    <div class="back-to-top">
-      <i class="fa fa-arrow-up"></i>
-    </div>
   </div>
 
   
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/pisces.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
 
-<script type="text/javascript">
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
-  }
-</script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -662,105 +648,9 @@
 
   
 
-
-
-  
-  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
-
-  
-  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
-
-  
-  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
-
-  
-  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-
-  
-  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-
-  
-  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
-
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
-
-
-
-  
-  
-
-
-  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
-
-  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
-
-
-
-  
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
-
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
-
-
-
   
 
   
-    
-  
-
-  <script type="text/javascript">
-    var duoshuoQuery = {short_name:"ab364743113"};
-    (function() {
-      var ds = document.createElement('script');
-      ds.type = 'text/javascript';ds.async = true;
-      ds.id = 'duoshuo-script';
-      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-      ds.charset = 'UTF-8';
-      (document.getElementsByTagName('head')[0]
-      || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
-  </script>
-
-  
-    
-    
-    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
-    <script src="/js/src/hook-duoshuo.js"></script>
-  
-
-
-
-
-
-
-
-
-
-
-  
-  
-
-  
-
-  
-
-  
-
-  
-
 
 </body>
 </html>

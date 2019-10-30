@@ -55,21 +55,19 @@
   };
 </script>
 
-  <meta name="description" content="一、OC对象的本质oc的对象占多大内存空间？ 答案是16个字节，为什么是16个，一个oc对象内部只存放了一个isa指针，而在64位系统中，一个指针占据的空间是8字节，但是为了字节对齐，最小的内存空间分配为16个字节。  oc的对象，是由类创建的，类在oc里面是Class，那么Class的本质是什么？实际上class是由c的结构体构成的。参阅runtime中的objc.h文件可知,具体实现如下">
+  <meta name="description" content="一、问题ios开发人员可能对cocoapod比较熟悉，在维护个人的cocoapod版本的时候，会遇到一个问题，那么就是本地代码库修改了文件，一般需要做如下三步操作  代码功能开发完毕，提交代码到git服务器 修改.podspec文件中的版本号 给对应的提交打上tag，以便pod发布时需要 使用pod trunk push 命令，发布到cocoapod  步骤比较多，修改版本和打tag，有时候容易遗">
+<meta name="keywords" content="python">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ios底层原理：OC对象">
-<meta property="og:url" content="http://yoursite.com/2019/10/10/ios底层原理：OC对象/index.html">
+<meta property="og:title" content="Python结合cocoapod自动发布版本实践">
+<meta property="og:url" content="http://yoursite.com/2019/10/18/Python结合cocoapod自动发布版本实践/index.html">
 <meta property="og:site_name" content="火三">
-<meta property="og:description" content="一、OC对象的本质oc的对象占多大内存空间？ 答案是16个字节，为什么是16个，一个oc对象内部只存放了一个isa指针，而在64位系统中，一个指针占据的空间是8字节，但是为了字节对齐，最小的内存空间分配为16个字节。  oc的对象，是由类创建的，类在oc里面是Class，那么Class的本质是什么？实际上class是由c的结构体构成的。参阅runtime中的objc.h文件可知,具体实现如下">
+<meta property="og:description" content="一、问题ios开发人员可能对cocoapod比较熟悉，在维护个人的cocoapod版本的时候，会遇到一个问题，那么就是本地代码库修改了文件，一般需要做如下三步操作  代码功能开发完毕，提交代码到git服务器 修改.podspec文件中的版本号 给对应的提交打上tag，以便pod发布时需要 使用pod trunk push 命令，发布到cocoapod  步骤比较多，修改版本和打tag，有时候容易遗">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://yoursite.com/2019/10/10/ios底层原理：OC对象/1.png">
-<meta property="og:image" content="http://yoursite.com/2019/10/10/ios底层原理：OC对象/2.png">
-<meta property="og:updated_time" content="2019-10-10T10:26:32.362Z">
+<meta property="og:updated_time" content="2019-10-18T07:40:13.850Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ios底层原理：OC对象">
-<meta name="twitter:description" content="一、OC对象的本质oc的对象占多大内存空间？ 答案是16个字节，为什么是16个，一个oc对象内部只存放了一个isa指针，而在64位系统中，一个指针占据的空间是8字节，但是为了字节对齐，最小的内存空间分配为16个字节。  oc的对象，是由类创建的，类在oc里面是Class，那么Class的本质是什么？实际上class是由c的结构体构成的。参阅runtime中的objc.h文件可知,具体实现如下">
-<meta name="twitter:image" content="http://yoursite.com/2019/10/10/ios底层原理：OC对象/1.png">
-  <link rel="canonical" href="http://yoursite.com/2019/10/10/ios底层原理：OC对象/">
+<meta name="twitter:title" content="Python结合cocoapod自动发布版本实践">
+<meta name="twitter:description" content="一、问题ios开发人员可能对cocoapod比较熟悉，在维护个人的cocoapod版本的时候，会遇到一个问题，那么就是本地代码库修改了文件，一般需要做如下三步操作  代码功能开发完毕，提交代码到git服务器 修改.podspec文件中的版本号 给对应的提交打上tag，以便pod发布时需要 使用pod trunk push 命令，发布到cocoapod  步骤比较多，修改版本和打tag，有时候容易遗">
+  <link rel="canonical" href="http://yoursite.com/2019/10/18/Python结合cocoapod自动发布版本实践/">
 
 
 <script id="page-configurations">
@@ -83,7 +81,7 @@
   };
 </script>
 
-  <title>ios底层原理：OC对象 | 火三</title>
+  <title>Python结合cocoapod自动发布版本实践 | 火三</title>
   
 
 
@@ -241,7 +239,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/10/ios底层原理：OC对象/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/18/Python结合cocoapod自动发布版本实践/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="火三">
@@ -255,7 +253,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            ios底层原理：OC对象
+            Python结合cocoapod自动发布版本实践
             
 
           
@@ -272,7 +270,7 @@
                 
               
 
-              <time title="创建时间：2019-10-10 17:35:06 / 修改时间：18:26:32" itemprop="dateCreated datePublished" datetime="2019-10-10T17:35:06+08:00">2019-10-10</time>
+              <time title="创建时间：2019-10-18 15:30:29 / 修改时间：15:40:13" itemprop="dateCreated datePublished" datetime="2019-10-18T15:30:29+08:00">2019-10-18</time>
             </span>
           
             
@@ -289,7 +287,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span>986</span>
+              <span>1.5k</span>
             </span>
           
             <span class="post-meta-item" title="阅读时长">
@@ -312,28 +310,18 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h3 id="一、OC对象的本质"><a href="#一、OC对象的本质" class="headerlink" title="一、OC对象的本质"></a>一、OC对象的本质</h3><p><strong>oc的对象占多大内存空间？</strong></p>
-<p>答案是16个字节，为什么是16个，一个oc对象内部只存放了一个isa指针，而在64位系统中，一个指针占据的空间是8字节，但是为了字节对齐，最小的内存空间分配为16个字节。</p>
-<p><img src="/2019/10/10/ios底层原理：OC对象/1.png" alt></p>
-<p>oc的对象，是由类创建的，类在oc里面是Class，那么Class的本质是什么？实际上class是由c的结构体构成的。<strong>参阅runtime中的objc.h文件可知,</strong>具体实现如下</p>
-<a id="more"></a>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> objc_class &#123;</span><br><span class="line">    Class _Nonnull isa  OBJC_ISA_AVAILABILITY;</span><br><span class="line"></span><br><span class="line"><span class="meta">#if !__OBJC2__</span></span><br><span class="line">    Class _Nullable super_class                              OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> * _Nonnull name                               OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">long</span> version                                             OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">long</span> info                                                OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">long</span> instance_size                                       OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">struct</span> objc_ivar_list * _Nullable ivars                  OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">struct</span> objc_method_list * _Nullable * _Nullable methodLists                    OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">struct</span> objc_cache * _Nonnull cache                       OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">struct</span> objc_protocol_list * _Nullable protocols          OBJC2_UNAVAILABLE;</span><br><span class="line"><span class="meta">#endif</span></span><br><span class="line"></span><br><span class="line">&#125; OBJC2_UNAVAILABLE;</span><br></pre></td></tr></table></figure>
-<p>每一个oc对象里面都有一个isa指针。如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">	struct objc_object &#123;</span><br><span class="line">    Class _Nonnull isa  OBJC_ISA_AVAILABILITY;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h3 id="二、对象的成员变量"><a href="#二、对象的成员变量" class="headerlink" title="二、对象的成员变量"></a>二、对象的成员变量</h3><p>oc对象的成员变量，方法，协议统统都是存放在class里面。在上面的objc_class结构体中，很明显可以看到这一点。</p>
-<h3 id="三、也来聊聊isa"><a href="#三、也来聊聊isa" class="headerlink" title="三、也来聊聊isa"></a>三、也来聊聊isa</h3><p>上一张大神图</p>
-<p><img src="/2019/10/10/ios底层原理：OC对象/2.png" alt></p>
-<p>记住一点：</p>
+        <h3 id="一、问题"><a href="#一、问题" class="headerlink" title="一、问题"></a>一、问题</h3><p>ios开发人员可能对cocoapod比较熟悉，在维护个人的cocoapod版本的时候，会遇到一个问题，那么就是本地代码库修改了文件，一般需要做如下三步操作</p>
 <ol>
-<li><p><strong>对象的isa指向的是：由谁创建的当前对象</strong>。</p>
-</li>
-<li><p><strong>NSObject类的superclass 为nil</strong></p>
-</li>
-<li><p><strong>NSObject元类的isa指向的是它自己</strong></p>
-</li>
+<li>代码功能开发完毕，提交代码到git服务器</li>
+<li>修改.podspec文件中的版本号</li>
+<li>给对应的提交打上tag，以便pod发布时需要</li>
+<li>使用pod trunk push 命令，发布到cocoapod</li>
 </ol>
-<hr>
-<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="https://www.jianshu.com/p/ffd742041946" target="_blank" rel="noopener">ios底层原理探究</a></p>
+<p>步骤比较多，修改版本和打tag，有时候容易遗漏，如果发布失败的话，还需要重新再修改版本，打tag。很浪费时间，基于此，结合我最近研究的python，写了一个脚本。来实现一键提交代码、发布pod库的功能</p>
+<a id="more"></a>
+<h3 id="二、脚本"><a href="#二、脚本" class="headerlink" title="二、脚本"></a>二、脚本</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#encoding:utf-8</span></span><br><span class="line"><span class="comment">#!usr/bin/python</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f = open(<span class="string">"CYKit.podspec"</span>, <span class="string">"r+"</span>)</span><br><span class="line"><span class="keyword">print</span> (<span class="string">"文件名为: "</span>, f.name)</span><br><span class="line"> </span><br><span class="line">shouldModifire = <span class="string">''</span> </span><br><span class="line">content = <span class="string">''</span></span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> f.readlines():                          <span class="comment">#依次读取每行  </span></span><br><span class="line">    content = content + line</span><br><span class="line">    line = line.strip()                             <span class="comment">#去掉每行头尾空白  </span></span><br><span class="line">    <span class="keyword">if</span> <span class="string">'s.version = "0'</span> <span class="keyword">in</span> line:</span><br><span class="line">    	shouldModifire = line</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#查找到需要修改的行</span></span><br><span class="line">print(<span class="string">'shouldModifire%s'</span>%shouldModifire)</span><br><span class="line">items = shouldModifire.split(<span class="string">'='</span>)</span><br><span class="line">print(items)</span><br><span class="line">versions = items[<span class="number">1</span>].split(<span class="string">'.'</span>)</span><br><span class="line">versions_last_length = len(versions[<span class="number">2</span>])</span><br><span class="line">versions_last = int(versions[<span class="number">2</span>][:versions_last_length<span class="number">-1</span>])</span><br><span class="line">versions_last_int = (versions_last) + <span class="number">1</span></span><br><span class="line">newVersion = str(versions[<span class="number">0</span>])+<span class="string">'.'</span>+ str(versions[<span class="number">1</span>]) + <span class="string">'.'</span> + str(versions_last_int) + <span class="string">'"'</span></span><br><span class="line">shouldReplaceItem = items[<span class="number">0</span>] + <span class="string">'='</span> + newVersion</span><br><span class="line"></span><br><span class="line"><span class="comment">#替换相应的版本号，并写入文件</span></span><br><span class="line">replaceed = content.replace(shouldModifire,shouldReplaceItem)</span><br><span class="line">print(<span class="string">'修改版本号:'</span> + shouldModifire + <span class="string">'=&gt;'</span> +  shouldReplaceItem)</span><br><span class="line"></span><br><span class="line"><span class="comment">#写入文件</span></span><br><span class="line">f.seek(<span class="number">0</span>)</span><br><span class="line">f.truncate()	</span><br><span class="line">f.write(replaceed)</span><br><span class="line">f.flush()</span><br><span class="line"><span class="comment">#关闭文件</span></span><br><span class="line">f.close()</span><br><span class="line"></span><br><span class="line"><span class="comment">#代码提交</span></span><br><span class="line">os.system(<span class="string">'git add .'</span>)</span><br><span class="line">os.system(<span class="string">'git commit -a -m "【脚本】修改相应版本号"'</span>)</span><br><span class="line">os.system(<span class="string">'git push origin master'</span>)</span><br><span class="line">os.system(<span class="string">'git tag -a '</span> + newVersion + <span class="string">' -m '</span> + <span class="string">'tag版本号'</span>)</span><br><span class="line">os.system(<span class="string">'git push --tags'</span>)</span><br><span class="line"><span class="comment">#提交到cocoapods</span></span><br><span class="line">os.system(<span class="string">'pod trunk push --allow-warnings'</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="三、遇到的问题"><a href="#三、遇到的问题" class="headerlink" title="三、遇到的问题"></a>三、遇到的问题</h3><p>总体来说开发还算顺利，唯一卡壳的地方就是，读取本地文件，修改里面的版本号，这里使用了暴力的写文件方式。</p>
+<p>好了，又可以开心的撸代码了，see u</p>
 
     </div>
 
@@ -373,14 +361,23 @@
       
 
       <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/python/" rel="tag"># python</a>
+            
+          </div>
+        
 
         
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
               
-                <a href="/2019/09/29/xcode自动打包实践/" rel="next" title="xcode自动打包实践">
-                  <i class="fa fa-chevron-left"></i> xcode自动打包实践
+                <a href="/2019/10/17/Hexo升级3-9-0实践/" rel="next" title="Hexo升级3.9.0实践">
+                  <i class="fa fa-chevron-left"></i> Hexo升级3.9.0实践
                 </a>
               
             </div>
@@ -389,8 +386,8 @@
 
             <div class="post-nav-prev post-nav-item">
               
-                <a href="/2019/10/16/Python学习笔记（一）/" rel="prev" title="Python学习笔记（一）">
-                  Python学习笔记（一） <i class="fa fa-chevron-right"></i>
+                <a href="/2019/10/30/修改Mac系统的命令行默认启动为Python3/" rel="prev" title="修改Mac系统的命令行默认启动为Python3">
+                  修改Mac系统的命令行默认启动为Python3 <i class="fa fa-chevron-right"></i>
                 </a>
               
             </div>
@@ -436,7 +433,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、OC对象的本质"><span class="nav-number">1.</span> <span class="nav-text">一、OC对象的本质</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、对象的成员变量"><span class="nav-number">2.</span> <span class="nav-text">二、对象的成员变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、也来聊聊isa"><span class="nav-number">3.</span> <span class="nav-text">三、也来聊聊isa</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参考文章"><span class="nav-number">3.1.</span> <span class="nav-text">参考文章</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、问题"><span class="nav-number">1.</span> <span class="nav-text">一、问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、脚本"><span class="nav-number">2.</span> <span class="nav-text">二、脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、遇到的问题"><span class="nav-number">3.</span> <span class="nav-text">三、遇到的问题</span></a></li></ol></div>
         
       </div>
       <!--/noindex-->

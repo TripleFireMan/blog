@@ -55,21 +55,18 @@
   };
 </script>
 
-  <meta name="description" content="一、OC对象的本质oc的对象占多大内存空间？ 答案是16个字节，为什么是16个，一个oc对象内部只存放了一个isa指针，而在64位系统中，一个指针占据的空间是8字节，但是为了字节对齐，最小的内存空间分配为16个字节。  oc的对象，是由类创建的，类在oc里面是Class，那么Class的本质是什么？实际上class是由c的结构体构成的。参阅runtime中的objc.h文件可知,具体实现如下">
+  <meta name="description" content="今天来继续学习下pytho中的函数 学习目标 如何定义函数及带不同参数的函数  函数模块  global、nonlocal、lambda">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ios底层原理：OC对象">
-<meta property="og:url" content="http://yoursite.com/2019/10/10/ios底层原理：OC对象/index.html">
+<meta property="og:title" content="Python学习笔记（三）">
+<meta property="og:url" content="http://yoursite.com/2019/10/30/Python学习笔记（三）/index.html">
 <meta property="og:site_name" content="火三">
-<meta property="og:description" content="一、OC对象的本质oc的对象占多大内存空间？ 答案是16个字节，为什么是16个，一个oc对象内部只存放了一个isa指针，而在64位系统中，一个指针占据的空间是8字节，但是为了字节对齐，最小的内存空间分配为16个字节。  oc的对象，是由类创建的，类在oc里面是Class，那么Class的本质是什么？实际上class是由c的结构体构成的。参阅runtime中的objc.h文件可知,具体实现如下">
+<meta property="og:description" content="今天来继续学习下pytho中的函数 学习目标 如何定义函数及带不同参数的函数  函数模块  global、nonlocal、lambda">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://yoursite.com/2019/10/10/ios底层原理：OC对象/1.png">
-<meta property="og:image" content="http://yoursite.com/2019/10/10/ios底层原理：OC对象/2.png">
-<meta property="og:updated_time" content="2019-10-10T10:26:32.362Z">
+<meta property="og:updated_time" content="2019-10-30T14:45:08.087Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ios底层原理：OC对象">
-<meta name="twitter:description" content="一、OC对象的本质oc的对象占多大内存空间？ 答案是16个字节，为什么是16个，一个oc对象内部只存放了一个isa指针，而在64位系统中，一个指针占据的空间是8字节，但是为了字节对齐，最小的内存空间分配为16个字节。  oc的对象，是由类创建的，类在oc里面是Class，那么Class的本质是什么？实际上class是由c的结构体构成的。参阅runtime中的objc.h文件可知,具体实现如下">
-<meta name="twitter:image" content="http://yoursite.com/2019/10/10/ios底层原理：OC对象/1.png">
-  <link rel="canonical" href="http://yoursite.com/2019/10/10/ios底层原理：OC对象/">
+<meta name="twitter:title" content="Python学习笔记（三）">
+<meta name="twitter:description" content="今天来继续学习下pytho中的函数 学习目标 如何定义函数及带不同参数的函数  函数模块  global、nonlocal、lambda">
+  <link rel="canonical" href="http://yoursite.com/2019/10/30/Python学习笔记（三）/">
 
 
 <script id="page-configurations">
@@ -83,7 +80,7 @@
   };
 </script>
 
-  <title>ios底层原理：OC对象 | 火三</title>
+  <title>Python学习笔记（三） | 火三</title>
   
 
 
@@ -241,7 +238,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/10/ios底层原理：OC对象/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/30/Python学习笔记（三）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="火三">
@@ -255,7 +252,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            ios底层原理：OC对象
+            Python学习笔记（三）
             
 
           
@@ -272,7 +269,7 @@
                 
               
 
-              <time title="创建时间：2019-10-10 17:35:06 / 修改时间：18:26:32" itemprop="dateCreated datePublished" datetime="2019-10-10T17:35:06+08:00">2019-10-10</time>
+              <time title="创建时间：2019-10-30 16:58:13 / 修改时间：22:45:08" itemprop="dateCreated datePublished" datetime="2019-10-30T16:58:13+08:00">2019-10-30</time>
             </span>
           
             
@@ -289,7 +286,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span>986</span>
+              <span>1.1k</span>
             </span>
           
             <span class="post-meta-item" title="阅读时长">
@@ -312,28 +309,67 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h3 id="一、OC对象的本质"><a href="#一、OC对象的本质" class="headerlink" title="一、OC对象的本质"></a>一、OC对象的本质</h3><p><strong>oc的对象占多大内存空间？</strong></p>
-<p>答案是16个字节，为什么是16个，一个oc对象内部只存放了一个isa指针，而在64位系统中，一个指针占据的空间是8字节，但是为了字节对齐，最小的内存空间分配为16个字节。</p>
-<p><img src="/2019/10/10/ios底层原理：OC对象/1.png" alt></p>
-<p>oc的对象，是由类创建的，类在oc里面是Class，那么Class的本质是什么？实际上class是由c的结构体构成的。<strong>参阅runtime中的objc.h文件可知,</strong>具体实现如下</p>
+        <p>今天来继续学习下pytho中的函数</p>
+<h3 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h3><ul>
+<li><p>如何定义函数及带不同参数的函数</p>
+</li>
+<li><p>函数模块</p>
+</li>
+<li><p>global、nonlocal、lambda</p>
 <a id="more"></a>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> objc_class &#123;</span><br><span class="line">    Class _Nonnull isa  OBJC_ISA_AVAILABILITY;</span><br><span class="line"></span><br><span class="line"><span class="meta">#if !__OBJC2__</span></span><br><span class="line">    Class _Nullable super_class                              OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> * _Nonnull name                               OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">long</span> version                                             OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">long</span> info                                                OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">long</span> instance_size                                       OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">struct</span> objc_ivar_list * _Nullable ivars                  OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">struct</span> objc_method_list * _Nullable * _Nullable methodLists                    OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">struct</span> objc_cache * _Nonnull cache                       OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">struct</span> objc_protocol_list * _Nullable protocols          OBJC2_UNAVAILABLE;</span><br><span class="line"><span class="meta">#endif</span></span><br><span class="line"></span><br><span class="line">&#125; OBJC2_UNAVAILABLE;</span><br></pre></td></tr></table></figure>
-<p>每一个oc对象里面都有一个isa指针。如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">	struct objc_object &#123;</span><br><span class="line">    Class _Nonnull isa  OBJC_ISA_AVAILABILITY;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h3 id="二、对象的成员变量"><a href="#二、对象的成员变量" class="headerlink" title="二、对象的成员变量"></a>二、对象的成员变量</h3><p>oc对象的成员变量，方法，协议统统都是存放在class里面。在上面的objc_class结构体中，很明显可以看到这一点。</p>
-<h3 id="三、也来聊聊isa"><a href="#三、也来聊聊isa" class="headerlink" title="三、也来聊聊isa"></a>三、也来聊聊isa</h3><p>上一张大神图</p>
-<p><img src="/2019/10/10/ios底层原理：OC对象/2.png" alt></p>
-<p>记住一点：</p>
-<ol>
-<li><p><strong>对象的isa指向的是：由谁创建的当前对象</strong>。</p>
 </li>
-<li><p><strong>NSObject类的superclass 为nil</strong></p>
+</ul>
+<h3 id="如何定义函数"><a href="#如何定义函数" class="headerlink" title="如何定义函数"></a>如何定义函数</h3><ol>
+<li><p>无入参的函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sayHello</span><span class="params">()</span>:</span></span><br><span class="line">	print(hello)</span><br></pre></td></tr></table></figure>
 </li>
-<li><p><strong>NSObject元类的isa指向的是它自己</strong></p>
+<li><p>带返回值的函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sayHello</span><span class="params">()</span>:</span></span><br><span class="line">	hello = <span class="string">'hello'</span></span><br><span class="line">	print(hello)</span><br><span class="line">	<span class="keyword">return</span> hello</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>带参数函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">saySomething</span><span class="params">(something)</span>:</span></span><br><span class="line">	print(something)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>有默认值函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sayDefault</span><span class="params">(something=<span class="string">'helloworld'</span>)</span>:</span></span><br><span class="line">	print(something)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>可变参数* ,**</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sayMore</span><span class="params">(*morething)</span>:</span></span><br><span class="line">	<span class="keyword">for</span> a <span class="keyword">in</span> morething:</span><br><span class="line">		print(a)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sayMoreDic</span><span class="params">(**moreDic)</span>:</span></span><br><span class="line">	<span class="keyword">for</span> dic <span class="keyword">in</span> moreDic:</span><br><span class="line">		print(dic)</span><br></pre></td></tr></table></figure>
+<p>*修饰的参数，其实是一个元组，**修饰的参数是一个字典，传入方式如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sayMore(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">sayMoreDic(name=<span class="string">'chengyan'</span>,age=<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>传字典、列表和元组</p>
+<p><strong>传字典和列表进入函数，在函数内修改，也会同步修改外面的值</strong></p>
+<p><strong>传数字、字符串、元组进入函数，在函数内修改，并不会同步修改外面的值</strong></p>
 </li>
 </ol>
+<h3 id="函数模块"><a href="#函数模块" class="headerlink" title="函数模块"></a>函数模块</h3><ol>
+<li><p><strong>定义</strong></p>
+<p>在python里面，新建不同的.py文件，就相当于是创建了函数模块。</p>
+</li>
+<li><p><strong>引用</strong></p>
+<p>通过关键字import xx 来引用相同目录下的文件，这么引用到的函数如果想调用，需要这么写</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> xx</span><br><span class="line">xx.sayHello()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>from xx import xxx</strong></p>
+<p>其中“xx”是模块名称，也就是文件名，”xxx”是我们要引用的函数名称，这么写有一个好处，是可以在调用函数的时候，略去”.”例如</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> xx <span class="keyword">import</span> sayHello</span><br><span class="line">sayHello()</span><br></pre></td></tr></table></figure>
+<p>还有一种写法是from xx import *,这种写法的话，会引入所有的函数</p>
+</li>
+<li><p><strong>模块搜索路径</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path[<span class="number">0</span>] = <span class="string">'函数模块所在路径'</span></span><br><span class="line"><span class="comment">#通过sys.path函数来指定模块搜索路径，用来解决代码文件不在一个文件夹下的问题</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="global、nonlocal、lambda关键字"><a href="#global、nonlocal、lambda关键字" class="headerlink" title="global、nonlocal、lambda关键字"></a>global、nonlocal、lambda关键字</h3><ul>
+<li><p>global 关键字用来在局部作用域内，声明变量为全局变量，从而可以<strong>修改</strong>全局变量</p>
+</li>
+<li><p>nonlocal 关键字用来修改闭包中的变量，将闭包变量修改为局部变量，从而可以修改闭包变量</p>
+</li>
+<li><p>lambda 关键字是用来申明匿名函数的，范例如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sum1 = <span class="keyword">lambda</span> x,y: x+y</span><br><span class="line">print(sum1(<span class="number">2</span>,<span class="number">7</span>))</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
 <hr>
-<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a href="https://www.jianshu.com/p/ffd742041946" target="_blank" rel="noopener">ios底层原理探究</a></p>
+<p>今天主要是学习了下函数的声明、调用、引用以及几个关于函数的关键字，下一节学习基础部分的最后一节类</p>
 
     </div>
 
@@ -379,8 +415,8 @@
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
               
-                <a href="/2019/09/29/xcode自动打包实践/" rel="next" title="xcode自动打包实践">
-                  <i class="fa fa-chevron-left"></i> xcode自动打包实践
+                <a href="/2019/10/30/修改Mac系统的命令行默认启动为Python3/" rel="next" title="修改Mac系统的命令行默认启动为Python3">
+                  <i class="fa fa-chevron-left"></i> 修改Mac系统的命令行默认启动为Python3
                 </a>
               
             </div>
@@ -388,10 +424,6 @@
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-              
-                <a href="/2019/10/16/Python学习笔记（一）/" rel="prev" title="Python学习笔记（一）">
-                  Python学习笔记（一） <i class="fa fa-chevron-right"></i>
-                </a>
               
             </div>
           </div>
@@ -436,7 +468,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、OC对象的本质"><span class="nav-number">1.</span> <span class="nav-text">一、OC对象的本质</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、对象的成员变量"><span class="nav-number">2.</span> <span class="nav-text">二、对象的成员变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、也来聊聊isa"><span class="nav-number">3.</span> <span class="nav-text">三、也来聊聊isa</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参考文章"><span class="nav-number">3.1.</span> <span class="nav-text">参考文章</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#学习目标"><span class="nav-number">1.</span> <span class="nav-text">学习目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何定义函数"><span class="nav-number">2.</span> <span class="nav-text">如何定义函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数模块"><span class="nav-number">3.</span> <span class="nav-text">函数模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#global、nonlocal、lambda关键字"><span class="nav-number">4.</span> <span class="nav-text">global、nonlocal、lambda关键字</span></a></li></ol></div>
         
       </div>
       <!--/noindex-->

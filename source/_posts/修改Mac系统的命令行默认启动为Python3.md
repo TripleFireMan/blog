@@ -1,7 +1,7 @@
 ---
 title: 修改Mac系统的命令行默认启动为Python3
 date: 2019-10-30 10:52:54
-tags:
+tags: python
 ---
 
 ### 问题

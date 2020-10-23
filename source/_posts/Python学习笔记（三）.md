@@ -1,7 +1,7 @@
 ---
 title: Python学习笔记（三）
 date: 2019-10-30 16:58:13
-tags:
+tags: python
 ---
 
 今天来继续学习下pytho中的函数

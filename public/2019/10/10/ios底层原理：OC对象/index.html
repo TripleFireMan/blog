@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>ios底层原理：OC对象 | 火三</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="一、OC对象的本质oc的对象占多大内存空间？ 答案是16个字节，为什么是16个，一个oc对象内部只存放了一个isa指针，而在64位系统中，一个指针占据的空间是8字节，但是为了字节对齐，最小的内存空间分配为16个字节。  oc的对象，是由类创建的，类在oc里面是Class，那么Class的本质是什么？实际上class是由c的结构体构成的。**参阅runtime中的objc.h文件可知,**具体实现如">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ios底层原理：OC对象">
+<meta property="og:url" content="http://example.com/2019/10/10/ios%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%EF%BC%9AOC%E5%AF%B9%E8%B1%A1/index.html">
+<meta property="og:site_name" content="火三">
+<meta property="og:description" content="一、OC对象的本质oc的对象占多大内存空间？ 答案是16个字节，为什么是16个，一个oc对象内部只存放了一个isa指针，而在64位系统中，一个指针占据的空间是8字节，但是为了字节对齐，最小的内存空间分配为16个字节。  oc的对象，是由类创建的，类在oc里面是Class，那么Class的本质是什么？实际上class是由c的结构体构成的。**参阅runtime中的objc.h文件可知,**具体实现如">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2019/10/10/ios%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%EF%BC%9AOC%E5%AF%B9%E8%B1%A1/ios%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%EF%BC%9AOC%E5%AF%B9%E8%B1%A1/1.png">
+<meta property="og:image" content="http://example.com/2019/10/10/ios%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%EF%BC%9AOC%E5%AF%B9%E8%B1%A1/ios%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%EF%BC%9AOC%E5%AF%B9%E8%B1%A1/2.png">
+<meta property="article:published_time" content="2019-10-10T09:35:06.000Z">
+<meta property="article:modified_time" content="2019-10-10T10:26:32.362Z">
+<meta property="article:author" content="火三">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2019/10/10/ios%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%EF%BC%9AOC%E5%AF%B9%E8%B1%A1/ios%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%EF%BC%9AOC%E5%AF%B9%E8%B1%A1/1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="火三" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">火三</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-ios底层原理：OC对象" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/10/10/ios%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%EF%BC%9AOC%E5%AF%B9%E8%B1%A1/" class="article-date">
+  <time class="dt-published" datetime="2019-10-10T09:35:06.000Z" itemprop="datePublished">2019-10-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      ios底层原理：OC对象
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="一、OC对象的本质"><a href="#一、OC对象的本质" class="headerlink" title="一、OC对象的本质"></a>一、OC对象的本质</h3><p><strong>oc的对象占多大内存空间？</strong></p>
+<p>答案是16个字节，为什么是16个，一个oc对象内部只存放了一个isa指针，而在64位系统中，一个指针占据的空间是8字节，但是为了字节对齐，最小的内存空间分配为16个字节。</p>
+<p><img src="ios%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%EF%BC%9AOC%E5%AF%B9%E8%B1%A1/1.png"></p>
+<p>oc的对象，是由类创建的，类在oc里面是Class，那么Class的本质是什么？实际上class是由c的结构体构成的。**参阅runtime中的objc.h文件可知,**具体实现如下</p>
+<!---more--->
+
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> objc_class &#123;</span><br><span class="line">    Class _Nonnull isa  OBJC_ISA_AVAILABILITY;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> !__OBJC2__</span></span><br><span class="line">    Class _Nullable super_class                              OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> * _Nonnull name                               OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">long</span> version                                             OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">long</span> info                                                OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">long</span> instance_size                                       OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">struct</span> objc_ivar_list * _Nullable ivars                  OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">struct</span> objc_method_list * _Nullable * _Nullable methodLists                    OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">struct</span> objc_cache * _Nonnull cache                       OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">struct</span> objc_protocol_list * _Nullable protocols          OBJC2_UNAVAILABLE;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">&#125; OBJC2_UNAVAILABLE;</span><br></pre></td></tr></table></figure>
+
+<p>每一个oc对象里面都有一个isa指针。如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">	struct objc_object &#123;</span><br><span class="line">    Class _Nonnull isa  OBJC_ISA_AVAILABILITY;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="二、对象的成员变量"><a href="#二、对象的成员变量" class="headerlink" title="二、对象的成员变量"></a>二、对象的成员变量</h3><p>oc对象的成员变量，方法，协议统统都是存放在class里面。在上面的objc_class结构体中，很明显可以看到这一点。</p>
+<h3 id="三、也来聊聊isa"><a href="#三、也来聊聊isa" class="headerlink" title="三、也来聊聊isa"></a>三、也来聊聊isa</h3><p>上一张大神图</p>
+<p><img src="ios%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%EF%BC%9AOC%E5%AF%B9%E8%B1%A1/2.png"></p>
+<p>记住一点：</p>
+<ol>
+<li><p><strong>对象的isa指向的是：由谁创建的当前对象</strong>。</p>
+</li>
+<li><p><strong>NSObject类的superclass 为nil</strong></p>
+</li>
+<li><p><strong>NSObject元类的isa指向的是它自己</strong></p>
+</li>
+</ol>
+<hr>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ffd742041946">ios底层原理探究</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2019/10/10/ios%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%EF%BC%9AOC%E5%AF%B9%E8%B1%A1/" data-id="ckipmbcli000hwrtpepd7cbos" data-title="ios底层原理：OC对象" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/10/16/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          Python学习笔记（一）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/09/29/xcode%E8%87%AA%E5%8A%A8%E6%89%93%E5%8C%85%E5%AE%9E%E8%B7%B5/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">xcode自动打包实践</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BD%AC/">转</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredata%E5%AD%A6%E4%B9%A0/" rel="tag">coredata学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%89%E6%96%B9%E5%BA%93%E7%A0%94%E7%A9%B6/" rel="tag">三方库研究</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag">工具</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4/" rel="tag">点点滴滴</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Hexo/" style="font-size: 13.33px;">Hexo</a> <a href="/tags/coredata%E5%AD%A6%E4%B9%A0/" style="font-size: 13.33px;">coredata学习</a> <a href="/tags/python/" style="font-size: 20px;">python</a> <a href="/tags/%E4%B8%89%E6%96%B9%E5%BA%93%E7%A0%94%E7%A9%B6/" style="font-size: 16.67px;">三方库研究</a> <a href="/tags/%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">工具</a> <a href="/tags/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4/" style="font-size: 20px;">点点滴滴</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 10px;">翻译</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/12/15/%E4%BD%BF%E7%94%A8%E9%92%89%E9%92%89%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%B0%86%E7%A6%85%E9%81%93%E4%BB%BB%E5%8A%A1%EF%BC%8C%E8%87%AA%E5%8A%A8%E5%8F%91%E9%80%81%E5%88%B0%E9%92%89%E9%92%89%E7%BE%A4%E7%BB%84/">使用钉钉机器人将禅道任务，自动发送到钉钉群组</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/30/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/">Python学习笔记（三）</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/30/%E4%BF%AE%E6%94%B9Mac%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%BB%98%E8%AE%A4%E5%90%AF%E5%8A%A8%E4%B8%BAPython3/">修改Mac系统的命令行默认启动为Python3</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/18/Python%E7%BB%93%E5%90%88cocoapod%E8%87%AA%E5%8A%A8%E5%8F%91%E5%B8%83%E7%89%88%E6%9C%AC%E5%AE%9E%E8%B7%B5/">Python结合cocoapod自动发布版本实践</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/17/Hexo%E5%8D%87%E7%BA%A73-9-0%E5%AE%9E%E8%B7%B5/">Hexo升级3.9.0实践</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2020 火三<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

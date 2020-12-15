@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>《CoreData》系列（二） | 火三</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="CoreData数据迁移以及版本升级   1 概述 为什么要有数据迁移？由于CoreData可视化的特殊性，那么当数据模型发生变化时，相应的sqlite数据库的表由于不知道model发生了变化，表结构必须相应的做出调整，否则会导致程序Crash，CoreData的解决方案是通过创建新的sqlite表，然后将旧的数据迁移到新表上得方案来处理。下面分别介绍三种数据迁移的方式，并详细说明三种迁移方式的应">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《CoreData》系列（二）">
+<meta property="og:url" content="http://example.com/2016/08/27/%E3%80%8ACoreData%E3%80%8B%E7%B3%BB%E5%88%97%EF%BC%88%E4%BA%8C%EF%BC%89/index.html">
+<meta property="og:site_name" content="火三">
+<meta property="og:description" content="CoreData数据迁移以及版本升级   1 概述 为什么要有数据迁移？由于CoreData可视化的特殊性，那么当数据模型发生变化时，相应的sqlite数据库的表由于不知道model发生了变化，表结构必须相应的做出调整，否则会导致程序Crash，CoreData的解决方案是通过创建新的sqlite表，然后将旧的数据迁移到新表上得方案来处理。下面分别介绍三种数据迁移的方式，并详细说明三种迁移方式的应">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://ock9zbzms.bkt.clouddn.com/20151106182444884.jpg">
+<meta property="og:image" content="http://ock9zbzms.bkt.clouddn.com/20151106183204704.jpg">
+<meta property="og:image" content="http://ock9zbzms.bkt.clouddn.com/20151106183355504.jpg">
+<meta property="og:image" content="http://ock9zbzms.bkt.clouddn.com/coredata20151106184607971.jpg">
+<meta property="article:published_time" content="2016-08-27T11:58:16.000Z">
+<meta property="article:modified_time" content="2017-01-20T15:15:14.000Z">
+<meta property="article:author" content="火三">
+<meta property="article:tag" content="coredata学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://ock9zbzms.bkt.clouddn.com/20151106182444884.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="火三" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">火三</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-《CoreData》系列（二）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2016/08/27/%E3%80%8ACoreData%E3%80%8B%E7%B3%BB%E5%88%97%EF%BC%88%E4%BA%8C%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2016-08-27T11:58:16.000Z" itemprop="datePublished">2016-08-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      《CoreData》系列（二）
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>CoreData数据迁移以及版本升级</p>
+<!---more--->
+
+<p><a href="#1">1 概述</a></p>
+<p>为什么要有数据迁移？<br>由于CoreData可视化的特殊性，那么当数据模型发生变化时，相应的sqlite数据库的表由于不知道model发生了变化，表结构必须相应的做出调整，否则会导致程序Crash，CoreData的解决方案是通过创建新的sqlite表，然后将旧的数据迁移到新表上得方案来处理。下面分别介绍三种数据迁移的方式，并详细说明三种迁移方式的应用场景和注意事项。</p>
+<p>1.轻量级的数据迁移方式<br>2.默认的迁移方式<br>3.使用迁移管理器</p>
+<p><a href="#2">1.1 轻量级的数据迁移方式</a></p>
+<p>轻量级的数据迁移，也就是说，并不需要程序员做很多事情就可以完成数据的迁移，是由系统默认进行的数据迁移。<br>那么如何进行轻量级的数据迁移呢，当model的表字段发生变化，且应用程序已经发布过版本时，此时千万不能单单修改原model来达到修改model的目的，如果这样做的话，程序会crash。正确的做法是，</p>
+<p>1.新建一个model，并将model命名为model2，并将model2设置为当前model。<br>2.修改NSPersistentStoreCoordinator加载缓存区的配置。具体如下</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSDictionary</span> *option = @&#123;<span class="built_in">NSMigratePersistentStoresAutomaticallyOption</span>:@(<span class="literal">YES</span>),  </span><br><span class="line">                         <span class="built_in">NSInferMappingModelAutomaticallyOption</span>:@(<span class="literal">YES</span>),  </span><br><span class="line">                         &#125;;  </span><br><span class="line">  </span><br><span class="line">_store = [_coordinate addPersistentStoreWithType:<span class="built_in">NSSQLiteStoreType</span>  </span><br><span class="line">                                   configuration:<span class="literal">nil</span>  </span><br><span class="line">                                             URL:[<span class="keyword">self</span> storeUrl]  </span><br><span class="line">                                         options:option  </span><br><span class="line">                                           error:&amp;error]; </span><br></pre></td></tr></table></figure>
+<p> tips：使用iCloud开发程序的app，只能使用这种迁移方式。</p>
+<p> <a href="#2">1.2 默认的迁移方式</a></p>
+<p> 正常情况下，使用轻量级的数据迁移已经足够了，但是如果由于开发需要，需要将某个Entity下面的某个Attribute迁移到新的Entity下的某个Attribute，那么轻量级的迁移方式就不能够满足需求，这个时候就需要使用默认的迁移方式来进行数据迁移。这里以一个例子代码来详细阐述如何进行默认的迁移</p>
+<p> <img src="http://ock9zbzms.bkt.clouddn.com/20151106182444884.jpg"></p>
+<p>  现在要将Model2里面的Measurement下面的name迁移到Account里面的下面的xyz属性下。<br>1.根据model2来创建一个新model，并命名为model3，然后将model3设置为currentmodel。<br>2.添加新的entity，并命名为Account，添加attribute xyz。<br>3.删除model2里面的Measurement，根据model3创建NSManagerObect的子类Account。<br>4.以model2为soureModel，model3为destinationModel添加一个MappingModel<br>5.按照下图所示设置映射model即可<br>6.最后记得将NSInferMappingModelAutomaticallyOption设置为Yes（coredata会优先读取映射model，如果没有就会自己推断），至此，默认的迁移方式就算是搞定了。</p>
+<p><img src="http://ock9zbzms.bkt.clouddn.com/20151106183204704.jpg"><br><img src="http://ock9zbzms.bkt.clouddn.com/20151106183355504.jpg"></p>
+<p><a href="#2">1.3 迁移管理器</a></p>
+<p>简单概述下何为迁移管理器，迁移管理器，就是不再使用系统的NSPersistentCoordinator进行数据迁移，而是使用NSMigrationManager进行数据缓存区的迁移。并配合一个数据迁移视图控制器提供优雅的迁移等待界面。等待界面如下，是不是感觉很丑呢，哈哈。那么使用迁移管理器的好处又是什么呢？可以实现更加精细化的数据操作，此外还能向用户报告迁移进度。有这俩点，还不够我们去研究下它么?Let’s go!</p>
+<p><img src="http://ock9zbzms.bkt.clouddn.com/coredata20151106184607971.jpg"></p>
+<p>准备工作<br>    何时启用迁移管理器，即迁移的时机？<br>    迁移工作如何进行？<br>    迁移完成如何善后？</p>
+<p>下面对上面的问题一一来做解答<br>迁移的时机，迁移工作需要在载入数据库的时候进行，即上节所讲的 loadStore：的时候进行，但是呢？还需要做一些判断工作。具体代码如下</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)loadStore  </span><br><span class="line">&#123;  </span><br><span class="line">    <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;Running %@ ,&#x27;%@&#x27;&quot;</span>,[<span class="keyword">self</span> <span class="keyword">class</span>], <span class="built_in">NSStringFromSelector</span>(_cmd));  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    <span class="keyword">if</span> (_store) &#123;  </span><br><span class="line">        <span class="keyword">return</span>;  </span><br><span class="line">    &#125;  </span><br><span class="line">    </span><br><span class="line">    <span class="built_in">BOOL</span> useMigrateManager = MigrationMode;  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">if</span> (useMigrateManager &amp;&amp; [<span class="keyword">self</span> isMigrationNecessaryForStore:[<span class="keyword">self</span> storeUrl]]) &#123;  </span><br><span class="line">        [<span class="keyword">self</span> performBackgroundManagedMigrationForStore:[<span class="keyword">self</span> storeUrl]];  </span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;  </span><br><span class="line">        <span class="built_in">NSError</span> *error;  </span><br><span class="line">          </span><br><span class="line">        <span class="comment">//NSMigratePersistentStoresAutomaticallyOption coreData尝试将低版本的数据模型向高版本进行迁移  </span></span><br><span class="line">        <span class="comment">//NSInferMappingModelAutomaticallyOption    coredata会自动创建迁移模型，会去自动尝试  </span></span><br><span class="line">        <span class="built_in">NSDictionary</span> *option = @&#123;<span class="built_in">NSMigratePersistentStoresAutomaticallyOption</span>:@(<span class="literal">YES</span>),  </span><br><span class="line">                                 <span class="built_in">NSInferMappingModelAutomaticallyOption</span>:@(<span class="literal">YES</span>),  </span><br><span class="line">                                 <span class="built_in">NSSQLitePragmasOption</span>:@&#123;<span class="string">@&quot;journal_mode&quot;</span>:<span class="string">@&quot;DELETE&quot;</span>&#125;&#125;;  </span><br><span class="line">          </span><br><span class="line">        _store = [_coordinate addPersistentStoreWithType:<span class="built_in">NSSQLiteStoreType</span>  </span><br><span class="line">                                           configuration:<span class="literal">nil</span>  </span><br><span class="line">                                                     URL:[<span class="keyword">self</span> storeUrl]  </span><br><span class="line">                                                 options:option  </span><br><span class="line">                                                   error:&amp;error];  </span><br><span class="line">        <span class="keyword">if</span> (!_store) &#123;  </span><br><span class="line">            <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">                <span class="built_in">NSLog</span>(<span class="string">@&quot;failed load store,error = %@&quot;</span>,error);  </span><br><span class="line">                abort();  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="keyword">else</span><span class="comment">/**/</span>&#123;  </span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;successfully add store : %@&quot;</span>,_store);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<p>其中有开关，用来控制是否使用迁移管理器，以及系统是否需要进行迁移的判断。系统是否需要迁移的判断代码如下</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">BOOL</span>)isMigrationNecessaryForStore:(<span class="built_in">NSURL</span> *)storeUrl  </span><br><span class="line">&#123;  </span><br><span class="line">    <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;Running %@ &#x27;%@&#x27;&quot;</span>,[<span class="keyword">self</span> <span class="keyword">class</span>],<span class="built_in">NSStringFromSelector</span>(_cmd));  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    <span class="comment">//文件是否存在，如果不存在认为是用户设备上并没有持久化存储区，自然不需要迁移  </span></span><br><span class="line">    <span class="keyword">if</span> (![[<span class="built_in">NSFileManager</span> defaultManager]fileExistsAtPath:[<span class="keyword">self</span> storeUrl].path isDirectory:<span class="literal">nil</span>]) &#123;  </span><br><span class="line">        <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;Skipped Migration, source database missing&quot;</span>);  </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NO</span>;  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">     <span class="built_in">NSError</span> *error                         = <span class="literal">nil</span>;  </span><br><span class="line">     <span class="built_in">NSDictionary</span> *sourceMetaData           = [<span class="built_in">NSPersistentStoreCoordinator</span> metadataForPersistentStoreOfType:<span class="built_in">NSSQLiteStoreType</span>  </span><br><span class="line">                                                                                                     URL:storeUrl  </span><br><span class="line">                                                                                                      error:&amp;error];</span><br><span class="line">    <span class="built_in">NSManagedObjectModel</span> *destinationModel = _coordinate.managedObjectModel;  </span><br><span class="line">      </span><br><span class="line">    <span class="comment">//比较当前对象模型是否与用户之前安装的应用持久化存储区是否兼容。如果兼容，不需要迁移  </span></span><br><span class="line">    <span class="keyword">if</span> ([destinationModel isConfiguration:<span class="literal">nil</span> compatibleWithStoreMetadata:sourceMetaData]) &#123;  </span><br><span class="line">        <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;Skipped Migration, source database is already compatible&quot;</span>);  </span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NO</span>;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">       </span><br><span class="line">    <span class="comment">//所有情况都尝试了，发现还是需要进行数据迁移  </span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;  </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>迁移工作如何进行，众所周知，迁移工作是一项比较耗时间的工作，尤其是在数据库比较大的情况下，那么肯定不能放在前台进行,必须放在后台进行，前台展示加载进度，代码如下</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)performBackgroundManagedMigrationForStore:(<span class="built_in">NSURL</span> *)store  </span><br><span class="line">&#123;  </span><br><span class="line">    <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;Running %@ &#x27;%@&#x27;&quot;</span>,[<span class="keyword">self</span> <span class="keyword">class</span>],<span class="built_in">NSStringFromSelector</span>(_cmd));  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    <span class="built_in">UIStoryboard</span> *sb                      = [<span class="built_in">UIStoryboard</span> storyboardWithName:<span class="string">@&quot;Main&quot;</span> bundle:<span class="literal">nil</span>];  </span><br><span class="line">    <span class="keyword">self</span>.migrationVC                      = [sb instantiateViewControllerWithIdentifier:<span class="string">@&quot;migration&quot;</span>];  </span><br><span class="line">  </span><br><span class="line">    <span class="built_in">UIApplication</span> *app                    = [<span class="built_in">UIApplication</span> sharedApplication];  </span><br><span class="line">    <span class="built_in">UINavigationController</span> *navigationCtl = (<span class="built_in">UINavigationController</span> *)[app keyWindow].rootViewController;  </span><br><span class="line">      </span><br><span class="line">    [navigationCtl presentViewController:<span class="keyword">self</span>.migrationVC  </span><br><span class="line">                                animated:<span class="literal">YES</span>  </span><br><span class="line">                              completion:<span class="literal">nil</span>];  </span><br><span class="line">      </span><br><span class="line">    <span class="built_in">dispatch_async</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, <span class="number">0</span>), ^&#123;  </span><br><span class="line">         </span><br><span class="line">        <span class="built_in">BOOL</span> done = [<span class="keyword">self</span> migrateStore:[<span class="keyword">self</span> storeUrl]];  </span><br><span class="line">        <span class="keyword">if</span> (done) &#123;  </span><br><span class="line">            <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;  </span><br><span class="line">                <span class="built_in">NSError</span> *error              = <span class="literal">nil</span>;  </span><br><span class="line">  </span><br><span class="line">                <span class="built_in">NSDictionary</span> *configuration = @&#123;<span class="built_in">NSMigratePersistentStoresAutomaticallyOption</span>:@(<span class="literal">YES</span>),  </span><br><span class="line">                                                <span class="built_in">NSInferMappingModelAutomaticallyOption</span>:@(<span class="literal">YES</span>),  </span><br><span class="line">                                                <span class="built_in">NSSQLitePragmasOption</span>:@&#123;<span class="string">@&quot;journal_mode&quot;</span>:<span class="string">@&quot;DELETE&quot;</span>&#125;&#125;;  </span><br><span class="line">  </span><br><span class="line">                _store                      = [_coordinate addPersistentStoreWithType:<span class="built_in">NSSQLiteStoreType</span>  </span><br><span class="line">                                                   configuration:<span class="literal">nil</span>  </span><br><span class="line">                                                             URL:[<span class="keyword">self</span> storeUrl]  </span><br><span class="line">                                                         options:configuration  </span><br><span class="line">                                                           error:&amp;error];  </span><br><span class="line">                <span class="keyword">if</span> (_store) &#123;  </span><br><span class="line">                    <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">                        <span class="built_in">NSLog</span>(<span class="string">@&quot;success create store&quot;</span>);  </span><br><span class="line">                    &#125;  </span><br><span class="line">                &#125;<span class="keyword">else</span> &#123;  </span><br><span class="line">                    <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">                        <span class="built_in">NSLog</span>(<span class="string">@&quot;failed, error = %@&quot;</span>,error);  </span><br><span class="line">                    &#125;  </span><br><span class="line">                    abort();  </span><br><span class="line">                &#125;  </span><br><span class="line">                  </span><br><span class="line">                [<span class="keyword">self</span>.migrationVC dismissViewControllerAnimated:<span class="literal">YES</span>  </span><br><span class="line">                                                     completion:<span class="literal">nil</span>];  </span><br><span class="line">                  </span><br><span class="line">                <span class="keyword">self</span>.migrationVC = <span class="literal">nil</span>;  </span><br><span class="line">            &#125;);  </span><br><span class="line">        &#125;  </span><br><span class="line">          </span><br><span class="line">    &#125;);  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来是，真正的迁移过程</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">BOOL</span>)migrateStore:(<span class="built_in">NSURL</span> *)store  </span><br><span class="line">&#123;  </span><br><span class="line">    <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;Running %@ &#x27;%@&#x27;&quot;</span>,[<span class="keyword">self</span> <span class="keyword">class</span>],<span class="built_in">NSStringFromSelector</span>(_cmd));  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">      </span><br><span class="line">    <span class="built_in">NSDictionary</span> *sourceMeta               = [<span class="built_in">NSPersistentStoreCoordinator</span> metadataForPersistentStoreOfType:<span class="built_in">NSSQLiteStoreType</span>  </span><br><span class="line">                                                                                                        URL:store  </span><br><span class="line">                                                                                                      error:<span class="literal">nil</span>];  </span><br><span class="line">  </span><br><span class="line">    <span class="built_in">NSManagedObjectModel</span> *sourceModel      = [<span class="built_in">NSManagedObjectModel</span> mergedModelFromBundles:<span class="literal">nil</span>  </span><br><span class="line">                                                                         forStoreMetadata:sourceMeta];  </span><br><span class="line">  </span><br><span class="line">    <span class="built_in">NSManagedObjectModel</span> *destinationModel = _model;  </span><br><span class="line">    <span class="built_in">NSMappingModel</span> *mappingModel           = [<span class="built_in">NSMappingModel</span> mappingModelFromBundles:<span class="literal">nil</span>  </span><br><span class="line">                                                                      forSourceModel:sourceModel  </span><br><span class="line">                                                                    destinationModel:destinationModel];  </span><br><span class="line">    <span class="keyword">if</span> (mappingModel) &#123;  </span><br><span class="line">        <span class="built_in">NSError</span> *error                       = <span class="literal">nil</span>;  </span><br><span class="line">  </span><br><span class="line">        <span class="built_in">NSMigrationManager</span> *migrationManager = [[<span class="built_in">NSMigrationManager</span> alloc]initWithSourceModel:sourceModel  </span><br><span class="line">                                                                             destinationModel:destinationModel];  </span><br><span class="line">  </span><br><span class="line">        [migrationManager addObserver:<span class="keyword">self</span>  </span><br><span class="line">                           forKeyPath:<span class="string">@&quot;migrationProgress&quot;</span>  </span><br><span class="line">                              options:<span class="built_in">NSKeyValueObservingOptionNew</span>  </span><br><span class="line">                              context:<span class="literal">nil</span>];  </span><br><span class="line">  </span><br><span class="line">        <span class="built_in">NSURL</span> *destinationStore              = [[<span class="keyword">self</span> applicationStoreDirectory]URLByAppendingPathComponent:<span class="string">@&quot;temp.sqlite&quot;</span>];  </span><br><span class="line">        <span class="built_in">BOOL</span> success                         = <span class="literal">NO</span>;  </span><br><span class="line">        success                              = [migrationManager migrateStoreFromURL:store  </span><br><span class="line">                                                    type:<span class="built_in">NSSQLiteStoreType</span>  </span><br><span class="line">                                                 options:<span class="literal">nil</span>  </span><br><span class="line">                                        withMappingModel:mappingModel  </span><br><span class="line">                                        toDestinationURL:destinationStore  </span><br><span class="line">                                         destinationType:<span class="built_in">NSSQLiteStoreType</span>  </span><br><span class="line">                                      destinationOptions:<span class="literal">nil</span>  </span><br><span class="line">                                                   error:&amp;error];  </span><br><span class="line">        <span class="keyword">if</span> (success) &#123;  </span><br><span class="line">            <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">                <span class="built_in">NSLog</span>(<span class="string">@&quot;Migration Successfully!&quot;</span>);  </span><br><span class="line">            &#125;  </span><br><span class="line">            <span class="keyword">if</span> ([<span class="keyword">self</span> replaceStore:store withStore:destinationStore]) &#123;  </span><br><span class="line">                [migrationManager removeObserver:<span class="keyword">self</span> forKeyPath:<span class="string">@&quot;migrationProgress&quot;</span> context:<span class="literal">NULL</span>];  </span><br><span class="line">                [[<span class="built_in">NSNotificationCenter</span> defaultCenter]postNotificationName:someThingChangedNotification object:<span class="literal">nil</span>];  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;  </span><br><span class="line">            <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">                <span class="built_in">NSLog</span>(<span class="string">@&quot;Migration Failed&quot;</span>);  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;  </span><br><span class="line">        <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;Mapping model is NULL&quot;</span>);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后附上俩个辅助方法，用来观察迁移过程和替换数据库的</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">BOOL</span>)replaceStore:(<span class="built_in">NSURL</span> *)old withStore:(<span class="built_in">NSURL</span> *)new  </span><br><span class="line">&#123;  </span><br><span class="line">    <span class="built_in">BOOL</span> success   = <span class="literal">NO</span>;  </span><br><span class="line">    <span class="built_in">NSError</span> *error = <span class="literal">nil</span>;  </span><br><span class="line">    <span class="keyword">if</span> ([[<span class="built_in">NSFileManager</span> defaultManager]removeItemAtURL:old error:&amp;error]) &#123;  </span><br><span class="line">        error = <span class="literal">nil</span>;  </span><br><span class="line">        <span class="keyword">if</span> ([[<span class="built_in">NSFileManager</span> defaultManager]moveItemAtURL:new toURL:old error:&amp;error]) &#123;  </span><br><span class="line">            success = <span class="literal">YES</span>;  </span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;  </span><br><span class="line">            <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">                <span class="built_in">NSLog</span>(<span class="string">@&quot;failed move new store to old&quot;</span>);  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;  </span><br><span class="line">        <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;failed remove old store&quot;</span>);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">return</span> success;  </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)observeValueForKeyPath:(<span class="built_in">NSString</span> *)keyPath ofObject:(<span class="keyword">id</span>)object change:(<span class="built_in">NSDictionary</span> *)change context:(voidvoid *)context  </span><br><span class="line">&#123;  </span><br><span class="line">    <span class="keyword">if</span> ([keyPath isEqualToString:<span class="string">@&quot;migrationProgress&quot;</span>]) &#123;  </span><br><span class="line">        <span class="built_in">dispatch_async</span>(dispatch_get_main_queue(), ^&#123;  </span><br><span class="line">            <span class="keyword">float</span> progress                         = [[change objectForKey:<span class="built_in">NSKeyValueChangeNewKey</span>]floatValue];  </span><br><span class="line">            <span class="keyword">self</span>.migrationVC.progressView.progress = progress;  </span><br><span class="line">  </span><br><span class="line">            <span class="keyword">int</span> percenttage                        = progress * <span class="number">100</span>;  </span><br><span class="line">            <span class="built_in">NSString</span> *string                       = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@&quot;Migration Progress %i%%&quot;</span>,percenttage];  </span><br><span class="line">            <span class="keyword">self</span>.migrationVC.progressLabel.text    = string;  </span><br><span class="line">        &#125;);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+<p>至此，三种数据迁移的方式，都已叙述完毕。<br>[2 小结]（#1）<br>三种迁移方式，各有各的好处，轻量级的迁移可以配套icloud实现云端存储，默认的数据迁移，支持将属性级别的数据进行任意迁移。迁移管理器，可以管理文件存储路径，并能够报告迁移进度，我们在开发过程中，应该按照自己的需求合理选择迁移方式，下一小节结合NSFetchedResultController进行数据的实际应用。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2016/08/27/%E3%80%8ACoreData%E3%80%8B%E7%B3%BB%E5%88%97%EF%BC%88%E4%BA%8C%EF%BC%89/" data-id="ckipmbcll000nwrtpdyhedypo" data-title="《CoreData》系列（二）" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/coredata%E5%AD%A6%E4%B9%A0/" rel="tag">coredata学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/08/27/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4%EF%BC%9ANSScanner%E7%9A%84%E7%94%A8%E6%B3%95%E5%B0%8F%E7%BB%93/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          点点滴滴：NSScanner的用法小结
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/08/27/%E3%80%8ACoreData%E3%80%8B%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">《CoreData》系列（一）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BD%AC/">转</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredata%E5%AD%A6%E4%B9%A0/" rel="tag">coredata学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%89%E6%96%B9%E5%BA%93%E7%A0%94%E7%A9%B6/" rel="tag">三方库研究</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag">工具</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4/" rel="tag">点点滴滴</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Hexo/" style="font-size: 13.33px;">Hexo</a> <a href="/tags/coredata%E5%AD%A6%E4%B9%A0/" style="font-size: 13.33px;">coredata学习</a> <a href="/tags/python/" style="font-size: 20px;">python</a> <a href="/tags/%E4%B8%89%E6%96%B9%E5%BA%93%E7%A0%94%E7%A9%B6/" style="font-size: 16.67px;">三方库研究</a> <a href="/tags/%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">工具</a> <a href="/tags/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4/" style="font-size: 20px;">点点滴滴</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 10px;">翻译</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/12/15/%E4%BD%BF%E7%94%A8%E9%92%89%E9%92%89%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%B0%86%E7%A6%85%E9%81%93%E4%BB%BB%E5%8A%A1%EF%BC%8C%E8%87%AA%E5%8A%A8%E5%8F%91%E9%80%81%E5%88%B0%E9%92%89%E9%92%89%E7%BE%A4%E7%BB%84/">使用钉钉机器人将禅道任务，自动发送到钉钉群组</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/30/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/">Python学习笔记（三）</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/30/%E4%BF%AE%E6%94%B9Mac%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%BB%98%E8%AE%A4%E5%90%AF%E5%8A%A8%E4%B8%BAPython3/">修改Mac系统的命令行默认启动为Python3</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/18/Python%E7%BB%93%E5%90%88cocoapod%E8%87%AA%E5%8A%A8%E5%8F%91%E5%B8%83%E7%89%88%E6%9C%AC%E5%AE%9E%E8%B7%B5/">Python结合cocoapod自动发布版本实践</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/17/Hexo%E5%8D%87%E7%BA%A73-9-0%E5%AE%9E%E8%B7%B5/">Hexo升级3.9.0实践</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2020 火三<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>《CoreData》系列（一） | 火三</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="《题外篇》  学习这个东西贵在日积月累，而且事情往往说起来容易，做起来难，我是一个资深dota玩家，从dota1到dota2，从大学到工作，从2008年到2015年。一直看2009的视频，经常吐槽09视频更新速度慢，但是细细想想，09能保持优酷更新401（最近查看）期视频。又有多少人能做的到。故而最近下了一个决定，每周五务必更新一篇技术博客，就看看自己能坚持多久。 《正文》1 概述本系列研究讨论的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《CoreData》系列（一）">
+<meta property="og:url" content="http://example.com/2016/08/27/%E3%80%8ACoreData%E3%80%8B%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/index.html">
+<meta property="og:site_name" content="火三">
+<meta property="og:description" content="《题外篇》  学习这个东西贵在日积月累，而且事情往往说起来容易，做起来难，我是一个资深dota玩家，从dota1到dota2，从大学到工作，从2008年到2015年。一直看2009的视频，经常吐槽09视频更新速度慢，但是细细想想，09能保持优酷更新401（最近查看）期视频。又有多少人能做的到。故而最近下了一个决定，每周五务必更新一篇技术博客，就看看自己能坚持多久。 《正文》1 概述本系列研究讨论的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://ock9zbzms.bkt.clouddn.com/20151030175726289.jpg">
+<meta property="og:image" content="http://ock9zbzms.bkt.clouddn.com/20151030180051371.jpg">
+<meta property="og:image" content="http://ock9zbzms.bkt.clouddn.com/20151030232125923.png">
+<meta property="article:published_time" content="2016-08-27T08:47:45.000Z">
+<meta property="article:modified_time" content="2017-06-08T15:48:46.000Z">
+<meta property="article:author" content="火三">
+<meta property="article:tag" content="coredata学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://ock9zbzms.bkt.clouddn.com/20151030175726289.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="火三" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">火三</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-《CoreData》系列（一）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2016/08/27/%E3%80%8ACoreData%E3%80%8B%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2016-08-27T08:47:45.000Z" itemprop="datePublished">2016-08-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      《CoreData》系列（一）
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="《题外篇》"><a href="#《题外篇》" class="headerlink" title="《题外篇》"></a>《题外篇》</h2><!---more-->
+
+<p>学习这个东西贵在日积月累，而且事情往往说起来容易，做起来难，我是一个资深dota玩家，从dota1到dota2，从大学到工作，从2008年到2015年。一直看2009的视频，经常吐槽09视频更新速度慢，但是细细想想，09能保持优酷更新401（最近查看）期视频。又有多少人能做的到。<br>故而最近下了一个决定，每周五务必更新一篇技术博客，就看看自己能坚持多久。</p>
+<h2 id="《正文》"><a href="#《正文》" class="headerlink" title="《正文》"></a>《正文》</h2><p><a href="#1">1 概述</a><br>本系列研究讨论的是iOS开发中的一种数据持久化技术－coredata。coredata、sqlite、fmdb的优缺点不是我要讨论的重点</p>
+<p>这个系列的blog主要会研究讨论以下几点<br>    1.快速搭建coredata环境，主要是连接数据库、创建数据库托管对象模型（NSManagerObject）、如何保存数据、查询数据？<br>    2.coredata升级以及数据迁移的三种方式。<br>    3.coredata与viewcontroller的结合，通过NSFetchedResultController使用coredata数据。<br>    4.导入默认数据和前后台context。<br>    5.关系</p>
+<p><a href="#1">2 环境搭建</a></p>
+<p><a href="#2">2.1 导入《CoreData》的framework</a><br>默认读者知道如何创建一个空白的项目，建立好空白项目之后，搜索coredata按图2-1操作，点击添加完成framework的引入。<br><img src="http://ock9zbzms.bkt.clouddn.com/20151030175726289.jpg" alt="图 2-1"></p>
+<p><a href="#2">2.2 创建Model</a><br>完成上述第一步，意味着我们已经可以使用CoreData提供的接口API了，接下来就是如何使用的事儿了。创建一个CoreData文件夹，专门用来放CoreData引擎，创建好文件夹后，右键点击选择newfile，然后按照图2-2所示创建数据库模型文件，并将其命名为Model,然后点击Model,添加Entity（表\Class）,添加Attribute（字段\属性），到这一部，基本上就把Model，创建出来了。并且里面有了数据模型结构，接下来的问题就是，连接数据库，根据模型创建托管对象了<br><img src="http://ock9zbzms.bkt.clouddn.com/20151030180051371.jpg" alt="图 2-2"></p>
+<p><a href="#2">2.3 代码连接数据库</a><br>好啦，前面只是开胃菜，真正的大餐马上就要来了，在吃大餐前，有一些名称需要说明下</p>
+<p>1.NSManagedObjectContext - 托管对象上下文，用来干嘛的呢？望文生意，用来管理托管对象的，负责从数据库中获取对象、保存对象、删除对象等等操作。<br>2.NSManagedObjectModel - 对象模型， 根据我们上面创建的数据模型，创建出托管对象模型，（类似于加工厂的概念，能够用来生产对象的模子）<br>3.NSPersistentStoreCoordinator - 持久化存储协调器，包含数据库的名称、存储数据类型（Sqlite、Xml、内存）、位置等信息<br>4.NSPersistentStore - 持久化存储区</p>
+<p>另外再附一张图来说明这几者的依赖关系<br><img src="http://ock9zbzms.bkt.clouddn.com/20151030232125923.png"></p>
+<p>由于CoreData管理数据的过程较为通用，个人觉的还是封装成一个管理对象较好，方便以后代码复用，这里创建一个CoreDataHelper的类，专门用来管理数据对象，该类的头文件如下</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;Foundation/Foundation.h&gt;  </span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;CoreData/CoreData.h&gt;  </span></span></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">CoreDataHelper</span> : <span class="title">NSObject</span>  </span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSManagedObjectContext</span>       *context;<span class="comment">//托管对象上下文  </span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSManagedObjectModel</span>         *model;<span class="comment">//托管对象模型  </span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSPersistentStoreCoordinator</span> *coordinate;<span class="comment">//持久化存储协调器  </span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">NSPersistentStore</span>            *store;<span class="comment">//持久化存储区  </span></span><br><span class="line">- (<span class="keyword">id</span>)init;             <span class="comment">//初始化  </span></span><br><span class="line">- (<span class="keyword">void</span>)loadStore;      <span class="comment">//加载cordite  </span></span><br><span class="line">- (<span class="keyword">void</span>)setupCoreData;  <span class="comment">//设置cordite相关信息  </span></span><br><span class="line">- (<span class="keyword">void</span>)saveContext;    <span class="comment">//保存context  </span></span><br></pre></td></tr></table></figure>
+<p>CoreDataHelp的实现文件如下</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&quot;CoreDataHelper.h&quot;</span>  </span></span><br><span class="line"><span class="keyword">static</span> <span class="built_in">NSString</span> *storeFileName = <span class="string">@&quot;demo.sqlite&quot;</span>;    <span class="comment">//测试数据库  </span></span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">CoreDataHelper</span>  </span></span><br><span class="line">  </span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> mark - PATHS  </span></span><br><span class="line">  </span><br><span class="line">- (<span class="built_in">NSString</span> *)applicationDocumentDirectory  </span><br><span class="line">&#123;  </span><br><span class="line">    <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;Running %@ &#x27;%@&#x27;&quot;</span>,[<span class="keyword">self</span> <span class="keyword">class</span>],<span class="built_in">NSStringFromSelector</span>(_cmd));  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    <span class="built_in">NSArray</span> *paths = <span class="built_in">NSSearchPathForDirectoriesInDomains</span>(<span class="built_in">NSDocumentDirectory</span>, <span class="built_in">NSUserDomainMask</span>, <span class="literal">YES</span>);  </span><br><span class="line">    <span class="keyword">return</span> [paths lastObject];  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line">- (<span class="built_in">NSURL</span> *)applicationStoreDirectory  </span><br><span class="line">&#123;  </span><br><span class="line">    <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;Running %@ &#x27;%@&#x27;&quot;</span>,[<span class="keyword">self</span> <span class="keyword">class</span>],<span class="built_in">NSStringFromSelector</span>(_cmd));  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    <span class="built_in">NSURL</span> *url = [[<span class="built_in">NSURL</span> fileURLWithPath:[<span class="keyword">self</span> applicationDocumentDirectory]] URLByAppendingPathComponent:<span class="string">@&quot;stores&quot;</span>];  </span><br><span class="line">    <span class="keyword">if</span> (![[<span class="built_in">NSFileManager</span> defaultManager]fileExistsAtPath:[url path]]) &#123;  </span><br><span class="line">        <span class="built_in">NSError</span> *error = <span class="literal">nil</span>;  </span><br><span class="line">        <span class="built_in">BOOL</span> success   = [[<span class="built_in">NSFileManager</span> defaultManager]createDirectoryAtURL:url  </span><br><span class="line">                                               withIntermediateDirectories:<span class="literal">YES</span>  </span><br><span class="line">                                                                attributes:<span class="literal">nil</span>  </span><br><span class="line">                                                                     error:&amp;error];  </span><br><span class="line">        <span class="keyword">if</span> (success) &#123;  </span><br><span class="line">            <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">                <span class="built_in">NSLog</span>(<span class="string">@&quot;success create directory!&quot;</span>);  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;  </span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;failed create directory!&quot;</span>);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    <span class="keyword">return</span> url;  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line">- (<span class="built_in">NSURL</span> *)storeUrl  </span><br><span class="line">&#123;  </span><br><span class="line">    <span class="built_in">NSURL</span> *storeUrl = [[<span class="keyword">self</span> applicationStoreDirectory]URLByAppendingPathComponent:storeFileName];  </span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;storeurl = %@&quot;</span>,storeUrl);  </span><br><span class="line">    <span class="keyword">return</span> storeUrl;  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> mark - SETUP  </span></span><br><span class="line">- (<span class="keyword">id</span>)init  </span><br><span class="line">&#123;  </span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>) &#123;  </span><br><span class="line">        _model      = [<span class="built_in">NSManagedObjectModel</span> mergedModelFromBundles:<span class="literal">nil</span>];  </span><br><span class="line">        _coordinate = [[<span class="built_in">NSPersistentStoreCoordinator</span> alloc]initWithManagedObjectModel:_model];  </span><br><span class="line">        _context    = [[<span class="built_in">NSManagedObjectContext</span> alloc]initWithConcurrencyType:<span class="built_in">NSMainQueueConcurrencyType</span>];  </span><br><span class="line">        [_context setMergePolicy:<span class="built_in">NSMergeByPropertyObjectTrumpMergePolicy</span>];  </span><br><span class="line">        [_context setPersistentStoreCoordinator:_coordinate];  </span><br><span class="line">          </span><br><span class="line">        _importContext = [[<span class="built_in">NSManagedObjectContext</span> alloc]initWithConcurrencyType:<span class="built_in">NSPrivateQueueConcurrencyType</span>];  </span><br><span class="line">          </span><br><span class="line">        [_importContext performBlock:^&#123;  </span><br><span class="line">            [_importContext setPersistentStoreCoordinator:_coordinate];  </span><br><span class="line">            [_importContext setMergePolicy:<span class="built_in">NSMergeByPropertyObjectTrumpMergePolicy</span>];  </span><br><span class="line">            [_importContext setUndoManager:<span class="literal">nil</span>];  </span><br><span class="line">        &#125;];  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line">- (<span class="keyword">void</span>)loadStore  </span><br><span class="line">&#123;  </span><br><span class="line">    <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;Running %@ ,&#x27;%@&#x27;&quot;</span>,[<span class="keyword">self</span> <span class="keyword">class</span>], <span class="built_in">NSStringFromSelector</span>(_cmd));  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    <span class="keyword">if</span> (_store) &#123;  </span><br><span class="line">        <span class="keyword">return</span>;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="built_in">NSError</span> *error;  </span><br><span class="line">          </span><br><span class="line">        <span class="comment">//NSMigratePersistentStoresAutomaticallyOption coreData尝试将低版本的数据模型向高版本进行迁移  </span></span><br><span class="line">        <span class="comment">//NSInferMappingModelAutomaticallyOption    coredata会自动创建迁移模型，会去自动尝试  </span></span><br><span class="line">        <span class="built_in">NSDictionary</span> *option = @&#123;<span class="built_in">NSMigratePersistentStoresAutomaticallyOption</span>:@(<span class="literal">YES</span>),  </span><br><span class="line">                                 <span class="built_in">NSInferMappingModelAutomaticallyOption</span>:@(<span class="literal">YES</span>),  </span><br><span class="line">                                 <span class="built_in">NSSQLitePragmasOption</span>:@&#123;<span class="string">@&quot;journal_mode&quot;</span>:<span class="string">@&quot;DELETE&quot;</span>&#125;&#125;;  </span><br><span class="line">          </span><br><span class="line">        _store = [_coordinate addPersistentStoreWithType:<span class="built_in">NSSQLiteStoreType</span>  </span><br><span class="line">                                           configuration:<span class="literal">nil</span>  </span><br><span class="line">                                                     URL:[<span class="keyword">self</span> storeUrl]  </span><br><span class="line">                                                 options:option  </span><br><span class="line">                                                   error:&amp;error];  </span><br><span class="line">        <span class="keyword">if</span> (!_store) &#123;  </span><br><span class="line">            <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">                <span class="built_in">NSLog</span>(<span class="string">@&quot;failed load store,error = %@&quot;</span>,error);  </span><br><span class="line">                abort();  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="keyword">else</span><span class="comment">/**/</span>&#123;  </span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;successfully add store : %@&quot;</span>,_store);  </span><br><span class="line">        &#125;  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line">- (<span class="keyword">void</span>)setupCoreData  </span><br><span class="line">&#123;  </span><br><span class="line">    [<span class="keyword">self</span> loadStore];  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line">- (<span class="keyword">void</span>)saveContext  </span><br><span class="line">&#123;  </span><br><span class="line">    <span class="keyword">if</span> ([_context hasChanges]) &#123;  </span><br><span class="line">        <span class="built_in">NSError</span> *error = <span class="literal">nil</span>;  </span><br><span class="line">        <span class="keyword">if</span> ([_context save:&amp;error]) &#123;  </span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;context save successfully&quot;</span>);  </span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;  </span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;failed save %@&quot;</span>,error);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;  </span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;skipped context save , there is no changes&quot;</span>);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">@end</span>  </span><br></pre></td></tr></table></figure>
+<p><a href="#2">2.4 最后附上查询和保存数据库的代码</a><br>在AppDelegate.m文件里写一个方法，用来初始化CoreData数据库</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">- (CoreDataHelper *)cdh  </span><br><span class="line">&#123;  </span><br><span class="line">    <span class="keyword">if</span> (!_cdh) &#123;  </span><br><span class="line">        <span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;  </span><br><span class="line">        <span class="built_in">dispatch_once</span>(&amp;onceToken, ^&#123;  </span><br><span class="line">            _cdh = [CoreDataHelper new];  </span><br><span class="line">              </span><br><span class="line">        &#125;);  </span><br><span class="line">        [_cdh setupCoreData];  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">return</span> _cdh;  </span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<p>下面是插入数据，查询、保存数据的方法</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)demo  </span><br><span class="line">&#123;  </span><br><span class="line">    Item *bananer = [<span class="built_in">NSEntityDescription</span> insertNewObjectForEntityForName:<span class="string">@&quot;Item&quot;</span> inManagedObjectContext:[[<span class="keyword">self</span> cdh] context]];  </span><br><span class="line">    bananer.unit = kg;  </span><br><span class="line">    bananer.name = <span class="string">@&quot;bananer&quot;</span>;  </span><br><span class="line">      </span><br><span class="line">    Item *oranger = [<span class="built_in">NSEntityDescription</span> insertNewObjectForEntityForName:<span class="string">@&quot;Item&quot;</span> inManagedObjectContext:[[<span class="keyword">self</span> cdh] context]];  </span><br><span class="line">    oranger.unit = kg;  </span><br><span class="line">    oranger.name = <span class="string">@&quot;Oranger&quot;</span>;  </span><br><span class="line">      </span><br><span class="line">    <span class="built_in">NSFetchRequest</span> *request = [<span class="built_in">NSFetchRequest</span> fetchRequestWithEntityName:<span class="string">@&quot;Item&quot;</span>];  </span><br><span class="line">    <span class="built_in">NSArray</span> *result = [[[<span class="keyword">self</span> cdh]context] executeFetchRequest:request error:<span class="literal">nil</span>];  </span><br><span class="line">    <span class="keyword">for</span> (Item *item <span class="keyword">in</span> result) &#123;  </span><br><span class="line">        <span class="keyword">if</span> (debug) &#123;  </span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;item.name = %@&quot;</span>,item.name);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">    [[<span class="keyword">self</span> cdh]saveContext];  </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<p><a href="#2">2.5 小结</a><br>经过这么一番下来，终于将CoreData技术应用到我们的项目中了，我们现在能做到，把数据插入到数据库、也能从数据库中读取出数据来，也能保存数据。但是要注意这才是刚刚开始，接下来还有更多的coredata问题等着我们，比方说下节要介绍的数据迁移问题。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2016/08/27/%E3%80%8ACoreData%E3%80%8B%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/" data-id="ckipmbclk000lwrtpcpsegr8t" data-title="《CoreData》系列（一）" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/coredata%E5%AD%A6%E4%B9%A0/" rel="tag">coredata学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/08/27/%E3%80%8ACoreData%E3%80%8B%E7%B3%BB%E5%88%97%EF%BC%88%E4%BA%8C%EF%BC%89/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          《CoreData》系列（二）
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BD%AC/">转</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredata%E5%AD%A6%E4%B9%A0/" rel="tag">coredata学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%89%E6%96%B9%E5%BA%93%E7%A0%94%E7%A9%B6/" rel="tag">三方库研究</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag">工具</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4/" rel="tag">点点滴滴</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Hexo/" style="font-size: 13.33px;">Hexo</a> <a href="/tags/coredata%E5%AD%A6%E4%B9%A0/" style="font-size: 13.33px;">coredata学习</a> <a href="/tags/python/" style="font-size: 20px;">python</a> <a href="/tags/%E4%B8%89%E6%96%B9%E5%BA%93%E7%A0%94%E7%A9%B6/" style="font-size: 16.67px;">三方库研究</a> <a href="/tags/%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">工具</a> <a href="/tags/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4/" style="font-size: 20px;">点点滴滴</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 10px;">翻译</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/12/15/%E4%BD%BF%E7%94%A8%E9%92%89%E9%92%89%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%B0%86%E7%A6%85%E9%81%93%E4%BB%BB%E5%8A%A1%EF%BC%8C%E8%87%AA%E5%8A%A8%E5%8F%91%E9%80%81%E5%88%B0%E9%92%89%E9%92%89%E7%BE%A4%E7%BB%84/">使用钉钉机器人将禅道任务，自动发送到钉钉群组</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/30/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/">Python学习笔记（三）</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/30/%E4%BF%AE%E6%94%B9Mac%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%BB%98%E8%AE%A4%E5%90%AF%E5%8A%A8%E4%B8%BAPython3/">修改Mac系统的命令行默认启动为Python3</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/18/Python%E7%BB%93%E5%90%88cocoapod%E8%87%AA%E5%8A%A8%E5%8F%91%E5%B8%83%E7%89%88%E6%9C%AC%E5%AE%9E%E8%B7%B5/">Python结合cocoapod自动发布版本实践</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/17/Hexo%E5%8D%87%E7%BA%A73-9-0%E5%AE%9E%E8%B7%B5/">Hexo升级3.9.0实践</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2020 火三<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

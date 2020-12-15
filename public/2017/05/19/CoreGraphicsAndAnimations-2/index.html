@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>CoreGraphicsAndAnimations(2) | 火三</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="绘图（2）图层合并及Flower生长动画图层合并图层的合并说起来很高大上，其实实际上在IOS里面实现非常的简单，实现原理就是，先获取当前的图片绘图上下文，将当前view的layer渲染到当前的绘图上下文，之后从当前的上下文中获取图片，最后结束当前上下文。返回获取到的图片 可能看代码更直观些。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CoreGraphicsAndAnimations(2)">
+<meta property="og:url" content="http://example.com/2017/05/19/CoreGraphicsAndAnimations-2/index.html">
+<meta property="og:site_name" content="火三">
+<meta property="og:description" content="绘图（2）图层合并及Flower生长动画图层合并图层的合并说起来很高大上，其实实际上在IOS里面实现非常的简单，实现原理就是，先获取当前的图片绘图上下文，将当前view的layer渲染到当前的绘图上下文，之后从当前的上下文中获取图片，最后结束当前上下文。返回获取到的图片 可能看代码更直观些。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2017/05/19/CoreGraphicsAndAnimations-2/CoreGraphicsAndAnimations-2/1.gif">
+<meta property="og:image" content="http://example.com/2017/05/19/CoreGraphicsAndAnimations-2/CoreGraphicsAndAnimations-2/2.gif">
+<meta property="og:image" content="http://example.com/2017/05/19/CoreGraphicsAndAnimations-2/CoreGraphicsAndAnimations-2/4.gif">
+<meta property="og:image" content="http://example.com/2017/05/19/CoreGraphicsAndAnimations-2/CoreGraphicsAndAnimations-2/5.gif">
+<meta property="article:published_time" content="2017-05-19T15:48:14.000Z">
+<meta property="article:modified_time" content="2017-06-08T15:52:04.000Z">
+<meta property="article:author" content="火三">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2017/05/19/CoreGraphicsAndAnimations-2/CoreGraphicsAndAnimations-2/1.gif">
+  
+    <link rel="alternate" href="/atom.xml" title="火三" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">火三</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-CoreGraphicsAndAnimations-2" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2017/05/19/CoreGraphicsAndAnimations-2/" class="article-date">
+  <time class="dt-published" datetime="2017-05-19T15:48:14.000Z" itemprop="datePublished">2017-05-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      CoreGraphicsAndAnimations(2)
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="绘图（2）"><a href="#绘图（2）" class="headerlink" title="绘图（2）"></a>绘图（2）</h1><h2 id="图层合并及Flower生长动画"><a href="#图层合并及Flower生长动画" class="headerlink" title="图层合并及Flower生长动画"></a>图层合并及Flower生长动画</h2><h3 id="图层合并"><a href="#图层合并" class="headerlink" title="图层合并"></a>图层合并</h3><p>图层的合并说起来很高大上，其实实际上在IOS里面实现非常的简单，实现原理就是，先获取当前的图片绘图上下文，将当前view的layer渲染到当前的绘图上下文，之后从当前的上下文中获取图片，最后结束当前上下文。返回获取到的图片</p>
+<p>可能看代码更直观些。</p>
+<a id="more"></a>
+
+<p>注：这是一个view的category方法</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">UIImage</span> *)cy_compositedView</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">UIGraphicsBeginImageContext</span>(<span class="keyword">self</span>.bounds.size);</span><br><span class="line">    [<span class="keyword">self</span>.layer renderInContext:<span class="built_in">UIGraphicsGetCurrentContext</span>()];</span><br><span class="line">    <span class="built_in">UIImage</span> *compositedImage = <span class="built_in">UIGraphicsGetImageFromCurrentImageContext</span>();</span><br><span class="line">    <span class="built_in">UIGraphicsEndImageContext</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> compositedImage;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Flower-生长动画"><a href="#Flower-生长动画" class="headerlink" title="Flower 生长动画"></a>Flower 生长动画</h3><p>flower的生长主要注意的地方就俩点，一个是花的位置安排，一个是花的生长动画。位置的话，需要注意的是我们希望看起来大的花和位置靠下的花，尽量能往前放。这样会有一些层次感。生长动画的话就是希望锚点能在根部，这样会有一种长起来的感觉。</p>
+<p>还有需要注意的就是，我们这里只使用了一个Flower类，然后用这个类去生成了🌺的图片。然后采用初始化UIImageView贴图片的方式创建60朵🌺，这样能大大的节省内存空间。</p>
+<p>代码如下</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)addFlowers</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">CGFloat</span> height = <span class="keyword">self</span>.view.bounds.size.height;</span><br><span class="line">    <span class="built_in">CGFloat</span> width = <span class="keyword">self</span>.view.bounds.size.width;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 花的高度</span></span><br><span class="line">    <span class="built_in">CGFloat</span> flowerHeight = height / <span class="number">6</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 花的起始位置</span></span><br><span class="line">    <span class="built_in">CGFloat</span> flowerY = height * <span class="number">0.3</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建花</span></span><br><span class="line">    CYFlower *flower = [[CYFlower alloc]initWithFrame:<span class="built_in">CGRectMake</span>(<span class="number">0</span>, <span class="number">0</span>, flowerHeight * <span class="number">.7</span>, flowerHeight)];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 生成花图片</span></span><br><span class="line">    <span class="built_in">UIImage</span> *floweimg = [flower cy_compositedView];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 贴花</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">60</span>; i ++) &#123;</span><br><span class="line">        <span class="keyword">int</span> size = height / <span class="number">12.</span>f;</span><br><span class="line">        <span class="built_in">CGFloat</span> flowersize =( arc4random() % (<span class="keyword">int</span>) size) + size;</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">UIImageView</span> *flowerImgView = [[<span class="built_in">UIImageView</span> alloc]initWithFrame:<span class="built_in">CGRectMake</span>(arc4random()%(<span class="keyword">int</span>)width * <span class="number">0.9</span>, arc4random() % (<span class="keyword">int</span>)flowerY + <span class="number">2</span> * flowerY, flowersize * <span class="number">.7</span>, flowersize)];</span><br><span class="line">        flowerImgView.image = floweimg;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// z position设置，这样会有层次感</span></span><br><span class="line">        flowerImgView.layer.zPosition = flowerImgView.frame.origin.y + flowersize;</span><br><span class="line">        [<span class="keyword">self</span>.view addSubview:flowerImgView];</span><br><span class="line">        <span class="comment">// 花生长</span></span><br><span class="line">        [<span class="keyword">self</span> growFlowers:flowerImgView duration:arc4random() % <span class="number">100</span> / <span class="number">25</span> + <span class="number">4</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)growFlowers:(<span class="built_in">UIImageView</span> *)flowers duration:(<span class="built_in">CGFloat</span>)duration</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 花锚点设置</span></span><br><span class="line">    flowers.layer.anchorPoint = <span class="built_in">CGPointMake</span>(<span class="number">.5</span>, <span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 添加动画</span></span><br><span class="line">    <span class="built_in">CABasicAnimation</span> *animation = [<span class="built_in">CABasicAnimation</span> animationWithKeyPath:<span class="string">@&quot;transform.scale&quot;</span>];</span><br><span class="line">    animation.timingFunction = [<span class="built_in">CAMediaTimingFunction</span> functionWithName:kCAMediaTimingFunctionEaseInEaseOut];</span><br><span class="line">    animation.duration = duration;</span><br><span class="line">    animation.fromValue = [<span class="built_in">NSValue</span> valueWithCGSize:<span class="built_in">CGSizeMake</span>(<span class="number">0</span>, <span class="number">0</span>)];</span><br><span class="line">    animation.toValue = [<span class="built_in">NSValue</span> valueWithCGSize:<span class="built_in">CGSizeMake</span>(<span class="number">1</span>, <span class="number">1</span>)];</span><br><span class="line">    [flowers.layer addAnimation:animation forKey:<span class="string">@&quot;grow&quot;</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>下面附上生长动画</p>
+<p><img src="CoreGraphicsAndAnimations-2/1.gif" alt="img"></p>
+<h3 id="利用梯度layer实现太阳升起的动画"><a href="#利用梯度layer实现太阳升起的动画" class="headerlink" title="利用梯度layer实现太阳升起的动画"></a>利用梯度layer实现太阳升起的动画</h3><p>ios里面有一个layer叫CAGradientLayer，这个layer支持线性的梯度，最为关键的是，它有一个colors属性支持动画效果。我们只需要给这个colors数组里面填充颜色对象就可以了，另外我们还希望能够从起点到结束点有个过度。那么需要对startPoint属性做动画。</p>
+<p>最后，不希望视图生成的时候就开始动画，而是在视图贴到父视图上的时候才开始动画，那么layer的动画就要加在-(void)didMoveToSuperView方法上。以下是具体实现代码</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">+ (Class)layerClass</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="built_in">CAGradientLayer</span> <span class="keyword">class</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)didMoveToSuperview</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">self</span>.backgroundColor = [<span class="built_in">UIColor</span> blackColor];</span><br><span class="line">    <span class="built_in">CGColorRef</span> blackcolor = [[<span class="built_in">UIColor</span> blackColor]<span class="built_in">CGColor</span>];</span><br><span class="line">    <span class="built_in">UIColor</span> *color1 = [<span class="built_in">UIColor</span> colorWithRed:<span class="number">0.01</span> green:<span class="number">0.2</span> blue:<span class="number">0.8</span> alpha:<span class="number">1</span>];</span><br><span class="line">    <span class="built_in">UIColor</span> *color2 = [<span class="built_in">UIColor</span> colorWithRed:<span class="number">1</span> green:<span class="number">0.5</span> blue:<span class="number">0</span> alpha:<span class="number">1</span>];</span><br><span class="line">    <span class="built_in">UIColor</span> *color3 = [<span class="built_in">UIColor</span> colorWithRed:<span class="number">.35</span> green:<span class="number">.74</span> blue:<span class="number">.11</span> alpha:<span class="number">1</span>];</span><br><span class="line">    <span class="built_in">NSArray</span> *colors = [<span class="built_in">NSArray</span> arrayWithObjects:(<span class="keyword">id</span>)[color1 <span class="built_in">CGColor</span>],</span><br><span class="line">                       [color2 <span class="built_in">CGColor</span>],</span><br><span class="line">                       [color3 <span class="built_in">CGColor</span>],</span><br><span class="line">                       <span class="literal">nil</span>];</span><br><span class="line">    <span class="built_in">NSNumber</span> *location1 = [<span class="built_in">NSNumber</span> numberWithFloat:<span class="number">.0</span>];</span><br><span class="line">    <span class="built_in">NSNumber</span> *location2 = [<span class="built_in">NSNumber</span> numberWithFloat:<span class="number">.4</span>];</span><br><span class="line">    <span class="built_in">NSNumber</span> *location3 = [<span class="built_in">NSNumber</span> numberWithFloat:<span class="number">.9</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">CAGradientLayer</span> *layer = (<span class="built_in">CAGradientLayer</span> *)[<span class="keyword">self</span> layer];</span><br><span class="line">    layer.colors = colors;</span><br><span class="line">    layer.locations = @[location1,location2,location3];</span><br><span class="line">    layer.startPoint = <span class="built_in">CGPointMake</span>(<span class="number">.5</span>, <span class="number">0</span>);</span><br><span class="line">    layer.endPoint = <span class="built_in">CGPointMake</span>(<span class="number">.5</span>, <span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">CABasicAnimation</span> *animation = [<span class="built_in">CABasicAnimation</span> animationWithKeyPath:<span class="string">@&quot;startPoint&quot;</span>];</span><br><span class="line">    animation.duration = <span class="number">6.</span>f;</span><br><span class="line">    animation.timingFunction = [<span class="built_in">CAMediaTimingFunction</span> functionWithName:kCAMediaTimingFunctionEaseOut];</span><br><span class="line">    animation.fromValue = [<span class="built_in">NSValue</span> valueWithCGPoint:<span class="built_in">CGPointMake</span>(<span class="number">.5</span>, <span class="number">1</span>)];</span><br><span class="line">    </span><br><span class="line">    [layer addAnimation:animation forKey:<span class="string">@&quot;start&quot;</span>];</span><br><span class="line">    </span><br><span class="line">    animation.keyPath = <span class="string">@&quot;colors&quot;</span>;</span><br><span class="line">    animation.duration = <span class="number">6.</span>f;</span><br><span class="line">    animation.timingFunction = [<span class="built_in">CAMediaTimingFunction</span> functionWithName:kCAMediaTimingFunctionEaseOut];</span><br><span class="line">    animation.fromValue = [<span class="built_in">NSArray</span> arrayWithObjects:(__bridge <span class="keyword">id</span>)blackcolor, blackcolor, blackcolor, <span class="literal">nil</span>];</span><br><span class="line">    </span><br><span class="line">    [layer addAnimation:animation forKey:<span class="string">@&quot;color&quot;</span>];</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<p>老规矩附上一张实现的效果图</p>
+<p><img src="CoreGraphicsAndAnimations-2/2.gif"></p>
+<h3 id="云彩飘动"><a href="#云彩飘动" class="headerlink" title="云彩飘动"></a>云彩飘动</h3><p>接下来，我们希望实现的是开篇的时候，展示的云朵从屏幕左侧飘移到屏幕右侧的动画，这里有几个需要注意的点</p>
+<ul>
+<li>云朵轨迹</li>
+<li>云朵投影</li>
+<li>云朵投影和云朵要一起动。</li>
+</ul>
+<p>实现方式的话，这里采用UIBezierPath绘制轨迹，然后内部采用梯度进行填充。云朵的投影采用云朵一半的高度绘制，然后将其设置为云朵的ShadowPath，然后利用shadowoffset属性将云朵投射到足够远的距离，形成一种投影的效果。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)drawRect:(<span class="built_in">CGRect</span>)rect</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">CGFloat</span> height = <span class="keyword">self</span>.bounds.size.height;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">UIBezierPath</span> *path = [<span class="keyword">self</span> createCloudPathWithHeight:height];</span><br><span class="line">    [path addClip];</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">CGGradientRef</span> gradientRef = [<span class="keyword">self</span> gradientWithColor:<span class="keyword">self</span>.innerColor toColor:<span class="keyword">self</span>.outerColor count:<span class="number">2</span>];</span><br><span class="line">    <span class="built_in">CGContextRef</span> context = <span class="built_in">UIGraphicsGetCurrentContext</span>();</span><br><span class="line">    <span class="built_in">CGPoint</span> startPoint = <span class="built_in">CGPointMake</span>(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">CGPoint</span> endPoint = <span class="built_in">CGPointMake</span>(<span class="number">0</span>, height);</span><br><span class="line">    <span class="built_in">CGContextDrawLinearGradient</span>(context, gradientRef, startPoint, endPoint, <span class="number">0</span>);</span><br><span class="line">    </span><br><span class="line">    path.lineWidth = <span class="keyword">self</span>.lineThickness;</span><br><span class="line">    [<span class="keyword">self</span>.strokeColor setStroke];</span><br><span class="line">    [path stroke];</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">UIBezierPath</span> *shadowPath = [<span class="keyword">self</span> createCloudPathWithHeight:height / <span class="number">2</span>];</span><br><span class="line">    <span class="keyword">self</span>.layer.shadowPath = shadowPath.CGPath;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">self</span>.distance) &#123;</span><br><span class="line">        <span class="keyword">self</span>.distance = height * <span class="number">1.8</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">self</span>.layer.shadowOffset = <span class="built_in">CGSizeMake</span>(<span class="number">0</span>, <span class="keyword">self</span>.distance);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">self</span>.layer.shadowOpacity = <span class="number">0.4</span>f;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">self</span>.alpha = <span class="number">0.9</span>f;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">UIBezierPath</span> *)createCloudPathWithHeight:(<span class="built_in">CGFloat</span>)height</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">CGFloat</span> width = <span class="keyword">self</span>.bounds.size.width;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">CGFloat</span> points[] = &#123;</span><br><span class="line">        <span class="number">0.4</span>,<span class="number">0.2</span>,</span><br><span class="line">        <span class="number">0.5</span>,<span class="number">0.1</span>,<span class="number">0.6</span>,<span class="number">0.2</span>,</span><br><span class="line">        <span class="number">0.8</span>,<span class="number">0.2</span>,<span class="number">0.8</span>,<span class="number">0.4</span>,</span><br><span class="line">        <span class="number">0.9</span>,<span class="number">0.5</span>,<span class="number">0.8</span>,<span class="number">0.6</span>,</span><br><span class="line">        <span class="number">0.8</span>,<span class="number">0.8</span>,<span class="number">0.6</span>,<span class="number">0.8</span>,</span><br><span class="line">        <span class="number">0.5</span>,<span class="number">0.9</span>,<span class="number">0.4</span>,<span class="number">0.8</span>,</span><br><span class="line">        <span class="number">0.2</span>,<span class="number">0.8</span>,<span class="number">0.2</span>,<span class="number">0.6</span>,</span><br><span class="line">        <span class="number">0.1</span>,<span class="number">0.5</span>,<span class="number">0.2</span>,<span class="number">0.4</span>,</span><br><span class="line">        <span class="number">0.2</span>,<span class="number">0.2</span>,<span class="number">0.4</span>,<span class="number">0.2</span>,</span><br><span class="line">    &#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">CGPoint</span> cPoint;</span><br><span class="line">    <span class="built_in">CGPoint</span> point;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">UIBezierPath</span> *path = [<span class="built_in">UIBezierPath</span> bezierPath];</span><br><span class="line">    [path moveToPoint:<span class="built_in">CGPointMake</span>(points[<span class="number">0</span>] * width, points[<span class="number">1</span>] * height)];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt; <span class="keyword">sizeof</span>(points) / <span class="keyword">sizeof</span>(<span class="built_in">CGFloat</span>); i += <span class="number">4</span>) &#123;</span><br><span class="line">        cPoint = <span class="built_in">CGPointMake</span>(points[i] * width, points[i + <span class="number">1</span>] * height);</span><br><span class="line">        point  = <span class="built_in">CGPointMake</span>(points[i + <span class="number">2</span>] * width, points[i + <span class="number">3</span>] * height);</span><br><span class="line">        [path addQuadCurveToPoint:point controlPoint:cPoint];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    [path closePath];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> path;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实现的效果图如下</p>
+<p><img src="CoreGraphicsAndAnimations-2/4.gif"></p>
+<h3 id="海鸥"><a href="#海鸥" class="headerlink" title="海鸥"></a>海鸥</h3><p>进行到现在，跟成品图中相差的也就剩下最后一步了，那就是海鸥的绘制，海鸥这里同样还是采用Bezier曲线绘制，不同的是，我们要采用onscreen渲染的方式，绘制出多张海鸥的image，最后将image组合成一个数组，然后用UIImageView的images数组进行展示。</p>
+<p>以下是具体绘制代码</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)didMoveToSuperview</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">self</span>.animationImages) &#123;</span><br><span class="line">        <span class="keyword">self</span>.animationImages = [<span class="keyword">self</span> arrayofImages];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">NSArray</span> *)arrayofImages</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSMutableArray</span> *arr = [<span class="built_in">NSMutableArray</span> arrayWithCapacity:COUNT];</span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">CGFloat</span> i = LOWWING; i &lt; HEIGING; i+=STEP) &#123;</span><br><span class="line">        [arr addObject:[<span class="keyword">self</span> animationFrame:i]];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">CGFloat</span> i = HEIGING; i &gt; LOWWING; i -= STEP) &#123;</span><br><span class="line">        [arr addObject:[<span class="keyword">self</span> animationFrame:i]];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> arr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">- (<span class="built_in">UIImage</span> *)animationFrame:(<span class="built_in">CGFloat</span>)frame</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">CGFloat</span> width = <span class="keyword">self</span>.bounds.size.width;</span><br><span class="line">    <span class="built_in">CGFloat</span> height = <span class="keyword">self</span>.bounds.size.height;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">UIGraphicsBeginImageContextWithOptions</span>(<span class="built_in">CGSizeMake</span>(width, height), <span class="literal">NO</span>, <span class="number">0</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">UIBezierPath</span> *path = [<span class="built_in">UIBezierPath</span> bezierPath];</span><br><span class="line">    [path moveToPoint:<span class="built_in">CGPointMake</span>(<span class="number">0</span>, frame)];</span><br><span class="line">    [path addQuadCurveToPoint:<span class="built_in">CGPointMake</span>(<span class="number">.5</span>, <span class="number">0.6</span> - frame / <span class="number">3</span>) controlPoint:<span class="built_in">CGPointMake</span>(<span class="number">.25</span>, <span class="number">.25</span>)];</span><br><span class="line">    [path addQuadCurveToPoint:<span class="built_in">CGPointMake</span>(<span class="number">1</span>, frame) controlPoint:<span class="built_in">CGPointMake</span>(<span class="number">.75</span>, <span class="number">.25</span>)];</span><br><span class="line">    </span><br><span class="line">    [path applyTransform:<span class="built_in">CGAffineTransformMakeScale</span>(width, height)];</span><br><span class="line">    path.lineWidth = height / <span class="number">30</span>;</span><br><span class="line">    [path stroke];</span><br><span class="line"></span><br><span class="line">    <span class="built_in">UIImage</span> *imge = <span class="built_in">UIGraphicsGetImageFromCurrentImageContext</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">UIGraphicsEndImageContext</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> imge;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>效果图</p>
+<p><img src="CoreGraphicsAndAnimations-2/5.gif"></p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>通过学习绘制图形以及给layer做动画，基本掌握了一些常用的绘制函数和动画实现方法。发现CoreGraphics确实是一个强大的图形绘制库，只要你脑洞大开就能绘制你想到的任意图形，此外图层合并能够大大节省内存空间，如果是静态的多个图层的view。可以考虑做图层渲染，渲染成图片。</p>
+<h2 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h2><p>最后附上本项目在git上的demo，感兴趣的朋友可以<a target="_blank" rel="noopener" href="https://github.com/TripleFireMan/GardenDemo.git">下载</a>下来看看，欢迎star。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2017/05/19/CoreGraphicsAndAnimations-2/" data-id="ckipmbcl70003wrtpfd443eu0" data-title="CoreGraphicsAndAnimations(2)" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/05/23/%E5%85%B3%E4%BA%8ERuntime%E7%9A%84%E4%B8%80%E4%BA%9B%E7%90%86%E8%AE%BA%E5%92%8C%E5%AE%9E%E8%B7%B5/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          关于Runtime的一些理论和实践
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/05/12/CoreGraphicsAndAnimation/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">CoreGraphicsAndAnimation(1)</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BD%AC/">转</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredata%E5%AD%A6%E4%B9%A0/" rel="tag">coredata学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%89%E6%96%B9%E5%BA%93%E7%A0%94%E7%A9%B6/" rel="tag">三方库研究</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag">工具</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4/" rel="tag">点点滴滴</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Hexo/" style="font-size: 13.33px;">Hexo</a> <a href="/tags/coredata%E5%AD%A6%E4%B9%A0/" style="font-size: 13.33px;">coredata学习</a> <a href="/tags/python/" style="font-size: 20px;">python</a> <a href="/tags/%E4%B8%89%E6%96%B9%E5%BA%93%E7%A0%94%E7%A9%B6/" style="font-size: 16.67px;">三方库研究</a> <a href="/tags/%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">工具</a> <a href="/tags/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4/" style="font-size: 20px;">点点滴滴</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 10px;">翻译</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/12/15/%E4%BD%BF%E7%94%A8%E9%92%89%E9%92%89%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%B0%86%E7%A6%85%E9%81%93%E4%BB%BB%E5%8A%A1%EF%BC%8C%E8%87%AA%E5%8A%A8%E5%8F%91%E9%80%81%E5%88%B0%E9%92%89%E9%92%89%E7%BE%A4%E7%BB%84/">使用钉钉机器人将禅道任务，自动发送到钉钉群组</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/30/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/">Python学习笔记（三）</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/30/%E4%BF%AE%E6%94%B9Mac%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%BB%98%E8%AE%A4%E5%90%AF%E5%8A%A8%E4%B8%BAPython3/">修改Mac系统的命令行默认启动为Python3</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/18/Python%E7%BB%93%E5%90%88cocoapod%E8%87%AA%E5%8A%A8%E5%8F%91%E5%B8%83%E7%89%88%E6%9C%AC%E5%AE%9E%E8%B7%B5/">Python结合cocoapod自动发布版本实践</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/17/Hexo%E5%8D%87%E7%BA%A73-9-0%E5%AE%9E%E8%B7%B5/">Hexo升级3.9.0实践</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2020 火三<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

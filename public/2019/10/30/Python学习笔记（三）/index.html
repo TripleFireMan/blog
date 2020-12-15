@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Python学习笔记（三） | 火三</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="今天来继续学习下pytho中的函数 学习目标 如何定义函数及带不同参数的函数  函数模块  global、nonlocal、lambda">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python学习笔记（三）">
+<meta property="og:url" content="http://example.com/2019/10/30/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/index.html">
+<meta property="og:site_name" content="火三">
+<meta property="og:description" content="今天来继续学习下pytho中的函数 学习目标 如何定义函数及带不同参数的函数  函数模块  global、nonlocal、lambda">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-10-30T08:58:13.000Z">
+<meta property="article:modified_time" content="2019-10-30T14:50:49.597Z">
+<meta property="article:author" content="火三">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="火三" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">火三</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Python学习笔记（三）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/10/30/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2019-10-30T08:58:13.000Z" itemprop="datePublished">2019-10-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Python学习笔记（三）
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>今天来继续学习下pytho中的函数</p>
+<h3 id="学习目标"><a href="#学习目标" class="headerlink" title="学习目标"></a>学习目标</h3><ul>
+<li><p>如何定义函数及带不同参数的函数</p>
+</li>
+<li><p>函数模块</p>
+</li>
+<li><p>global、nonlocal、lambda</p>
+<a id="more"></a>
+
+</li>
+</ul>
+<h3 id="如何定义函数"><a href="#如何定义函数" class="headerlink" title="如何定义函数"></a>如何定义函数</h3><ol>
+<li><p>无入参的函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sayHello</span>():</span></span><br><span class="line">	print(hello)	</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>带返回值的函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sayHello</span>():</span></span><br><span class="line">	hello = <span class="string">&#x27;hello&#x27;</span></span><br><span class="line">	print(hello)</span><br><span class="line">	<span class="keyword">return</span> hello</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>带参数函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">saySomething</span>(<span class="params">something</span>):</span></span><br><span class="line">	print(something)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>有默认值函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sayDefault</span>(<span class="params">something=<span class="string">&#x27;helloworld&#x27;</span></span>):</span></span><br><span class="line">	print(something)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>可变参数* ,**</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sayMore</span>(<span class="params">*morething</span>):</span></span><br><span class="line">	<span class="keyword">for</span> a <span class="keyword">in</span> morething:</span><br><span class="line">		print(a)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sayMoreDic</span>(<span class="params">**moreDic</span>):</span></span><br><span class="line">	<span class="keyword">for</span> dic <span class="keyword">in</span> moreDic:</span><br><span class="line">		print(dic)</span><br></pre></td></tr></table></figure>
+
+<p>*修饰的参数，其实是一个元组，**修饰的参数是一个字典，传入方式如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sayMore(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">sayMoreDic(name=<span class="string">&#x27;chengyan&#x27;</span>,age=<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>传字典、列表和元组</p>
+<p><strong>传字典和列表进入函数，在函数内修改，也会同步修改外面的值</strong></p>
+<p><strong>传数字、字符串、元组进入函数，在函数内修改，并不会同步修改外面的值</strong></p>
+</li>
+</ol>
+<h3 id="函数模块"><a href="#函数模块" class="headerlink" title="函数模块"></a>函数模块</h3><ol>
+<li><p><strong>定义</strong></p>
+<p>在python里面，新建不同的.py文件，就相当于是创建了函数模块。</p>
+</li>
+<li><p><strong>引用</strong></p>
+<p>通过关键字import xx 来引用相同目录下的文件，这么引用到的函数如果想调用，需要这么写</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> xx</span><br><span class="line">xx.sayHello()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>from xx import xxx</strong></p>
+<p>其中“xx”是模块名称，也就是文件名，”xxx”是我们要引用的函数名称，这么写有一个好处，是可以在调用函数的时候，略去”.”例如</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> xx <span class="keyword">import</span> sayHello</span><br><span class="line">sayHello()</span><br></pre></td></tr></table></figure>
+
+<p>还有一种写法是from xx import *,这种写法的话，会引入所有的函数</p>
+</li>
+<li><p><strong>模块搜索路径</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path[<span class="number">0</span>] = <span class="string">&#x27;函数模块所在路径&#x27;</span></span><br><span class="line"><span class="comment">#通过sys.path函数来指定模块搜索路径，用来解决代码文件不在一个文件夹下的问题</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h3 id="global、nonlocal、lambda关键字"><a href="#global、nonlocal、lambda关键字" class="headerlink" title="global、nonlocal、lambda关键字"></a>global、nonlocal、lambda关键字</h3><ul>
+<li><p>global 关键字用来在局部作用域内，声明变量为全局变量，从而可以<strong>修改</strong>全局变量</p>
+</li>
+<li><p>nonlocal 关键字用来修改闭包中的变量，将闭包变量修改为局部变量，从而可以修改闭包变量</p>
+</li>
+<li><p>lambda 关键字是用来申明匿名函数的，范例如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sum1 = <span class="keyword">lambda</span> x,y: x+y</span><br><span class="line">print(sum1(<span class="number">2</span>,<span class="number">7</span>))</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+<hr>
+<p>今天主要是学习了下函数的声明、调用、引用以及几个关于函数的关键字，下一节学习基础部分的最后一节类</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2019/10/30/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/" data-id="ckipmbcld0009wrtpef7bc9gf" data-title="Python学习笔记（三）" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/" rel="tag">python</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/12/15/%E4%BD%BF%E7%94%A8%E9%92%89%E9%92%89%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%B0%86%E7%A6%85%E9%81%93%E4%BB%BB%E5%8A%A1%EF%BC%8C%E8%87%AA%E5%8A%A8%E5%8F%91%E9%80%81%E5%88%B0%E9%92%89%E9%92%89%E7%BE%A4%E7%BB%84/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          使用钉钉机器人将禅道任务，自动发送到钉钉群组
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/10/30/%E4%BF%AE%E6%94%B9Mac%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%BB%98%E8%AE%A4%E5%90%AF%E5%8A%A8%E4%B8%BAPython3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">修改Mac系统的命令行默认启动为Python3</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BD%AC/">转</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredata%E5%AD%A6%E4%B9%A0/" rel="tag">coredata学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%89%E6%96%B9%E5%BA%93%E7%A0%94%E7%A9%B6/" rel="tag">三方库研究</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag">工具</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4/" rel="tag">点点滴滴</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Hexo/" style="font-size: 13.33px;">Hexo</a> <a href="/tags/coredata%E5%AD%A6%E4%B9%A0/" style="font-size: 13.33px;">coredata学习</a> <a href="/tags/python/" style="font-size: 20px;">python</a> <a href="/tags/%E4%B8%89%E6%96%B9%E5%BA%93%E7%A0%94%E7%A9%B6/" style="font-size: 16.67px;">三方库研究</a> <a href="/tags/%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">工具</a> <a href="/tags/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4/" style="font-size: 20px;">点点滴滴</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 10px;">翻译</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/12/15/%E4%BD%BF%E7%94%A8%E9%92%89%E9%92%89%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%B0%86%E7%A6%85%E9%81%93%E4%BB%BB%E5%8A%A1%EF%BC%8C%E8%87%AA%E5%8A%A8%E5%8F%91%E9%80%81%E5%88%B0%E9%92%89%E9%92%89%E7%BE%A4%E7%BB%84/">使用钉钉机器人将禅道任务，自动发送到钉钉群组</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/30/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/">Python学习笔记（三）</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/30/%E4%BF%AE%E6%94%B9Mac%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%BB%98%E8%AE%A4%E5%90%AF%E5%8A%A8%E4%B8%BAPython3/">修改Mac系统的命令行默认启动为Python3</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/18/Python%E7%BB%93%E5%90%88cocoapod%E8%87%AA%E5%8A%A8%E5%8F%91%E5%B8%83%E7%89%88%E6%9C%AC%E5%AE%9E%E8%B7%B5/">Python结合cocoapod自动发布版本实践</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/17/Hexo%E5%8D%87%E7%BA%A73-9-0%E5%AE%9E%E8%B7%B5/">Hexo升级3.9.0实践</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2020 火三<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

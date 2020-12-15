@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>使用钉钉机器人将禅道任务，自动发送到钉钉群组 | 火三</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="一、为什么要开发这样一个功能？  禅道，是公司用来对项目进行管理的软件，主要是用来对项目任务、产品bug进行追踪和管理.钉钉，是公司所有员工用来工作沟通的软件 将禅道上面，每个员工工作任务的情况，进行汇总并同步到钉钉群，有助于项目人员及管理人员对项目执行情况快速及时的掌握">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用钉钉机器人将禅道任务，自动发送到钉钉群组">
+<meta property="og:url" content="http://example.com/2020/12/15/%E4%BD%BF%E7%94%A8%E9%92%89%E9%92%89%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%B0%86%E7%A6%85%E9%81%93%E4%BB%BB%E5%8A%A1%EF%BC%8C%E8%87%AA%E5%8A%A8%E5%8F%91%E9%80%81%E5%88%B0%E9%92%89%E9%92%89%E7%BE%A4%E7%BB%84/index.html">
+<meta property="og:site_name" content="火三">
+<meta property="og:description" content="一、为什么要开发这样一个功能？  禅道，是公司用来对项目进行管理的软件，主要是用来对项目任务、产品bug进行追踪和管理.钉钉，是公司所有员工用来工作沟通的软件 将禅道上面，每个员工工作任务的情况，进行汇总并同步到钉钉群，有助于项目人员及管理人员对项目执行情况快速及时的掌握">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-15T02:00:24.000Z">
+<meta property="article:modified_time" content="2020-12-15T06:16:06.122Z">
+<meta property="article:author" content="火三">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="火三" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">火三</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-使用钉钉机器人将禅道任务，自动发送到钉钉群组" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2020/12/15/%E4%BD%BF%E7%94%A8%E9%92%89%E9%92%89%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%B0%86%E7%A6%85%E9%81%93%E4%BB%BB%E5%8A%A1%EF%BC%8C%E8%87%AA%E5%8A%A8%E5%8F%91%E9%80%81%E5%88%B0%E9%92%89%E9%92%89%E7%BE%A4%E7%BB%84/" class="article-date">
+  <time class="dt-published" datetime="2020-12-15T02:00:24.000Z" itemprop="datePublished">2020-12-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      使用钉钉机器人将禅道任务，自动发送到钉钉群组
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><font color=#ff5400 size=5><b>一、为什么要开发这样一个功能？</b></font></p>
+<blockquote>
+<p>禅道，是公司用来对项目进行管理的软件，主要是用来对项目任务、产品bug进行追踪和管理.<br>钉钉，是公司所有员工用来工作沟通的软件</p>
+<p>将禅道上面，每个员工工作任务的情况，进行汇总并同步到钉钉群，有助于项目人员及管理人员对项目执行情况快速及时的掌握</p>
+</blockquote>
+<a id="more"></a>
+<p><strong>下图是最终实现的效果图，钉钉机器人将项目组成员，一周任务完成情况，进行汇总。未完成的任务点击链接可传送到禅道对应的任务页面，进行快速处理</strong></p>
+<img src = http://yun.chengyan.shop/iShot2020-12-13.png width=300>
+
+<p><font color=#ff5400 size=5><b>二、实现原理</b></font></p>
+<ul>
+<li>钉钉的webhook机制</li>
+<li>禅道的二次开发API</li>
+<li>python脚本</li>
+<li>crontab定时器</li>
+</ul>
+<p><font color=#ff5400 size=4><b>钉钉的webhook机制</b></font><br>钉钉的webhook，是可以通过向一个url地址，发送消息，然后钉钉解析之后，会根据消息类型展示不同的样式卡片，而这个url，就是通常我们说的webhook，翻译成中文就是“网络钩子的意思”</p>
+<p>添加一个钉钉群组机器人，大概需要以下四步<br>第一步： 群组中进入群设置<br><img src=http://yun.chengyan.shop/iShot2020-12-13%2008.19.22.png width=300><br>第二步：点击智能助手，进入机器人设置页<br><img src=http://yun.chengyan.shop/iShot2020-12-13%2008.21.32.png width=300><br>第三步：勾选自定义机器人，并进入机器人设置页<br><img src=http://yun.chengyan.shop/iShot2020-12-13%2008.22.07.png width=300><br>第四步:机器人添加设置页<br><img src=http://yun.chengyan.shop/iShot2020-12-13%2008.29.41.png width=300></p>
+<p><font color=#ff5400 size=4><b>禅道的二级开发api</b></font><br>想要实现我们的效果，需要拿到每个员工的任务列表，而拿到任务列表，需要获取每个员工的编号，禅道里面是用户名。通过用户名获取该用户的所有任务列表。</p>
+<p>首先遇到的问题是，<br><font color=red>登录问题</font><br>禅道是需要进行登录的，登录是要建立会话的，这里使用的session进行会话管理,但是并不是每一个登录用户都可以随意获取别人的任务状态，这里涉及到另外一个问题<br><font color=red>权限问题</font><br>权限找田新亮，将账户提升为“admin开发者”。</p>
+<p>至此禅道api的大体流程就出来了！</p>
+<ol>
+<li>获取禅道sid</li>
+<li>拿到sid与admin开发者权限的账号进行登录</li>
+<li>获取需要汇报任务的成员username</li>
+<li>根据username去获取任务状态，任务状态分为：未开始、进行中、已完成</li>
+</ol>
+<p><font color=#ff5400 size=4><b>python脚</b></font><br>python脚本主要是实现，上述所说的禅道获取任务列表，以及将消息发送到webhook的钉钉机器人，代码比较多，这里贴一部分核心代码，主要是禅道的登录与任务列表的获取<br><strong>禅道登录与任务列表获取核心代码</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Zentao_cli</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    session = <span class="literal">None</span>  <span class="comment"># 用于实现单例类，避免多次申请sessionID</span></span><br><span class="line">    sid = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, url, account, password, override=<span class="literal">False</span></span>):</span></span><br><span class="line">        self.url = url</span><br><span class="line">        self.account = account  <span class="comment"># 账号</span></span><br><span class="line">        self.password = password  <span class="comment"># 密码</span></span><br><span class="line">        self.session_override = override  <span class="comment"># 是否覆盖原会话</span></span><br><span class="line">        self.pages = &#123;</span><br><span class="line">            <span class="string">&quot;sid&quot;</span>: <span class="string">&quot;/api-getsessionid.json&quot;</span>,  <span class="comment"># 获取sid的接口</span></span><br><span class="line">            <span class="string">&quot;login&quot;</span>: <span class="string">&quot;/user-login.json?account=&#123;0&#125;&amp;password=&#123;1&#125;&amp;zentaosid=&#123;2&#125;&quot;</span>,  <span class="comment"># 登录的接口</span></span><br><span class="line">            <span class="string">&quot;get_story_list_by_projectID&quot;</span>: <span class="string">&quot;/index.php?t=json&amp;m=story&amp;f=ajaxGetProjectStories&amp;projectID=&#123;0&#125;&quot;</span>,</span><br><span class="line">            <span class="string">&quot;get_task_list_by_account&quot;</span>: <span class="string">&quot;/task-ajaxGetUserTasks-&#123;0&#125;-1-&#123;1&#125;.json&quot;</span>,</span><br><span class="line">            <span class="comment"># &quot;get_task_list_by_account&quot;: &quot;/user-view-chengyan.json&quot;,</span></span><br><span class="line">            <span class="string">&quot;get_story_list_by_account&quot;</span>: <span class="string">&quot;/index.php?&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">        self.s = <span class="literal">None</span></span><br><span class="line">        self.sid = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">req</span>(<span class="params">self, url</span>):</span></span><br><span class="line">        <span class="comment"># 请求并返回结果</span></span><br><span class="line">        print(url)</span><br><span class="line">        web = self.s.get(url)</span><br><span class="line"></span><br><span class="line">        print(web.content)</span><br><span class="line">        <span class="keyword">if</span> web.status_code == <span class="number">200</span>:</span><br><span class="line">            resp = json.loads(web.content)</span><br><span class="line">            <span class="keyword">if</span> resp.get(<span class="string">&quot;status&quot;</span>) == <span class="string">&quot;success&quot;</span>:</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">True</span>, resp</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">False</span>, resp</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">login</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">if</span> self.s <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> self.session_override <span class="keyword">and</span> Zentao_cli.session <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">                self.s = Zentao_cli.session</span><br><span class="line">                self.sid = Zentao_cli.sid</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="comment"># 新建会话</span></span><br><span class="line">                self.s = requests.session()</span><br><span class="line">                res, resp = self.req(self.url.rstrip(<span class="string">&quot;/&quot;</span>) + self.pages[<span class="string">&quot;sid&quot;</span>])</span><br><span class="line">                <span class="keyword">if</span> res:</span><br><span class="line">                    print(<span class="string">&quot;获取sessionID成功&quot;</span>)</span><br><span class="line">                    self.sid = json.loads(resp[<span class="string">&quot;data&quot;</span>])[<span class="string">&quot;sessionID&quot;</span>]</span><br><span class="line">                    Zentao_cli.sid = self.sid</span><br><span class="line">                    login_res, login_resp = self.req(</span><br><span class="line">                        self.url.rstrip(<span class="string">&quot;/&quot;</span>) + self.pages[<span class="string">&quot;login&quot;</span>].<span class="built_in">format</span>(self.account, self.password, self.sid))</span><br><span class="line">                    <span class="keyword">if</span> login_res:</span><br><span class="line">                        print(<span class="string">&quot;登录成功&quot;</span>)</span><br><span class="line">                        Zentao_cli.session = self.s</span><br></pre></td></tr></table></figure>
+
+<p><font color=#ff5400 size=4><b>crontab定时器</b></font><br>作为一个机器人，肯定是需要自己去做一些事情，我们脚本开发完成之后，肯定不能再去浪费时间去手动操作了，那么在macos或linux系统里面，需要用到crontab 定时去执行我们的脚本，我这里设置的时间是每周六的下午5.30分，去定时跑一下脚本，然后就会发消息到钉钉群了<br>crontab的写法比较简单，下面是我这次用到的写法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">30 17 * * 6  &#x2F;Users&#x2F;chengyan&#x2F;Desktop&#x2F;quanqiuwa&#x2F;zandaoPlugin&#x2F;main.py&gt;&gt;&#x2F;Users&#x2F;chengyan&#x2F;Desktop&#x2F;quanqiuwa&#x2F;zanDaoPlugin&#x2F;zandaoPlugin.log 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+<p><font color=#ff5400 size=5><b>三、后续计划与改进</b></font></p>
+<ol>
+<li><p><strong>@未完成任务小伙伴</strong><br>群组消息太多，可能会有小伙伴将群设置为勿扰模式，那么针对没有完成任务的小伙伴，当然很多时候，并不是真的没有完成任务，而是忘了修改禅道任务的状态，考虑添加一个功能是：有未完成任务的小伙伴，会去主动的@一下</p>
+</li>
+<li><p><strong>禅道bug未解决情况汇总</strong><br>禅道还支持，获取未完成bug的列表拉去，这个目前不是很紧急，等项目不忙的时候，可以搞起来</p>
+</li>
+</ol>
+<p><font color=#ff5400 size=5><b>四、小结</b></font><br>做这个功能的出发点是利用自己所掌握的知识做一些效能提高方面的事情，总的来说还是希望在人工智能时代，将一些非人工的事情，让机器去做，节省人力成本，后续如果有希望帮助的小伙伴，可以随时钉钉联系我，一起为公司的发展、壮大添砖加瓦。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/12/15/%E4%BD%BF%E7%94%A8%E9%92%89%E9%92%89%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%B0%86%E7%A6%85%E9%81%93%E4%BB%BB%E5%8A%A1%EF%BC%8C%E8%87%AA%E5%8A%A8%E5%8F%91%E9%80%81%E5%88%B0%E9%92%89%E9%92%89%E7%BE%A4%E7%BB%84/" data-id="ckipmbclm000pwrtpax474pi6" data-title="使用钉钉机器人将禅道任务，自动发送到钉钉群组" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/" rel="tag">python</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2019/10/30/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">Python学习笔记（三）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BD%AC/">转</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredata%E5%AD%A6%E4%B9%A0/" rel="tag">coredata学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%89%E6%96%B9%E5%BA%93%E7%A0%94%E7%A9%B6/" rel="tag">三方库研究</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag">工具</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4/" rel="tag">点点滴滴</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Hexo/" style="font-size: 13.33px;">Hexo</a> <a href="/tags/coredata%E5%AD%A6%E4%B9%A0/" style="font-size: 13.33px;">coredata学习</a> <a href="/tags/python/" style="font-size: 20px;">python</a> <a href="/tags/%E4%B8%89%E6%96%B9%E5%BA%93%E7%A0%94%E7%A9%B6/" style="font-size: 16.67px;">三方库研究</a> <a href="/tags/%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">工具</a> <a href="/tags/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4/" style="font-size: 20px;">点点滴滴</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 10px;">翻译</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/12/15/%E4%BD%BF%E7%94%A8%E9%92%89%E9%92%89%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%B0%86%E7%A6%85%E9%81%93%E4%BB%BB%E5%8A%A1%EF%BC%8C%E8%87%AA%E5%8A%A8%E5%8F%91%E9%80%81%E5%88%B0%E9%92%89%E9%92%89%E7%BE%A4%E7%BB%84/">使用钉钉机器人将禅道任务，自动发送到钉钉群组</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/30/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/">Python学习笔记（三）</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/30/%E4%BF%AE%E6%94%B9Mac%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%BB%98%E8%AE%A4%E5%90%AF%E5%8A%A8%E4%B8%BAPython3/">修改Mac系统的命令行默认启动为Python3</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/18/Python%E7%BB%93%E5%90%88cocoapod%E8%87%AA%E5%8A%A8%E5%8F%91%E5%B8%83%E7%89%88%E6%9C%AC%E5%AE%9E%E8%B7%B5/">Python结合cocoapod自动发布版本实践</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/17/Hexo%E5%8D%87%E7%BA%A73-9-0%E5%AE%9E%E8%B7%B5/">Hexo升级3.9.0实践</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2020 火三<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>点点滴滴：NSLog一点说道 | 火三</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="今天的小结主要讲述在IOS开发中实现自定义的NSLog方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="点点滴滴：NSLog一点说道">
+<meta property="og:url" content="http://example.com/2016/08/27/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4%EF%BC%9ANSLog%E4%B8%80%E7%82%B9%E8%AF%B4%E9%81%93/index.html">
+<meta property="og:site_name" content="火三">
+<meta property="og:description" content="今天的小结主要讲述在IOS开发中实现自定义的NSLog方法">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-08-27T13:03:09.000Z">
+<meta property="article:modified_time" content="2020-11-20T15:37:59.631Z">
+<meta property="article:author" content="火三">
+<meta property="article:tag" content="点点滴滴">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="火三" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">火三</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-点点滴滴：NSLog一点说道" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2016/08/27/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4%EF%BC%9ANSLog%E4%B8%80%E7%82%B9%E8%AF%B4%E9%81%93/" class="article-date">
+  <time class="dt-published" datetime="2016-08-27T13:03:09.000Z" itemprop="datePublished">2016-08-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      点点滴滴：NSLog一点说道
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>今天的小结主要讲述在IOS开发中实现自定义的NSLog方法</p>
+<a id="more"></a>
+<h4 id="1-为什么要对NSLog进行重定义？"><a href="#1-为什么要对NSLog进行重定义？" class="headerlink" title="1 为什么要对NSLog进行重定义？"></a><a href="#1">1 为什么要对NSLog进行重定义？</a></h4><p>在开始这个知识点的讲解之前，首先说下，为什么要对NSLog宏进行重定义。在项目开发中，经常需要对程序进行调试。由于调试分布在项目的各种地方，当项目发布时，如果再将调试信息去掉，显示会消耗很大的人力，物力。幸好，强大的xcode给我们提供了一个非常方便的功能。在项目的Build Settings中给Apple LLVM Preprocessing中的 preprocessor macros下面的Debug添加一个调试宏DEBUG=1,记住在Release下面不要添加任何东西！添加这个东西的意思就是告诉编译器，在调试阶段，项目中进行了一个DEBUG的宏定义，但是Release阶段不定义。</p>
+<h4 id="2-如何对NSLog宏进行定义了"><a href="#2-如何对NSLog宏进行定义了" class="headerlink" title="2 如何对NSLog宏进行定义了"></a><a href="#1">2 如何对NSLog宏进行定义了</a></h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> DEBUG</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NSLog(args...)  ExtendNSLog(__FILE__,__LINE__,__PRETTY_FUNCTION__,args);</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NSLog(x...)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p>下面来对上述宏进行解释，如果定义了DEBUG宏，那么就对NSLog(args…)进行重定义，如果没有定义，将NSLog(args…)设置为空，不做任何处理，</p>
+<h4 id="3-如何对定义的信息进行输出，并附带-文件名，打印行数，方法名-接下来对ExtendNSLog-进行解释"><a href="#3-如何对定义的信息进行输出，并附带-文件名，打印行数，方法名-接下来对ExtendNSLog-进行解释" class="headerlink" title="3 如何对定义的信息进行输出，并附带.文件名，打印行数，方法名.接下来对ExtendNSLog()进行解释"></a><a href="#1">3 如何对定义的信息进行输出，并附带.文件名，打印行数，方法名.接下来对ExtendNSLog()进行解释</a></h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">void</span> ExtendNSLog(<span class="keyword">const</span> <span class="keyword">char</span> *file, <span class="keyword">int</span> lineNumber, <span class="keyword">const</span> <span class="keyword">char</span> *functionName, <span class="built_in">NSString</span> *format, ...)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// Type to hold information about variable arguments.</span></span><br><span class="line">    va_list ap;</span><br><span class="line">    <span class="comment">// Initialize a variable argument list.</span></span><br><span class="line">    va_start (ap, format);</span><br><span class="line">    <span class="comment">// NSLog only adds a newline to the end of the NSLog format if</span></span><br><span class="line">    <span class="comment">// one is not already there.</span></span><br><span class="line">    <span class="comment">// Here we are utilizing this feature of NSLog()</span></span><br><span class="line">    <span class="keyword">if</span> (![format hasSuffix: <span class="string">@&quot;\n&quot;</span>])</span><br><span class="line">    &#123;</span><br><span class="line">        format = [format stringByAppendingString: <span class="string">@&quot;\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\n\n&quot;</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">NSString</span> *body = [[<span class="built_in">NSString</span> alloc] initWithFormat:format arguments:ap];</span><br><span class="line">    <span class="comment">// End using variable argument list.</span></span><br><span class="line">    va_end (ap);</span><br><span class="line">    <span class="built_in">NSString</span> *fileName = [[<span class="built_in">NSString</span> stringWithUTF8String:file] lastPathComponent];</span><br><span class="line">    fprintf(stderr, <span class="string">&quot;[%s LINE:%d]%s:\n%s&quot;</span>,</span><br><span class="line">            [fileName UTF8String],lineNumber,</span><br><span class="line">            (functionName[<span class="number">0</span>])==<span class="string">&#x27;-&#x27;</span>?(&amp;functionName[<span class="number">1</span>]):functionName,</span><br><span class="line">            [body UTF8String]);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面来对上述代码进行解释</p>
+<ol>
+<li>获取参数列表类</li>
+<li>启动参数列表类和格式化字符串的关联</li>
+<li>获取格式化字符串的实际输出文本</li>
+<li>关闭参数列表类和格式化字符串的关联</li>
+<li>调用C函数fprintf(),将打印信息输出。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2016/08/27/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4%EF%BC%9ANSLog%E4%B8%80%E7%82%B9%E8%AF%B4%E9%81%93/" data-id="ckipmbclq0014wrtp5gbefqdj" data-title="点点滴滴：NSLog一点说道" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4/" rel="tag">点点滴滴</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/08/27/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4%EF%BC%9A%E4%B8%80%E4%B8%AA%E5%AE%B9%E6%98%93%E8%A2%AB%E5%BF%BD%E8%A7%86%E7%9A%84%E6%95%B0%E7%BB%84%E5%92%8C%E5%AD%97%E5%85%B8%E7%9A%84%E6%96%B9%E6%B3%95/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          点点滴滴：一个容易被忽视的数组和字典的方法
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/08/27/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4%EF%BC%9A%E5%85%B3%E4%BA%8Eva-list/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">点点滴滴：关于va_list</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BD%AC/">转</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredata%E5%AD%A6%E4%B9%A0/" rel="tag">coredata学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%89%E6%96%B9%E5%BA%93%E7%A0%94%E7%A9%B6/" rel="tag">三方库研究</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag">工具</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4/" rel="tag">点点滴滴</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Hexo/" style="font-size: 13.33px;">Hexo</a> <a href="/tags/coredata%E5%AD%A6%E4%B9%A0/" style="font-size: 13.33px;">coredata学习</a> <a href="/tags/python/" style="font-size: 20px;">python</a> <a href="/tags/%E4%B8%89%E6%96%B9%E5%BA%93%E7%A0%94%E7%A9%B6/" style="font-size: 16.67px;">三方库研究</a> <a href="/tags/%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">工具</a> <a href="/tags/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4/" style="font-size: 20px;">点点滴滴</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 10px;">翻译</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/12/15/%E4%BD%BF%E7%94%A8%E9%92%89%E9%92%89%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%B0%86%E7%A6%85%E9%81%93%E4%BB%BB%E5%8A%A1%EF%BC%8C%E8%87%AA%E5%8A%A8%E5%8F%91%E9%80%81%E5%88%B0%E9%92%89%E9%92%89%E7%BE%A4%E7%BB%84/">使用钉钉机器人将禅道任务，自动发送到钉钉群组</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/30/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/">Python学习笔记（三）</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/30/%E4%BF%AE%E6%94%B9Mac%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%BB%98%E8%AE%A4%E5%90%AF%E5%8A%A8%E4%B8%BAPython3/">修改Mac系统的命令行默认启动为Python3</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/18/Python%E7%BB%93%E5%90%88cocoapod%E8%87%AA%E5%8A%A8%E5%8F%91%E5%B8%83%E7%89%88%E6%9C%AC%E5%AE%9E%E8%B7%B5/">Python结合cocoapod自动发布版本实践</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/17/Hexo%E5%8D%87%E7%BA%A73-9-0%E5%AE%9E%E8%B7%B5/">Hexo升级3.9.0实践</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2020 火三<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

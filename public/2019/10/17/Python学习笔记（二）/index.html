@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Python学习笔记（二） | 火三</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="今天来学习下Python中的数组、元组和字典 一、数组 数组的声明，python的数组可以存放任何类型的数据，数组的声明如下  12#数组的声明list &#x3D; [1, 2, &amp;#x27;chengyan&amp;#x27;,[&amp;#x27;chengyan&amp;#x27;,1]]   数组元素的获取，支持根据下标进行获取  123#根据下标获取print(list[0])#将会打印1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python学习笔记（二）">
+<meta property="og:url" content="http://example.com/2019/10/17/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/index.html">
+<meta property="og:site_name" content="火三">
+<meta property="og:description" content="今天来学习下Python中的数组、元组和字典 一、数组 数组的声明，python的数组可以存放任何类型的数据，数组的声明如下  12#数组的声明list &#x3D; [1, 2, &amp;#x27;chengyan&amp;#x27;,[&amp;#x27;chengyan&amp;#x27;,1]]   数组元素的获取，支持根据下标进行获取  123#根据下标获取print(list[0])#将会打印1">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-10-17T10:10:32.000Z">
+<meta property="article:modified_time" content="2019-10-17T14:22:50.468Z">
+<meta property="article:author" content="火三">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="火三" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">火三</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">学如逆水行舟，不进则退，何况逝者如斯夫，不舍昼夜</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Python学习笔记（二）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/10/17/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2019-10-17T10:10:32.000Z" itemprop="datePublished">2019-10-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Python学习笔记（二）
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>今天来学习下Python中的数组、元组和字典</p>
+<h3 id="一、数组"><a href="#一、数组" class="headerlink" title="一、数组"></a>一、数组</h3><ul>
+<li><strong>数组的声明</strong>，python的数组可以存放任何类型的数据，数组的声明如下</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#数组的声明</span></span><br><span class="line"><span class="built_in">list</span> = [<span class="number">1</span>, <span class="number">2</span>, <span class="string">&#x27;chengyan&#x27;</span>,[<span class="string">&#x27;chengyan&#x27;</span>,<span class="number">1</span>]]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>数组元素的获取</strong>，支持根据下标进行获取</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#根据下标获取</span></span><br><span class="line">print(<span class="built_in">list</span>[<span class="number">0</span>])</span><br><span class="line"><span class="comment">#将会打印1</span></span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<ul>
+<li>列表常用的方法**</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>方法名称</th>
+<th>方法功能描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>append</td>
+<td>在列表尾部拼接元素</td>
+</tr>
+<tr>
+<td>clear</td>
+<td>列表清空（python3.3之后支持）</td>
+</tr>
+<tr>
+<td>copy</td>
+<td>复制生成另一个列表（3.3后支持）</td>
+</tr>
+<tr>
+<td>count</td>
+<td>统计指定元素个数</td>
+</tr>
+<tr>
+<td>extend</td>
+<td>合并两个列表</td>
+</tr>
+<tr>
+<td>index</td>
+<td>获取指定元素的下标</td>
+</tr>
+<tr>
+<td>insert</td>
+<td>在指定位置插入元素</td>
+</tr>
+<tr>
+<td>pop</td>
+<td>删除指定下标元素</td>
+</tr>
+<tr>
+<td>remove</td>
+<td>删除某个元素，元素需要在列表中，否则会报错</td>
+</tr>
+<tr>
+<td>reverse</td>
+<td>反转列表</td>
+</tr>
+<tr>
+<td>sort</td>
+<td>对列表进行排序</td>
+</tr>
+</tbody></table>
+<h3 id="二、元组"><a href="#二、元组" class="headerlink" title="二、元组"></a>二、元组</h3><p>元组与列表的区别在于：1. 元组不能对其元素进行变动，而列表可以。2. 元组用（）括起来，而列表用[]括起来</p>
+<ul>
+<li><p>元组的声明</p>
+<ul>
+<li>简单版</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#声明一个空元组</span></span><br><span class="line"><span class="built_in">tuple</span>=()</span><br><span class="line"><span class="comment">#简单声明一个元组</span></span><br><span class="line">tuple1=(<span class="string">&#x27;name&#x27;</span>,<span class="string">&#x27;age&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>进阶版</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#省略（）的元组</span></span><br><span class="line">name,age=<span class="string">&#x27;chengyan&#x27;</span>,<span class="number">18</span></span><br><span class="line">person=(name,age)</span><br><span class="line">print(person)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>元组的基本操作</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>方法名称</th>
+<th>方法功能描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>count</td>
+<td>统计指定元素的个数</td>
+</tr>
+<tr>
+<td>index</td>
+<td>返回指定元素的下标</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>函数名称</th>
+<th>函数功能描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>len</td>
+<td>统计元组元素个数</td>
+</tr>
+<tr>
+<td>max</td>
+<td>返回元组中最大值的元素</td>
+</tr>
+<tr>
+<td>min</td>
+<td>返回元组中最小值的元素</td>
+</tr>
+<tr>
+<td>tuple</td>
+<td>将列表转换为元组</td>
+</tr>
+<tr>
+<td>type</td>
+<td>返回对象类型</td>
+</tr>
+<tr>
+<td>del</td>
+<td>删除整个元组对象</td>
+</tr>
+<tr>
+<td>sum</td>
+<td>对元组所有元素求和</td>
+</tr>
+</tbody></table>
+<h3 id="三、字典"><a href="#三、字典" class="headerlink" title="三、字典"></a>三、字典</h3><ul>
+<li><strong>创建字典</strong></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dic=&#123;<span class="string">&#x27;name&#x27;</span>:<span class="string">&#x27;chengyan&#x27;</span>,<span class="string">&#x27;age&#x27;</span>:<span class="number">18</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>字典的常用方法</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>方法名称</th>
+<th>方法功能描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>clear</td>
+<td>字典清空</td>
+</tr>
+<tr>
+<td>copy</td>
+<td>复制生成另一个字典</td>
+</tr>
+<tr>
+<td>fromkeys</td>
+<td>使用给定的key建立新的字典，值默认为None</td>
+</tr>
+<tr>
+<td>get</td>
+<td>返回key对应的值</td>
+</tr>
+<tr>
+<td>items</td>
+<td>以元组数组的方式返回字典中的元素</td>
+</tr>
+<tr>
+<td>keys</td>
+<td>以列表的形式返回字典中的keys</td>
+</tr>
+<tr>
+<td>pop</td>
+<td>删除指定键的值，并返回该值</td>
+</tr>
+<tr>
+<td>popitem</td>
+<td>随机返回元素，并删除元素，以元组的形式</td>
+</tr>
+<tr>
+<td>setdefault</td>
+<td>当字典中的键不存在的时候，设置值，如存在时，返回对应的值</td>
+</tr>
+<tr>
+<td>update</td>
+<td>利用一个字典去更新另外一个字典</td>
+</tr>
+<tr>
+<td>values</td>
+<td>返回字典中的值</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>一些示例</strong></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">dic=&#123;<span class="string">&#x27;name&#x27;</span>:<span class="string">&#x27;chengyan&#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#新增元素</span></span><br><span class="line">dic[<span class="string">&#x27;age&#x27;</span>]=<span class="number">18</span></span><br><span class="line"><span class="comment">#如果没有，设置默认值，有，不做操作</span></span><br><span class="line">dic.setdefault(<span class="string">&#x27;name&#x27;</span>,<span class="string">&#x27;wangqi&#x27;</span>)</span><br><span class="line"><span class="comment">#查询</span></span><br><span class="line">name = dic[<span class="string">&#x27;name&#x27;</span>]</span><br><span class="line">name = dic.get(<span class="string">&#x27;name&#x27;</span>)</span><br><span class="line"><span class="comment">#修改</span></span><br><span class="line">dic[<span class="string">&#x27;name&#x27;</span>]=<span class="string">&#x27;wangqi&#x27;</span></span><br><span class="line">dic.update(<span class="string">&#x27;name&#x27;</span>,<span class="string">&#x27;wangqi&#x27;</span>)</span><br><span class="line"><span class="comment">#删除</span></span><br><span class="line">dic.pop(<span class="string">&#x27;name&#x27;</span>)</span><br><span class="line"><span class="keyword">del</span>(dic[<span class="string">&#x27;name&#x27;</span>])</span><br><span class="line"><span class="comment">#随机删除一个并返回该元组</span></span><br><span class="line">dic.popitem()</span><br><span class="line"><span class="comment">#遍历</span></span><br><span class="line"><span class="keyword">for</span> <span class="built_in">tuple</span> <span class="keyword">in</span> dic:</span><br><span class="line">  print(<span class="built_in">tuple</span>)</span><br><span class="line"><span class="keyword">for</span> key <span class="keyword">in</span> dic:</span><br><span class="line">	print(key)</span><br><span class="line"><span class="keyword">for</span> key <span class="keyword">in</span> dic:</span><br><span class="line">  print(dic[key])</span><br><span class="line"><span class="comment">#fromkeys方式创建字典</span></span><br><span class="line">dic1=&#123;&#125;.fromkeys[<span class="string">&#x27;name&#x27;</span>,<span class="string">&#x27;age&#x27;</span>,<span class="string">&#x27;class&#x27;</span>,<span class="string">&#x27;school&#x27;</span>]</span><br><span class="line">  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h3><p>这一节，基本了解了元组、列表、字典的创建、以及一些常用的方法。下节学习下函数，see u</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2019/10/17/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/" data-id="ckipmbcle000awrtp9vyx6ylx" data-title="Python学习笔记（二）" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/" rel="tag">python</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/10/17/Hexo%E5%8D%87%E7%BA%A73-9-0%E5%AE%9E%E8%B7%B5/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          Hexo升级3.9.0实践
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/10/16/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">Python学习笔记（一）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BD%AC/">转</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coredata%E5%AD%A6%E4%B9%A0/" rel="tag">coredata学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%89%E6%96%B9%E5%BA%93%E7%A0%94%E7%A9%B6/" rel="tag">三方库研究</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag">工具</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4/" rel="tag">点点滴滴</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BF%BB%E8%AF%91/" rel="tag">翻译</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Hexo/" style="font-size: 13.33px;">Hexo</a> <a href="/tags/coredata%E5%AD%A6%E4%B9%A0/" style="font-size: 13.33px;">coredata学习</a> <a href="/tags/python/" style="font-size: 20px;">python</a> <a href="/tags/%E4%B8%89%E6%96%B9%E5%BA%93%E7%A0%94%E7%A9%B6/" style="font-size: 16.67px;">三方库研究</a> <a href="/tags/%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">工具</a> <a href="/tags/%E7%82%B9%E7%82%B9%E6%BB%B4%E6%BB%B4/" style="font-size: 20px;">点点滴滴</a> <a href="/tags/%E7%BF%BB%E8%AF%91/" style="font-size: 10px;">翻译</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/12/15/%E4%BD%BF%E7%94%A8%E9%92%89%E9%92%89%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%B0%86%E7%A6%85%E9%81%93%E4%BB%BB%E5%8A%A1%EF%BC%8C%E8%87%AA%E5%8A%A8%E5%8F%91%E9%80%81%E5%88%B0%E9%92%89%E9%92%89%E7%BE%A4%E7%BB%84/">使用钉钉机器人将禅道任务，自动发送到钉钉群组</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/30/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/">Python学习笔记（三）</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/30/%E4%BF%AE%E6%94%B9Mac%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%BB%98%E8%AE%A4%E5%90%AF%E5%8A%A8%E4%B8%BAPython3/">修改Mac系统的命令行默认启动为Python3</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/18/Python%E7%BB%93%E5%90%88cocoapod%E8%87%AA%E5%8A%A8%E5%8F%91%E5%B8%83%E7%89%88%E6%9C%AC%E5%AE%9E%E8%B7%B5/">Python结合cocoapod自动发布版本实践</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/17/Hexo%E5%8D%87%E7%BA%A73-9-0%E5%AE%9E%E8%B7%B5/">Hexo升级3.9.0实践</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2020 火三<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

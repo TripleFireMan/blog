@@ -94,8 +94,8 @@
 
 <p>​    isa指针是实例方法在运行时能够被执行的关键，运行时系统将依靠isa指针找到实例所在的类，进而找到方法列表和缓存方法，进行消息的发送。如果消息得不到执行，将根据类里面的super_classs指针找父类的实例方法。但是如果是类方法或者说是+号方法进行消息发送，那么将会获取类里面的isa指针进而找到元类，获取元类里面的方法列表或缓存方法进行消息处理，如果没找到，那么将去寻找元类里面的super_class指针找父元类的类方法。</p>
 <p>​    下面是哥们从网上找的一张isa 和super_class指针的指向图</p>
-<p><img src="%E5%85%B3%E4%BA%8ERuntime%E7%9A%84%E4%B8%80%E4%BA%9B%E7%90%86%E8%AE%BA%E5%92%8C%E5%AE%9E%E8%B7%B5/1.jpeg"></p>
-<h4 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h4><p>​    有了基础中的基础之后，我们才知道Objective-C的本源其实也是来自于C语言，来自于结构体。那么有了这些之后，怎么让OC的类和对象在我们的程序内部运作起来，接下来，有个新的东西要登场了，那就是<font color=red><strong>objc_msgSend</strong></font>，请记住它，正是有了它objective-c才真正称得上是一门面向运行时的语言。</p>
+<p><img src="/2017/05/23/%E5%85%B3%E4%BA%8ERuntime%E7%9A%84%E4%B8%80%E4%BA%9B%E7%90%86%E8%AE%BA%E5%92%8C%E5%AE%9E%E8%B7%B5/1.jpeg"></p>
+<h4 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h4><p>​    有了基础中的基础之后，我们才知道Objective-C的本源其实也是来自于C语言，来自于结构体。那么有了这些之后，怎么让OC的类和对象在我们的程序内部运作起来，接下来，有个新的东西要登场了，那就是<font color="red"><strong>objc_msgSend</strong></font>，请记住它，正是有了它objective-c才真正称得上是一门面向运行时的语言。</p>
 <p>​    objc_msgSend实质上就是一个C函数。其次objc_msgSend的参数类型第一个必须是id，第二个是SEL，第三个是va_list参数列表。从cocoa的objc.h文件中，我们可以看到它的定义。</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">id</span> objc_msgSend(<span class="keyword">id</span> <span class="keyword">self</span>, SEL op, ...)<span class="comment">//运行时消息发送的函数</span></span><br></pre></td></tr></table></figure>
 
@@ -132,7 +132,7 @@
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 根据获取到的Ivar结构体，获取它的名字</span></span><br><span class="line">OBJC_EXPORT <span class="keyword">const</span> <span class="keyword">char</span> *ivar_getName(Ivar v) </span><br><span class="line">    OBJC_AVAILABLE(<span class="number">10.5</span>, <span class="number">2.0</span>, <span class="number">9.0</span>, <span class="number">1.0</span>);</span><br><span class="line"><span class="comment">// 根据获取到的Ivar结构体，获取它的类型</span></span><br><span class="line">OBJC_EXPORT <span class="keyword">const</span> <span class="keyword">char</span> *ivar_getTypeEncoding(Ivar v) </span><br><span class="line">    OBJC_AVAILABLE(<span class="number">10.5</span>, <span class="number">2.0</span>, <span class="number">9.0</span>, <span class="number">1.0</span>);</span><br></pre></td></tr></table></figure>
 
 <p>这俩个方法，可以帮助我们拿到当前变量的名称和变量的类型。名称，我们知道是变量的名称。如_name _title，之类的，可是类型是什么呢？还是得靠查苹果资料，我们找到了<a target="_blank" rel="noopener" href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html#//apple_ref/doc/uid/TP40008048-CH100-SW1">官方定义</a>下图是部分定义</p>
-<p><img src="%E5%85%B3%E4%BA%8ERuntime%E7%9A%84%E4%B8%80%E4%BA%9B%E7%90%86%E8%AE%BA%E5%92%8C%E5%AE%9E%E8%B7%B5/2.png"></p>
+<p><img src="/2017/05/23/%E5%85%B3%E4%BA%8ERuntime%E7%9A%84%E4%B8%80%E4%BA%9B%E7%90%86%E8%AE%BA%E5%92%8C%E5%AE%9E%E8%B7%B5/2.png"></p>
 </li>
 <li><p><strong><em>第三步，进行归档</em></strong></p>
 <p>现在有了变量名称和变量类型，我们基本就可以对对象的变量进行归档了。</p>

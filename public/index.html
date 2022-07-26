@@ -83,7 +83,7 @@
   <div class="article-content">
     <div class="entry">
       
-        <p><font color=#ff5400 size=5><b>一、为什么要开发这样一个功能？</b></font></p>
+        <p><font color="#ff5400" size="5"><b>一、为什么要开发这样一个功能？</b></font></p>
 <blockquote>
 <p>禅道，是公司用来对项目进行管理的软件，主要是用来对项目任务、产品bug进行追踪和管理.<br>钉钉，是公司所有员工用来工作沟通的软件</p>
 <p>将禅道上面，每个员工工作任务的情况，进行汇总并同步到钉钉群，有助于项目人员及管理人员对项目执行情况快速及时的掌握</p>
@@ -146,7 +146,7 @@
 </li>
 <li><p>函数模块</p>
 </li>
-<li><p>global、nonlocal、lambda</p>
+<li><p>global、nonlocal、lambda</p></li></ul>
         
       
     </div>
@@ -487,30 +487,9 @@
       
         <h3 id="一、OC对象的本质"><a href="#一、OC对象的本质" class="headerlink" title="一、OC对象的本质"></a>一、OC对象的本质</h3><p><strong>oc的对象占多大内存空间？</strong></p>
 <p>答案是16个字节，为什么是16个，一个oc对象内部只存放了一个isa指针，而在64位系统中，一个指针占据的空间是8字节，但是为了字节对齐，最小的内存空间分配为16个字节。</p>
-<p><img src="ios%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%EF%BC%9AOC%E5%AF%B9%E8%B1%A1/1.png"></p>
+<p><img src="/2019/10/10/ios%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%EF%BC%9AOC%E5%AF%B9%E8%B1%A1/1.png"></p>
 <p>oc的对象，是由类创建的，类在oc里面是Class，那么Class的本质是什么？实际上class是由c的结构体构成的。**参阅runtime中的objc.h文件可知,**具体实现如下</p>
-<!---more--->
-
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> objc_class &#123;</span><br><span class="line">    Class _Nonnull isa  OBJC_ISA_AVAILABILITY;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> !__OBJC2__</span></span><br><span class="line">    Class _Nullable super_class                              OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> * _Nonnull name                               OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">long</span> version                                             OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">long</span> info                                                OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">long</span> instance_size                                       OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">struct</span> objc_ivar_list * _Nullable ivars                  OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">struct</span> objc_method_list * _Nullable * _Nullable methodLists                    OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">struct</span> objc_cache * _Nonnull cache                       OBJC2_UNAVAILABLE;</span><br><span class="line">    <span class="keyword">struct</span> objc_protocol_list * _Nullable protocols          OBJC2_UNAVAILABLE;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">&#125; OBJC2_UNAVAILABLE;</span><br></pre></td></tr></table></figure>
-
-<p>每一个oc对象里面都有一个isa指针。如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">	struct objc_object &#123;</span><br><span class="line">    Class _Nonnull isa  OBJC_ISA_AVAILABILITY;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h3 id="二、对象的成员变量"><a href="#二、对象的成员变量" class="headerlink" title="二、对象的成员变量"></a>二、对象的成员变量</h3><p>oc对象的成员变量，方法，协议统统都是存放在class里面。在上面的objc_class结构体中，很明显可以看到这一点。</p>
-<h3 id="三、也来聊聊isa"><a href="#三、也来聊聊isa" class="headerlink" title="三、也来聊聊isa"></a>三、也来聊聊isa</h3><p>上一张大神图</p>
-<p><img src="ios%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86%EF%BC%9AOC%E5%AF%B9%E8%B1%A1/2.png"></p>
-<p>记住一点：</p>
-<ol>
-<li><p><strong>对象的isa指向的是：由谁创建的当前对象</strong>。</p>
-</li>
-<li><p><strong>NSObject类的superclass 为nil</strong></p>
-</li>
-<li><p><strong>NSObject元类的isa指向的是它自己</strong></p>
-</li>
-</ol>
-<hr>
-<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h4><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ffd742041946">ios底层原理探究</a></p>
-
+        
       
     </div>
 
@@ -606,23 +585,8 @@
   <div class="article-content">
     <div class="entry">
       
-        <h2 id="Hexo手册"><a href="#Hexo手册" class="headerlink" title="Hexo手册"></a>Hexo手册</h2><h3 id="1-启动本地调试服务器"><a href="#1-启动本地调试服务器" class="headerlink" title="1.启动本地调试服务器"></a>1.启动本地调试服务器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-新建文章"><a href="#2-新建文章" class="headerlink" title="2.新建文章"></a>2.新建文章</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new &#39;文章标题&#39;</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-静态文件生成"><a href="#3-静态文件生成" class="headerlink" title="3. 静态文件生成"></a>3. 静态文件生成</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo generate</span><br></pre></td></tr></table></figure>
-
-<h3 id="4-文章发布"><a href="#4-文章发布" class="headerlink" title="4. 文章发布"></a>4. 文章发布</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-
-
-
-<!---more--->
-
-<h3 id="5-图片放置"><a href="#5-图片放置" class="headerlink" title="5.图片放置"></a>5.图片放置</h3><p>将用的图片放置到 “文章标题”/  文件夹下面</p>
-<p>使用的时候</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![](文章标题&#x2F;图片.jpg)</span><br></pre></td></tr></table></figure>
-
-
+        <h2 id="Hexo手册"><a href="#Hexo手册" class="headerlink" title="Hexo手册"></a>Hexo手册</h2>
+        
       
     </div>
 

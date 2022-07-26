@@ -6,6 +6,8 @@ tags: Hexo
 
 ## Hexo手册
 
+<!--more-->
+
 ### 1.启动本地调试服务器
 
 ```objective-c
@@ -32,7 +34,7 @@ hexo deploy
 
 
 
-<!---more--->
+
 
 ### 5.图片放置
 

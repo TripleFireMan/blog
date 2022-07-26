@@ -14,7 +14,7 @@ tags:
 
 oc的对象，是由类创建的，类在oc里面是Class，那么Class的本质是什么？实际上class是由c的结构体构成的。**参阅runtime中的objc.h文件可知,**具体实现如下
 
-<!---more--->
+<!--more-->
 
 ```objc
 struct objc_class {

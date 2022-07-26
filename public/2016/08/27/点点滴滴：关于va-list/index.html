@@ -33,7 +33,7 @@
   <link href="/favicon.ico" rel="icon">
   <link rel="alternate" href="/atom.xml" title="火三" type="application/atom+xml">
   <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-<meta name="generator" content="Hexo 5.2.0"></head>
+<meta name="generator" content="Hexo 5.4.2"></head>
 
 
 <body>
@@ -52,9 +52,11 @@
       
         <li><a href="/">主页</a></li>
       
-        <li><a href="/archives/">归档</a></li>
+        <li><a href="/archives">归档</a></li>
       
-        <li><a href="/tags/">标签</a></li>
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
       
     </ul>
   </nav>
@@ -86,7 +88,7 @@
     <div class="entry">
       
         <p>想必在iOS这行混过一段时间的人看到下面的代码都会很熟悉</p>
-<a id="more"></a>
+<span id="more"></span>
 <p><img src="http://ock9zbzms.bkt.clouddn.com/small-small640.png"><br>我们今天要讨论的就是这个方法最后边的可变参数列表的使用。这个方法内部到底是如何实现的呢？以及这样提供函数调用的好处又有哪些呢？接下来，我们慢慢研究下</p>
 <p>1.首先，苹果这么做，肯定是有它这么设计的原因。相比于最后一个参数换为数组，可变参数列表的形式更加直观，可读性强！此外，相对于只能传递一个参数的方法，可变参数列表参数又提供了扩展性，基于此，很有必要去研究下可变参数列表的使用了。<br>2.其次，iOS实现可变参数列表的关键点是什么？关键在于va_list。va_list是C语言提供的处理可变参数的一种方法。具体的注意事项如下</p>
 <p>1.首先在函数里面定义va_list的变量，这个变量是指向参数的指针。<br>2.然后用va_start初始化刚定义的va_list变量。<br>3.然后用va_arg返回可变的参数，va_arg的第二个参数是返回的参数类型，例如va_arg(args,NSString *)，va_arg每调用一次就会指向下个参数的地址，直到再也没有获取到参数为止。<br>4.最后用va_end宏结束可变参数的获取。</p>

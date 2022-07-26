@@ -33,7 +33,7 @@
   <link href="/favicon.ico" rel="icon">
   <link rel="alternate" href="/atom.xml" title="火三" type="application/atom+xml">
   <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-<meta name="generator" content="Hexo 5.2.0"></head>
+<meta name="generator" content="Hexo 5.4.2"></head>
 
 
 <body>
@@ -52,9 +52,11 @@
       
         <li><a href="/">主页</a></li>
       
-        <li><a href="/archives/">归档</a></li>
+        <li><a href="/archives">归档</a></li>
       
-        <li><a href="/tags/">标签</a></li>
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
       
     </ul>
   </nav>
@@ -94,9 +96,9 @@
 <ul>
 <li><strong>数组元素的获取</strong>，支持根据下标进行获取</li>
 </ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#根据下标获取</span></span><br><span class="line">print(<span class="built_in">list</span>[<span class="number">0</span>])</span><br><span class="line"><span class="comment">#将会打印1</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#根据下标获取</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">list</span>[<span class="number">0</span>])</span><br><span class="line"><span class="comment">#将会打印1</span></span><br></pre></td></tr></table></figure>
 
-<a id="more"></a>
+<span id="more"></span>
 
 <ul>
 <li>列表常用的方法**</li>
@@ -164,7 +166,7 @@
 <ul>
 <li>进阶版</li>
 </ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#省略（）的元组</span></span><br><span class="line">name,age=<span class="string">&#x27;chengyan&#x27;</span>,<span class="number">18</span></span><br><span class="line">person=(name,age)</span><br><span class="line">print(person)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#省略（）的元组</span></span><br><span class="line">name,age=<span class="string">&#x27;chengyan&#x27;</span>,<span class="number">18</span></span><br><span class="line">person=(name,age)</span><br><span class="line"><span class="built_in">print</span>(person)</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>元组的基本操作</p>
 </li>
@@ -284,7 +286,7 @@
 <ul>
 <li><strong>一些示例</strong></li>
 </ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">dic=&#123;<span class="string">&#x27;name&#x27;</span>:<span class="string">&#x27;chengyan&#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#新增元素</span></span><br><span class="line">dic[<span class="string">&#x27;age&#x27;</span>]=<span class="number">18</span></span><br><span class="line"><span class="comment">#如果没有，设置默认值，有，不做操作</span></span><br><span class="line">dic.setdefault(<span class="string">&#x27;name&#x27;</span>,<span class="string">&#x27;wangqi&#x27;</span>)</span><br><span class="line"><span class="comment">#查询</span></span><br><span class="line">name = dic[<span class="string">&#x27;name&#x27;</span>]</span><br><span class="line">name = dic.get(<span class="string">&#x27;name&#x27;</span>)</span><br><span class="line"><span class="comment">#修改</span></span><br><span class="line">dic[<span class="string">&#x27;name&#x27;</span>]=<span class="string">&#x27;wangqi&#x27;</span></span><br><span class="line">dic.update(<span class="string">&#x27;name&#x27;</span>,<span class="string">&#x27;wangqi&#x27;</span>)</span><br><span class="line"><span class="comment">#删除</span></span><br><span class="line">dic.pop(<span class="string">&#x27;name&#x27;</span>)</span><br><span class="line"><span class="keyword">del</span>(dic[<span class="string">&#x27;name&#x27;</span>])</span><br><span class="line"><span class="comment">#随机删除一个并返回该元组</span></span><br><span class="line">dic.popitem()</span><br><span class="line"><span class="comment">#遍历</span></span><br><span class="line"><span class="keyword">for</span> <span class="built_in">tuple</span> <span class="keyword">in</span> dic:</span><br><span class="line">  print(<span class="built_in">tuple</span>)</span><br><span class="line"><span class="keyword">for</span> key <span class="keyword">in</span> dic:</span><br><span class="line">	print(key)</span><br><span class="line"><span class="keyword">for</span> key <span class="keyword">in</span> dic:</span><br><span class="line">  print(dic[key])</span><br><span class="line"><span class="comment">#fromkeys方式创建字典</span></span><br><span class="line">dic1=&#123;&#125;.fromkeys[<span class="string">&#x27;name&#x27;</span>,<span class="string">&#x27;age&#x27;</span>,<span class="string">&#x27;class&#x27;</span>,<span class="string">&#x27;school&#x27;</span>]</span><br><span class="line">  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">dic=&#123;<span class="string">&#x27;name&#x27;</span>:<span class="string">&#x27;chengyan&#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#新增元素</span></span><br><span class="line">dic[<span class="string">&#x27;age&#x27;</span>]=<span class="number">18</span></span><br><span class="line"><span class="comment">#如果没有，设置默认值，有，不做操作</span></span><br><span class="line">dic.setdefault(<span class="string">&#x27;name&#x27;</span>,<span class="string">&#x27;wangqi&#x27;</span>)</span><br><span class="line"><span class="comment">#查询</span></span><br><span class="line">name = dic[<span class="string">&#x27;name&#x27;</span>]</span><br><span class="line">name = dic.get(<span class="string">&#x27;name&#x27;</span>)</span><br><span class="line"><span class="comment">#修改</span></span><br><span class="line">dic[<span class="string">&#x27;name&#x27;</span>]=<span class="string">&#x27;wangqi&#x27;</span></span><br><span class="line">dic.update(<span class="string">&#x27;name&#x27;</span>,<span class="string">&#x27;wangqi&#x27;</span>)</span><br><span class="line"><span class="comment">#删除</span></span><br><span class="line">dic.pop(<span class="string">&#x27;name&#x27;</span>)</span><br><span class="line"><span class="keyword">del</span>(dic[<span class="string">&#x27;name&#x27;</span>])</span><br><span class="line"><span class="comment">#随机删除一个并返回该元组</span></span><br><span class="line">dic.popitem()</span><br><span class="line"><span class="comment">#遍历</span></span><br><span class="line"><span class="keyword">for</span> <span class="built_in">tuple</span> <span class="keyword">in</span> dic:</span><br><span class="line">  <span class="built_in">print</span>(<span class="built_in">tuple</span>)</span><br><span class="line"><span class="keyword">for</span> key <span class="keyword">in</span> dic:</span><br><span class="line">	<span class="built_in">print</span>(key)</span><br><span class="line"><span class="keyword">for</span> key <span class="keyword">in</span> dic:</span><br><span class="line">  <span class="built_in">print</span>(dic[key])</span><br><span class="line"><span class="comment">#fromkeys方式创建字典</span></span><br><span class="line">dic1=&#123;&#125;.fromkeys[<span class="string">&#x27;name&#x27;</span>,<span class="string">&#x27;age&#x27;</span>,<span class="string">&#x27;class&#x27;</span>,<span class="string">&#x27;school&#x27;</span>]</span><br><span class="line">  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <h3 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h3><p>这一节，基本了解了元组、列表、字典的创建、以及一些常用的方法。下节学习下函数，see u</p>
 

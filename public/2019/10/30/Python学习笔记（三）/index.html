@@ -33,7 +33,7 @@
   <link href="/favicon.ico" rel="icon">
   <link rel="alternate" href="/atom.xml" title="火三" type="application/atom+xml">
   <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-<meta name="generator" content="Hexo 5.2.0"></head>
+<meta name="generator" content="Hexo 5.4.2"></head>
 
 
 <body>
@@ -52,9 +52,11 @@
       
         <li><a href="/">主页</a></li>
       
-        <li><a href="/archives/">归档</a></li>
+        <li><a href="/archives">归档</a></li>
       
-        <li><a href="/tags/">标签</a></li>
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
       
     </ul>
   </nav>
@@ -92,25 +94,25 @@
 <li><p>函数模块</p>
 </li>
 <li><p>global、nonlocal、lambda</p>
-<a id="more"></a>
+<span id="more"></span>
 
 </li>
 </ul>
 <h3 id="如何定义函数"><a href="#如何定义函数" class="headerlink" title="如何定义函数"></a>如何定义函数</h3><ol>
 <li><p>无入参的函数</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sayHello</span>():</span></span><br><span class="line">	print(hello)	</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">sayHello</span>():</span><br><span class="line">	<span class="built_in">print</span>(hello)	</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>带返回值的函数</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sayHello</span>():</span></span><br><span class="line">	hello = <span class="string">&#x27;hello&#x27;</span></span><br><span class="line">	print(hello)</span><br><span class="line">	<span class="keyword">return</span> hello</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">sayHello</span>():</span><br><span class="line">	hello = <span class="string">&#x27;hello&#x27;</span></span><br><span class="line">	<span class="built_in">print</span>(hello)</span><br><span class="line">	<span class="keyword">return</span> hello</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>带参数函数</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">saySomething</span>(<span class="params">something</span>):</span></span><br><span class="line">	print(something)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">saySomething</span>(<span class="params">something</span>):</span><br><span class="line">	<span class="built_in">print</span>(something)</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>有默认值函数</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sayDefault</span>(<span class="params">something=<span class="string">&#x27;helloworld&#x27;</span></span>):</span></span><br><span class="line">	print(something)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">sayDefault</span>(<span class="params">something=<span class="string">&#x27;helloworld&#x27;</span></span>):</span><br><span class="line">	<span class="built_in">print</span>(something)</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>可变参数* ,**</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sayMore</span>(<span class="params">*morething</span>):</span></span><br><span class="line">	<span class="keyword">for</span> a <span class="keyword">in</span> morething:</span><br><span class="line">		print(a)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sayMoreDic</span>(<span class="params">**moreDic</span>):</span></span><br><span class="line">	<span class="keyword">for</span> dic <span class="keyword">in</span> moreDic:</span><br><span class="line">		print(dic)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">sayMore</span>(<span class="params">*morething</span>):</span><br><span class="line">	<span class="keyword">for</span> a <span class="keyword">in</span> morething:</span><br><span class="line">		<span class="built_in">print</span>(a)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">sayMoreDic</span>(<span class="params">**moreDic</span>):</span><br><span class="line">	<span class="keyword">for</span> dic <span class="keyword">in</span> moreDic:</span><br><span class="line">		<span class="built_in">print</span>(dic)</span><br></pre></td></tr></table></figure>
 
 <p>*修饰的参数，其实是一个元组，**修饰的参数是一个字典，传入方式如下</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sayMore(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">sayMoreDic(name=<span class="string">&#x27;chengyan&#x27;</span>,age=<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
@@ -145,7 +147,7 @@
 <li><p>nonlocal 关键字用来修改闭包中的变量，将闭包变量修改为局部变量，从而可以修改闭包变量</p>
 </li>
 <li><p>lambda 关键字是用来申明匿名函数的，范例如下</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sum1 = <span class="keyword">lambda</span> x,y: x+y</span><br><span class="line">print(sum1(<span class="number">2</span>,<span class="number">7</span>))</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sum1 = <span class="keyword">lambda</span> x,y: x+y</span><br><span class="line"><span class="built_in">print</span>(sum1(<span class="number">2</span>,<span class="number">7</span>))</span><br></pre></td></tr></table></figure>
 
 
 

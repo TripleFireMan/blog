@@ -33,7 +33,7 @@
   <link href="/favicon.ico" rel="icon">
   <link rel="alternate" href="/atom.xml" title="火三" type="application/atom+xml">
   <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-<meta name="generator" content="Hexo 5.2.0"></head>
+<meta name="generator" content="Hexo 5.4.2"></head>
 
 
 <body>
@@ -52,9 +52,11 @@
       
         <li><a href="/">主页</a></li>
       
-        <li><a href="/archives/">归档</a></li>
+        <li><a href="/archives">归档</a></li>
       
-        <li><a href="/tags/">标签</a></li>
+        <li><a href="/tags">标签</a></li>
+      
+        <li><a href="/about">关于</a></li>
       
     </ul>
   </nav>
@@ -86,7 +88,7 @@
     <div class="entry">
       
         <p>今天来讨论下平时大家熟悉的数组/字典，但是容易忽略的数组/字典的valueForKeyPath方法<br>可能大家对- (id)valueForKeyPath:(NSString *)keyPath方法不是很了解。<br>其实这个方法非常的强大，举个例子:</p>
-<a id="more"></a>
+<span id="more"></span>
 
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSArray</span> *array = @[<span class="string">@&quot;name&quot;</span>, <span class="string">@&quot;w&quot;</span>, <span class="string">@&quot;aa&quot;</span>, <span class="string">@&quot;jimsa&quot;</span>];</span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;%@&quot;</span>, [array valueForKeyPath:<span class="string">@&quot;uppercaseString&quot;</span>]);</span><br></pre></td></tr></table></figure>
 <p>输出<br>(<br>    NAME,<br>    W,<br>    AA,<br>    JIMSA<br>)</p>

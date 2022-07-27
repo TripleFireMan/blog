@@ -4,15 +4,11 @@ date: 2019-10-30 16:58:13
 tags: python
 ---
 
-今天来继续学习下pytho中的函数
-
-### 学习目标
-
-* 如何定义函数及带不同参数的函数
-
-* 函数模块
-
-* global、nonlocal、lambda
+<font color=#ff5400 > <b>今天来继续学习下pytho中的函数 </b></font>
+> ### 学习目标
+> * 如何定义函数及带不同参数的函数
+> * 函数模块
+> * global、nonlocal、lambda
 
   <!--more-->
 

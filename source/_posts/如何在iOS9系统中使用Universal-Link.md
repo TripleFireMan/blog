@@ -90,7 +90,8 @@ tags:
 
 而且此文件的类型应该是application/pkcs7-mime
 
-### 常见错误
+## 常见错误
+
 
 ```objc
   ### Denying redirect 'https://www.domain.com/.well-known/apple-app-site-association' -> 'http://err.taobao.com/error1.html'

@@ -39,7 +39,7 @@ flower的生长主要注意的地方就俩点，一个是花的位置安排，�
 
 代码如下
 
-```objc
+```swift
 - (void)addFlowers
 {
     CGFloat height = self.view.bounds.size.height;
@@ -101,7 +101,7 @@ ios里面有一个layer叫CAGradientLayer，这个layer支持线性的梯度，�
 
 最后，不希望视图生成的时候就开始动画，而是在视图贴到父视图上的时候才开始动画，那么layer的动画就要加在-(void)didMoveToSuperView方法上。以下是具体实现代码
 
-```objc
+```oc
 + (Class)layerClass
 {
     return [CAGradientLayer class];

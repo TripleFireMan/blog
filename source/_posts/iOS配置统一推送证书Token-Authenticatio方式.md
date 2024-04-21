@@ -20,7 +20,7 @@ Apple提供了一种新的方案，在开发者网站上，可以创建keys，�
 <br/>
 
 <center>
-<img src=iOS%E9%85%8D%E7%BD%AE%E7%BB%9F%E4%B8%80%E6%8E%A8%E9%80%81%E8%AF%81%E4%B9%A6Token-Authenticatio%E6%96%B9%E5%BC%8F/20220727150128.jpg width=300>
+<img src=iOS配置统一推送证书Token-Authenticatio方式/20220727150128.jpg width=2186 alt="9">
 <br/>
 <i>图一</i>
 </center>
